@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>eus_vive</name>
+  <version>0.0.0</version>
+  <description>The eus_vive package</description>
+
+  <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
+
+  <license>BSD</license>
+
+  <author email="shingogo.5511@gmail.com">Shingo Kitagawa</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roseus</depend>
+  <depend>pr2eus</depend>
+  <depend>vive_ros</depend>
+
+  <export>
+  </export>
+
+</package>
