@@ -1,0 +1,8 @@
+<launch>
+  <arg name="main" default="true" />
+  <include file="$(find eus_vive)/launch/vive.launch">
+    <arg name="image_left" value="/wide_stereo/left/image_rect_color" />
+    <arg name="image_right" value="/wide_stereo/right/image_rect_color" />
+  </include>
+  <node if="$(arg main)" pkg="eus_vive" type="pr2-vive.l" name="main" args="&quot;(main)&quot;" output="screen" />
+</launch>

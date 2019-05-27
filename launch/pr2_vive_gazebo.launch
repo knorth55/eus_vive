@@ -1,0 +1,5 @@
+<launch>
+  <arg name="main" default="true" />
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
+  <include file="$(find eus_vive)/launch/pr2_vive.launch" />
+</launch>
