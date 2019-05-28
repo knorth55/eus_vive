@@ -46,11 +46,22 @@
         (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail t :stop 100 :debug-view nil))
       target-coords)))
 
+(defun head-cb ()
+  (let (coords rpy)
+    (send *tfl* :wait-for-transform *bvive-frame-id* *hmd-frame-id* (ros::time 0) 0.1)
+    (setq coords (send *tfl* :lookup-transform *bvive-frame-id* *hmd-frame-id* (ros::time 0)))
+    (when coords
+      (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world)
+      (setq rpy (car (send coords :rpy-angle)))
+      (send *pr2* :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
+      (send *pr2* :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
+    )))
 
 (defun main ()
   (init)
   (ros::rate 10)
   (while (ros::ok)
+    (head-cb)
     (setq *larm-coords* (arm-cb :larm))
     (setq *rarm-coords* (arm-cb :rarm))
     (when *larm-coords* (send *larm-coords* :draw-on :flush t :size 50 :color #f(0 1 0) :width 5))
