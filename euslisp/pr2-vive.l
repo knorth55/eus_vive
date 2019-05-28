@@ -24,8 +24,8 @@
     (send *tfl* :wait-for-transform *hmd-frame-id* vive-frame-id (ros::time 0) 0.1)
     (setq coords (send *tfl* :lookup-transform *hmd-frame-id* vive-frame-id (ros::time 0)))
     (when coords
-      (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world) 
-      (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world) 
+      (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world)
+      (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world)
       (setq *tmp-coords* (send (send (send *pr2* :head-end-coords) :copy-worldcoords) :transform (send coords :copy-worldcoords)))
       (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
       (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
@@ -36,7 +36,7 @@
     (setq hmd->vive-coords (get-vive-coords arm))
     (setq world->head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
     (when hmd->vive-coords
-      (setq target-coords (send world->head-coords :transform hmd->vive-coords)) 
+      (setq target-coords (send world->head-coords :transform hmd->vive-coords))
       (setq target-pos (send target-coords :worldpos))
       (setq target-coords (make-coords :pos (float-vector (* *scale* (elt target-pos 0))
                                                           (* *scale* (elt target-pos 1))
