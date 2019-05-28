@@ -31,8 +31,9 @@
   (setq *bvive-frame-id* "/lighthouse_LHB_11CFA4E1")
   (setq *cvive-frame-id* "/lighthouse_LHB_8E924CC3")
   (setq *tfl* (instance ros::transform-listener :init))
-  (setq *send-time* 1000)
   (setq *scale* 2.0)
+  (setq *av-tm* 1000)
+  (setq *av-scale* 10.0)
   (objects (list *pr2*))
   (ros::rate 10))
 
@@ -62,8 +63,9 @@
                                                           (* *scale* (elt target-pos 1))
                                                           (elt target-pos 2))
                                        :rot (send target-coords :worldrot)))
-      (unless (send *pr2* arm :inverse-kinematics target-coords :rotation-axis t :revert-if-fail nil :stop 100 :debug-view nil)
-        (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail t :stop 100 :debug-view nil))
+      (send *pr2* arm :inverse-kinematics target-coords :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
+      ; (unless (send *pr2* arm :inverse-kinematics target-coords :rotation-axis t :revert-if-fail t :stop 100 :debug-view nil)
+      ;   (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
       target-coords)))
 
 (defun head-cb ()
@@ -121,10 +123,15 @@
     (when *rarm-enable*
       (setq *rarm-coords* (arm-cb :rarm))
       (when *rarm-coords* (send *rarm-coords* :draw-on :flush t :size 50 :color #f(1 0 0) :width 5)))
-    (when *rarm-enable* (gripper-cb :rarm))
-    (when *larm-enable* (gripper-cb :larm))
-    (if (or *larm-enable* *rarm-enable*)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) *send-time* nil 0 :scale 3.0))
+    (when *larm-enable*
+      (gripper-cb :larm)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :larm-controller 0
+            :min-time 0.1 :scale *av-scale*))
+    (when *rarm-enable*
+      (gripper-cb :rarm)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :rarm-controller 0
+            :min-time 0.1 :scale *av-scale*))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :head-controller 0 :scale *av-scale*)
     (send *irtviewer* :draw-objects)
     (x::window-main-one)
     (ros::spin-once)
