@@ -1,8 +1,14 @@
 <launch>
   <arg name="main" default="true" />
+  <arg name="gazebo" default="false" />
+  <arg name="image_left" default="/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="image_right" default="/kinect_head_decompressed/rgb/image_rect_color" />
+
+  <node name="kinect_head_decompress" pkg="image_transport" type="republish" unless="$(arg gazebo)"
+        args="compressed in:=/kinect_head/rgb/image_rect_color raw out:=/kinect_head_decompressed/rgb/image_rect_color" />
   <include file="$(find eus_vive)/launch/vive.launch">
-    <arg name="image_left" value="/wide_stereo/left/image_rect_color" />
-    <arg name="image_right" value="/wide_stereo/right/image_rect_color" />
+    <arg name="image_left" value="$(arg image_left)" />
+    <arg name="image_right" value="$(arg image_right)" />
   </include>
   <node if="$(arg main)" pkg="eus_vive" type="pr2-vive.l" name="main" args="&quot;(main)&quot;" output="screen" />
 </launch>
