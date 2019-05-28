@@ -12,7 +12,7 @@
   (setq *cvive-frame-id* "/lighthouse_LHB_8E924CC3")
   (setq *tfl* (instance ros::transform-listener :init))
   (setq *send-time* 1000)
-  (setq *scale* 1.8)
+  (setq *scale* 2.0)
   (objects (list *pr2*))
   (ros::rate 10))
 
