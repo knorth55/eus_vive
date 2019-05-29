@@ -1,11 +1,29 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="gazebo" default="false" />
-  <arg name="image_left" default="/kinect_head_decompressed/rgb/image_rect_color" />
-  <arg name="image_right" default="/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="kinfu" default="false" />
+  <arg name="image_left" default="/kinect_head_decompressed/rgb/image_rect_color" unless="$(arg kinfu)" />
+  <arg name="image_right" default="/kinect_head_decompressed/rgb/image_rect_color" unless="$(arg kinfu)" />
+  <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
+  <arg name="image_right" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
 
-  <node name="kinect_head_decompress" pkg="image_transport" type="republish" unless="$(arg gazebo)"
-        args="compressed in:=/kinect_head/rgb/image_rect_color raw out:=/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
+  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
+  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
+  <arg name="IMAGE_DECOMP_DEPTH" default="/kinect_head_decompressed/depth_registered/image_rect" />
+  <arg name="IMAGE_DECOMP_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
+
+  <node name="kinect_head_depth_decompress" pkg="image_transport" type="republish"
+        args="compressedDepth in:=$(arg IMAGE_DEPTH) raw out:=$(arg IMAGE_DECOMP_DEPTH)" />
+  <node name="kinect_head_rgb_decompress" pkg="image_transport" type="republish"
+        args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg IMAGE_DECOMP_COLOR)" />
+
+  <include file="$(find eus_vive)/launch/kinfu.launch" if="$(arg kinfu)">
+    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
+    <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DECOMP_DEPTH)" />
+    <arg name="IMAGE_COLOR" value="$(arg IMAGE_DECOMP_COLOR)" />
+  </include>
+
   <include file="$(find eus_vive)/launch/vive.launch">
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
