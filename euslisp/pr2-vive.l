@@ -6,7 +6,7 @@
 (defun init ()
   (ros::roseus "vive_pr2eus")
   (pr2-init)
-  (send *ri* :angle-vector (send *pr2* :reset-pose))
+  (send *ri* :angle-vector (send *pr2* :reset-manip-pose))
   (send *ri* :stop-grasp :arms)
   (send *ri* :wait-interpolation)
   (setq *larm-grasp* nil)
