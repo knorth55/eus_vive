@@ -75,7 +75,11 @@
     (setq coords (send *tfl* :lookup-transform *bvive-frame-id* *hmd-frame-id* (ros::time 0)))
     (when coords
       (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world)
-      (setq rpy (car (send coords :rpy-angle)))
+      (setq rpy
+            (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
+              (car (send coords :rpy-angle))
+              (cadr (send coords :rpy-angle))))
+      (pprint (send coords :rpy-angle))
       (send *pr2* :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
       (send *pr2* :head-neck-y :joint-angle (rad2deg (elt rpy 1))))))
 
