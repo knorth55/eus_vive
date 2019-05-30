@@ -86,8 +86,10 @@
 (defun enable-cb ()
   (when (and (not (eq *larm-menu* *prev-larm-menu*)) *larm-menu*)
     (setq *larm-enable* (not *larm-enable*)))
+  (unless *larm-enable* (send *ri* :cancel-angle-vector :controller-type :larm-controller))
   (when (and (not (eq *rarm-menu* *prev-rarm-menu*)) *rarm-menu*)
-    (setq *rarm-enable* (not *rarm-enable*))))
+    (setq *rarm-enable* (not *rarm-enable*)))
+  (unless *rarm-enable* (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
 
 (defun gripper-cb (arm)
   (if (eq arm :larm)
