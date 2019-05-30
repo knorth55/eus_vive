@@ -18,13 +18,13 @@
   <node name="kinect_head_rgb_decompress" pkg="image_transport" type="republish"
         args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg IMAGE_DECOMP_COLOR)" />
 
-  <include file="$(find eus_vive)/launch/kinfu.launch" if="$(arg kinfu)">
+  <include file="$(find eus_vive)/launch/include/kinfu.launch" if="$(arg kinfu)">
     <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
     <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DECOMP_DEPTH)" />
     <arg name="IMAGE_COLOR" value="$(arg IMAGE_DECOMP_COLOR)" />
   </include>
 
-  <include file="$(find eus_vive)/launch/vive.launch">
+  <include file="$(find eus_vive)/launch/include/vive.launch">
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
   </include>
