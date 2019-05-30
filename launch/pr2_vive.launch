@@ -2,28 +2,73 @@
   <arg name="main" default="true" />
   <arg name="gazebo" default="false" />
   <arg name="kinfu" default="false" />
-  <arg name="image_left" default="/kinect_head_decompressed/rgb/image_rect_color" unless="$(arg kinfu)" />
-  <arg name="image_right" default="/kinect_head_decompressed/rgb/image_rect_color" unless="$(arg kinfu)" />
+  <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
+  <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
   <arg name="image_right" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
 
   <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
   <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
   <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
-  <arg name="IMAGE_DECOMP_DEPTH" default="/kinect_head_decompressed/depth_registered/image_rect" />
-  <arg name="IMAGE_DECOMP_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="DECOMP_CAMERA_INFO" default="/kinect_head_decompressed/depth_registered/camera_info" />
+  <arg name="DECOMP_RGB_CAMERA_INFO" default="/kinect_head_decompressed/rgb/camera_info" />
+  <arg name="DECOMP_IMAGE_DEPTH" default="/kinect_head_decompressed/depth_registered/image_rect" />
+  <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
 
-  <node name="kinect_head_depth_decompress" pkg="image_transport" type="republish"
-        args="compressedDepth in:=$(arg IMAGE_DEPTH) raw out:=$(arg IMAGE_DECOMP_DEPTH)" />
-  <node name="kinect_head_rgb_decompress" pkg="image_transport" type="republish"
-        args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg IMAGE_DECOMP_COLOR)" />
+  <group ns="kinect_head_decompressed">
+    <node name="camera_info_relay" pkg="topic_tools" type="relay"
+          args="$(arg CAMERA_INFO) $(arg DECOMP_CAMERA_INFO)" />
+    <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
+          args="$(arg CAMERA_INFO) $(arg DECOMP_RGB_CAMERA_INFO)" />
+    <node name="depth_image_transport" pkg="image_transport" type="republish"
+          args="compressedDepth in:=$(arg IMAGE_DEPTH) raw out:=$(arg DECOMP_IMAGE_DEPTH)" />
+    <node name="rgb_image_transport" pkg="image_transport" type="republish"
+          args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg DECOMP_IMAGE_COLOR)" />
+    <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
+          args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" />
+  </group>
+
+  <group ns="virtual_camera">
+    <group ns="left">
+      <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="-0.05 0 0 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+      <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+            output="screen">
+        <remap from="~input/camera_info" to="$(arg CAMERA_INFO)" />
+        <rosparam>
+          frame_id: virtual_camera_left_rgb_optical_frame
+        </rosparam>
+      </node>
+      <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+            args="standalone jsk_pcl/DepthImageCreator" output="screen">
+        <remap from="~input" to="$(arg DECOMP_POINTS)" />
+        <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+      </node>
+    </group>
+    <group ns="right">
+      <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0.05 0 0 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+      <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+            output="screen">
+        <remap from="~input/camera_info" to="$(arg CAMERA_INFO)" />
+        <rosparam>
+          frame_id: virtual_camera_right_rgb_optical_frame
+        </rosparam>
+      </node>
+      <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+            args="standalone jsk_pcl/DepthImageCreator" output="screen">
+        <remap from="~input" to="$(arg DECOMP_POINTS)" />
+        <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+      </node>
+    </group>
+  </group>
 
   <include file="$(find eus_vive)/launch/include/kinfu.launch" if="$(arg kinfu)">
-    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
-    <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DECOMP_DEPTH)" />
-    <arg name="IMAGE_COLOR" value="$(arg IMAGE_DECOMP_COLOR)" />
+    <arg name="CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
+    <arg name="IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
+    <arg name="IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
   </include>
-
   <include file="$(find eus_vive)/launch/include/vive.launch">
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
