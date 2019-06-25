@@ -33,7 +33,7 @@
   (setq *tfl* (instance ros::transform-listener :init))
   (setq *scale* 2.0)
   (setq *av-tm* 1000)
-  (setq *av-scale* 10.0)
+  (setq *av-scale* 8.0)
   (setq *feedback-topic-name* "/vive/set_feedback")
   (ros::advertise *feedback-topic-name* sensor_msgs::JoyFeedback 1)
   (objects (list *pr2*))
