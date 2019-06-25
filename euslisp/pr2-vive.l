@@ -88,11 +88,11 @@
 (defun enable-cb ()
   (when (and (not (eq *larm-menu* *prev-larm-menu*)) *larm-menu*)
     (setq *larm-enable* (not *larm-enable*))
-    (send-feedback 0))
+    (send-feedback 2))
   (unless *larm-enable* (send *ri* :cancel-angle-vector :controller-type :larm-controller))
   (when (and (not (eq *rarm-menu* *prev-rarm-menu*)) *rarm-menu*)
     (setq *rarm-enable* (not *rarm-enable*))
-    (send-feedback 0))
+    (send-feedback 1))
   (unless *rarm-enable* (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
 
 (defun gripper-cb (arm)
@@ -123,9 +123,8 @@
 
 (defun send-feedback (&optional (id 0))
   (let (msg)
-    (setq msg
-          (instance sensor_msgs::JoyFeedback :init
-                    :type 1 :id id :intensity 1.0))
+    (setq msg (instance sensor_msgs::JoyFeedback :init
+                        :type 1 :id id :intensity 3000))
     (ros::publish *feedback-topic-name* msg)))
 
 (defun main ()
