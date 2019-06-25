@@ -34,6 +34,8 @@
   (setq *scale* 2.0)
   (setq *av-tm* 1000)
   (setq *av-scale* 10.0)
+  (setq *feedback-topic-name* "/vive/set_feedback")
+  (ros::advertise *feedback-topic-name* sensor_msgs::JoyFeedback 1)
   (objects (list *pr2*))
   (ros::rate 10))
 
@@ -85,10 +87,12 @@
 
 (defun enable-cb ()
   (when (and (not (eq *larm-menu* *prev-larm-menu*)) *larm-menu*)
-    (setq *larm-enable* (not *larm-enable*)))
+    (setq *larm-enable* (not *larm-enable*))
+    (send-feedback 0))
   (unless *larm-enable* (send *ri* :cancel-angle-vector :controller-type :larm-controller))
   (when (and (not (eq *rarm-menu* *prev-rarm-menu*)) *rarm-menu*)
-    (setq *rarm-enable* (not *rarm-enable*)))
+    (setq *rarm-enable* (not *rarm-enable*))
+    (send-feedback 0))
   (unless *rarm-enable* (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
 
 (defun gripper-cb (arm)
@@ -116,6 +120,13 @@
       (setq *prev-rarm-menu* *rarm-menu*)
       (setq *rarm-trigger* (> (elt (send msg :buttons) 1) 0))
       (setq *rarm-menu* (> (elt (send msg :buttons) 0) 0)))))
+
+(defun send-feedback (&optional (id 0))
+  (let (msg)
+    (setq msg
+          (instance sensor_msgs::JoyFeedback :init
+                    :type 1 :id id :intensity 1.0))
+    (ros::publish *feedback-topic-name* msg)))
 
 (defun main ()
   (init)
