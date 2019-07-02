@@ -135,8 +135,7 @@
     (enable-cb)
     (when *larm-enable*
       (setq *larm-coords* (arm-cb :larm))
-      (when *larm-coords* (send *larm-coords* :draw-on :flush t :size 50 :color #f(0 1 0) :width 5))
-      )
+      (when *larm-coords* (send *larm-coords* :draw-on :flush t :size 50 :color #f(0 1 0) :width 5)))
     (when *rarm-enable*
       (setq *rarm-coords* (arm-cb :rarm))
       (when *rarm-coords* (send *rarm-coords* :draw-on :flush t :size 50 :color #f(1 0 0) :width 5)))
