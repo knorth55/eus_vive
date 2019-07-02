@@ -3,6 +3,7 @@
 (load "package://pr2eus/pr2-interface.l")
 (ros::load-ros-manifest "sensor_msgs")
 
+
 (defun init ()
   (ros::roseus "vive_pr2eus")
   (pr2-init)
@@ -39,6 +40,7 @@
   (objects (list *pr2*))
   (ros::rate 10))
 
+
 (defun get-vive-coords (arm)
   (when (not (or (eq arm :larm) (eq arm :rarm)))
     (print (format nil "~A arm is not supported ~%" arm))
@@ -53,6 +55,7 @@
       (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
       (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
       coords)))
+
 
 (defun arm-cb (arm)
   (let (hmd->vive-coords world->head-coords target-coords target-pos)
@@ -71,6 +74,7 @@
       ;   (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
       target-coords)))
 
+
 (defun head-cb ()
   (let (coords rpy)
     (send *tfl* :wait-for-transform *bvive-frame-id* *hmd-frame-id* (ros::time 0) 0.1)
@@ -85,15 +89,17 @@
       (send *pr2* :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
       (send *pr2* :head-neck-y :joint-angle (rad2deg (elt rpy 1))))))
 
+
 (defun enable-cb ()
   (when (and (not (eq *larm-menu* *prev-larm-menu*)) *larm-menu*)
     (setq *larm-enable* (not *larm-enable*))
-    (send-feedback 2))
+    (send-joy-feedback :larm))
   (unless *larm-enable* (send *ri* :cancel-angle-vector :controller-type :larm-controller))
   (when (and (not (eq *rarm-menu* *prev-rarm-menu*)) *rarm-menu*)
     (setq *rarm-enable* (not *rarm-enable*))
-    (send-feedback 1))
+    (send-joy-feedback :rarm))
   (unless *rarm-enable* (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
+
 
 (defun gripper-cb (arm)
   (if (eq arm :larm)
@@ -108,6 +114,7 @@
         (send *ri* :start-grasp :rarm :wait nil))
       (setq *rarm-grasp* (not *rarm-grasp*)))))
 
+
 (defun vive-button-cb (msg arm)
   (if (eq arm :larm)
     (progn
@@ -121,11 +128,13 @@
       (setq *rarm-trigger* (> (elt (send msg :buttons) 1) 0))
       (setq *rarm-menu* (> (elt (send msg :buttons) 0) 0)))))
 
-(defun send-feedback (&optional (id 0))
-  (let (msg)
+
+(defun send-joy-feedback (&optional (arm :larm))
+  (let (msg (id (if (eq arm :larm) 2 1)))
     (setq msg (instance sensor_msgs::JoyFeedback :init
                         :type 1 :id id :intensity 3000))
     (ros::publish *feedback-topic-name* msg)))
+
 
 (defun main ()
   (init)
