@@ -2,6 +2,7 @@
 
 (load "package://pr2eus/pr2-interface.l")
 (ros::load-ros-manifest "sensor_msgs")
+(ros::load-ros-manifest "topic_tools")
 
 
 (defun init ()
@@ -10,6 +11,7 @@
   (send *ri* :angle-vector (send *pr2* :reset-manip-pose))
   (send *ri* :stop-grasp :arms)
   (send *ri* :wait-interpolation)
+  (send *ri* :clear-costmap)
   (setq *larm-grasp* nil)
   (setq *rarm-grasp* nil)
   (setq *larm-trigger* nil)
@@ -22,6 +24,7 @@
   (setq *prev-rarm-menu* nil)
   (setq *larm-enable* nil)
   (setq *rarm-enable* nil)
+  (setq *base-enable* nil)
   (setq *hmd-frame-id* "/hmd")
   (setq *lvive-frame-id* "/controller_LHR_FD35BD42")
   (setq *lvive-topic-name* (format nil "/vive~A/joy" *lvive-frame-id*))
@@ -35,8 +38,20 @@
   (setq *scale* 2.0)
   (setq *av-tm* 1000)
   (setq *av-scale* 8.0)
+  (setq *vx* 0.0)
+  (setq *vy* 0.0)
+  (setq *vw* 0.0)
+  (setq *vx-thresh* 0.3)
+  (setq *vy-thresh* 0.3)
+  (setq *vw-thresh* 0.3)
+  (setq *vx-scale* 1.0)
+  (setq *vy-scale* 1.0)
+  (setq *vw-scale* 1.0)
   (setq *feedback-topic-name* "/vive/set_feedback")
   (ros::advertise *feedback-topic-name* sensor_msgs::JoyFeedback 1)
+  (setq *joy-org-topic-name* "/joy_org")
+  (setq *joy-other-topic-name* "/joy_other")
+  (ros::advertise *joy-other-topic-name* sensor_msgs::Joy 1)
   (objects (list *pr2*))
   (ros::rate 10))
 
@@ -44,7 +59,7 @@
 (defun get-vive-coords (arm)
   (when (not (or (eq arm :larm) (eq arm :rarm)))
     (print (format nil "~A arm is not supported ~%" arm))
-    (return nil))
+    (return-from get-vive-coords nil))
   (let (coords (vive-frame-id (if (eq arm :larm) *lvive-frame-id* *rvive-frame-id*)))
     (send *tfl* :wait-for-transform *hmd-frame-id* vive-frame-id (ros::time 0) 0.1)
     (setq coords (send *tfl* :lookup-transform *hmd-frame-id* vive-frame-id (ros::time 0)))
@@ -121,12 +136,15 @@
       (setq *prev-larm-trigger* *larm-trigger*)
       (setq *prev-larm-menu* *larm-menu*)
       (setq *larm-trigger* (> (elt (send msg :buttons) 1) 0))
-      (setq *larm-menu* (> (elt (send msg :buttons) 0) 0)))
+      (setq *larm-menu* (> (elt (send msg :buttons) 0) 0))
+      (setq *vw* (* -1 (elt (send msg :axes) 0))))
     (progn
       (setq *prev-rarm-trigger* *rarm-trigger*)
       (setq *prev-rarm-menu* *rarm-menu*)
       (setq *rarm-trigger* (> (elt (send msg :buttons) 1) 0))
-      (setq *rarm-menu* (> (elt (send msg :buttons) 0) 0)))))
+      (setq *rarm-menu* (> (elt (send msg :buttons) 0) 0))
+      (setq *vx* (elt (send msg :axes) 1))
+      (setq *vy* (* -1 (elt (send msg :axes) 0))))))
 
 
 (defun send-joy-feedback (&optional (arm :larm))
@@ -136,27 +154,85 @@
     (ros::publish *feedback-topic-name* msg)))
 
 
+(defun base-cb ()
+  (let (msg (axes (make-list 29 :initial-element 0))
+            (buttons (make-list 17 :initial-element 0)))
+    ;; for unsafe teleop
+    ;; (setf (elt buttons 9) 1)
+    (setf (elt buttons 10) 1)
+    (setf (elt axes 3) (* *vx-scale* (if (> (abs *vx*) *vx-thresh*) *vx* 0.0)))
+    (setf (elt axes 2) (* *vy-scale* (if (> (abs *vy*) *vy-thresh*) *vy* 0.0)))
+    (setf (elt axes 0) (* *vw-scale* (if (> (abs *vw*) *vw-thresh*) *vw* 0.0)))
+    (setq msg (instance sensor_msgs::Joy :init))
+    (send msg :header :stamp (ros::time-now))
+    (send msg :axes axes)
+    (send msg :buttons buttons)
+    (ros::publish *joy-other-topic-name* msg)))
+
+
+(defun switch-joy (joy-topic-name)
+  (let ((joy-mux-service-name "/multiple_joystick_mux/select")
+        mux-req)
+    (setq mux-req (instance topic_tools::MuxSelectRequest :init))
+    (send mux-req :topic joy-topic-name)
+    (ros::service-call joy-mux-service-name mux-req)))
+
+
+(defun switch-joy-to-vive ()
+  (switch-joy *joy-other-topic-name*))
+
+
+(defun switch-joy-to-ps3joy ()
+  (switch-joy *joy-org-topic-name*))
+
+
 (defun main ()
   (init)
-  (ros::rate 10)
+  (send-joy-feedback :larm)
+  (send-joy-feedback :rarm)
   (while (ros::ok)
     (head-cb)
     (enable-cb)
-    (when *larm-enable*
-      (setq *larm-coords* (arm-cb :larm))
-      (when *larm-coords* (send *larm-coords* :draw-on :flush t :size 50 :color #f(0 1 0) :width 5)))
-    (when *rarm-enable*
-      (setq *rarm-coords* (arm-cb :rarm))
-      (when *rarm-coords* (send *rarm-coords* :draw-on :flush t :size 50 :color #f(1 0 0) :width 5)))
-    (when *larm-enable*
-      (gripper-cb :larm)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :larm-controller 0
-            :min-time 0.1 :scale *av-scale*))
-    (when *rarm-enable*
-      (gripper-cb :rarm)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :rarm-controller 0
-            :min-time 0.1 :scale *av-scale*))
-    (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm* :head-controller 0 :scale *av-scale*)
+    (if (and (not *larm-enable*) (not *rarm-enable*))
+      (progn
+        (unless *base-enable* (switch-joy-to-vive))
+        (setq *base-enable* t))
+      (progn
+        (when *base-enable* (switch-joy-to-ps3joy))
+        (setq *base-enable* nil)
+        (when *larm-enable*
+          (setq *larm-coords* (arm-cb :larm))
+          (when *larm-coords*
+                (send *larm-coords* :draw-on :flush t :size 50
+                      :color #f(0 1 0) :width 5)))
+        (when *rarm-enable*
+          (setq *rarm-coords* (arm-cb :rarm))
+          (when *rarm-coords*
+                (send *rarm-coords* :draw-on :flush t :size 50
+                      :color #f(1 0 0) :width 5)))))
+    (cond
+      ((and *larm-enable* *rarm-enable*)
+        (gripper-cb :larm)
+        (gripper-cb :rarm)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :default-controller 0 :min-time 0.1 :scale *av-scale*))
+      ((and *larm-enable* (not *rarm-enable*))
+        (gripper-cb :larm)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :larm-controller 0 :min-time 0.1 :scale *av-scale*)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :head-controller 0 :min-time 0.1 :scale *av-scale*))
+      ((and (not *larm-enable*) *rarm-enable*)
+        (gripper-cb :rarm)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :rarm-controller 0 :min-time 0.1 :scale *av-scale*)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :head-controller 0 :min-time 0.1 :scale *av-scale*))
+      (*base-enable*
+        (base-cb)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) *av-tm*
+              :head-controller 0 :min-time 0.1 :scale *av-scale*))
+      (t nil))
     (send *irtviewer* :draw-objects)
     (x::window-main-one)
     (ros::spin-once)
