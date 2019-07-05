@@ -68,7 +68,7 @@
     (setq rarm-enable nil)
     (setq rvive-frame-id "/controller_LHR_F7AFBF47")
 
-    (setq scale 2.0)
+    (setq scale 1.5)
     (setq av-tm 1000)
     (setq av-scale 8.0)
     (setq vx 0.0)
