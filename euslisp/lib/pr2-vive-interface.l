@@ -74,16 +74,14 @@
       (send self :set-arm-slot arm :prev-trigger nil)
       (send self :set-arm-slot arm :menu nil)
       (send self :set-arm-slot arm :prev-menu nil)
-      (send self :set-arm-slot arm :enable nil))
+      (send self :set-arm-slot arm :enable nil)
+      (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id)
+                      sensor_msgs::Joy #'send self :vive-button-cb arm)))
 
     (send self :set-val 'rate 10)
     (setq *tfl* (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1)
-    (ros::subscribe (format nil "/vive~A/joy" larm-vive-frame-id)
-                    sensor_msgs::Joy #'send self :vive-button-cb :larm)
-    (ros::subscribe (format nil "/vive~A/joy" rarm-vive-frame-id)
-                    sensor_msgs::Joy #'send self :vive-button-cb :rarm))
+    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
   (:get-arm-slot (arm slot)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase slot)))))
   (:set-arm-slot (arm slot val)
@@ -101,7 +99,7 @@
   (:get-target-coords (arm &key (head t))
     (let* ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
            (head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
-           (pr2-heigh (elt (send head-coords :worldpos) 2))
+           (pr2-height (elt (send head-coords :worldpos) 2))
            target-coords target-pos)
       (when hmd->vive-coords
         (setq target-coords (send head-coords :transform hmd->vive-coords))
@@ -144,12 +142,12 @@
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
       (cond
-        ((or larm-menu rarm-menu)
+        ((or larm-trigger rarm-trigger)
           (setf (elt buttons 10) 1)
           (setf (elt buttons 12)
-                (if (and larm-menu (not rarm-menu)) 1 0))
+                (if (and larm-trigger (not rarm-trigger)) 1 0))
           (setf (elt buttons 14)
-                (if (and (not larm-menu) rarm-menu) 1 0)))
+                (if (and (not larm-trigger) rarm-trigger) 1 0)))
         ((and rarm-trigger
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
           ;; for unsafe teleop
@@ -181,9 +179,9 @@
       (when vive-menu-p
         (when enable-p
           (send *ri* :cancel-angle-vector
-                :controller-type (send self :get-arm-controller arm))
+                :controller-type (send self :get-arm-controller arm)))
         (send self :set-arm-slot arm :enable (not enable-p))
-        (send self :send-joy-feedback arm)))))
+        (send self :send-joy-feedback arm))))
   (:vive-button-cb (arm msg)
     (send self :set-arm-slot arm :prev-trigger (send self :get-arm-slot arm :trigger))
     (send self :set-arm-slot arm :prev-menu (send self :get-arm-slot arm :menu))
@@ -199,7 +197,7 @@
   (:vive-trigger-p (arm)
     (let ((trigger (send self :get-arm-slot arm :trigger))
           (prev-trigger (send self :get-arm-slot arm :prev-trigger)))
-      (and (not (eq trigger prev-trigger) trigger))))
+      (and (not (eq trigger prev-trigger)) trigger)))
   (:vive-menu-p (arm)
     (let ((menu (send self :get-arm-slot arm :menu))
           (prev-menu (send self :get-arm-slot arm :prev-menu)))
