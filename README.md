@@ -15,9 +15,9 @@ roslaunch eus_vive pr2_vive.launch
 
 | Button | Usage |
 |:-:|:-:|
-| 1 | Control toggle: base / arm (Default: base) |
-| 3 | Steam Menu |
-| 8 | Not used |
+| 1 / Menu | Control toggle: base / arm (Default: base) |
+| 3 / Stream Menu | Steam Menu |
+| 8 / Grip | Not used |
 
 ### Arm mode
 
@@ -25,8 +25,8 @@ You can enable arm mode of right and left arm separately.
 
 | Command | Usage |
 |:-:|:-:|
-| 7 | Gripper toggle: open/close (Default: open) | 
-| pose | robot end effector's pose |
+| 7 / Trigger | Gripper toggle: open/close (Default: open) | 
+| Controller pose | robot end effector's pose |
 
 ### Base mode
 
@@ -34,6 +34,6 @@ Base mode is enabled when both arms are disabled in Arm mode.
 
 | Command | Usage |
 |:-:|:-:|
-| 2 | Torso control: right: down / left: up |
-| 2 + 7 (right) | Safe base control: right: x, y / left: w |
-| 2 + 7 (right) + 7 (left) | Unsafe base control: right: x, y / left: w |
+| 2 / Trackpad | Torso control: right: down / left: up |
+| 2 / Trackpad + 7 / Trigger (right) | Safe base control: right: x, y / left: w |
+| 2 / Trackpad + 7 / Trigger (right + left) | Unsafe base control: right: x, y / left: w |
