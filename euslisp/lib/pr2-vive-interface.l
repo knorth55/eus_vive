@@ -88,10 +88,40 @@
                     sensor_msgs::Joy #'send self :vive-button-cb :larm)
     (ros::subscribe (format nil "/vive~A/joy" rvive-frame-id)
                     sensor_msgs::Joy #'send self :vive-button-cb :rarm))
-  (:get-vive-coords (arm)
+  (:arm-cb (arm &key (head t))
+    (let (target-coords)
+      (setq target-coords
+            (if head
+              (send self :get-target-coords-with-head arm)
+              (send self :get-target-coords arm)))
+      (when target-coords
+        (send *pr2* arm :inverse-kinematics target-coords
+              :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil))
+        ;; (unless (send *pr2* arm :inverse-kinematics target-coords
+        ;;                         :rotation-axis t :revert-if-fail t :stop 100 :debug-view nil)
+        ;;   (send *pr2* arm :inverse-kinematics target-coords
+        ;;                   :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
+      target-coords))
+  (:get-target-coords-with-head (arm &key (head t))
+    (let (hmd->vive-coords head-coords pr2-heigh target-coords target-pos)
+      (setq hmd->vive-coords (send self :get-hmd->vive-coords arm))
+      (setq head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
+      (setq pr2-height (elt (send head-coords :worldpos) 2))
+      (when hmd->vive-coords
+        (setq target-coords (send head-coords :transform hmd->vive-coords))
+        (setq target-pos (send target-coords :worldpos))
+        (setq target-coords
+              (make-coords :pos
+                           (float-vector (* scale (elt target-pos 0))
+                                         (* scale (elt target-pos 1))
+                                         (- pr2-height
+                                            (* scale (- pr2-height (elt target-pos 2)))))
+                           :rot (send target-coords :worldrot))))
+      target-coords))
+  (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (print (format nil "~A arm is not supported ~%" arm))
-      (return-from :get-vive-coords nil))
+      (return-from :get-hmd->vive-coords nil))
     (let (coords (vive-frame-id (if (eq arm :larm) lvive-frame-id rvive-frame-id)))
       (send *tfl* :wait-for-transform hmd-frame-id vive-frame-id (ros::time 0) 0.1)
       (setq coords (send *tfl* :lookup-transform hmd-frame-id vive-frame-id (ros::time 0)))
@@ -101,26 +131,6 @@
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
-  (:arm-cb (arm)
-    (let (hmd->vive-coords world->head-coords pr2-heigh target-coords target-pos)
-      (setq hmd->vive-coords (send self :get-vive-coords arm))
-      (setq world->head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
-      (setq pr2-height (elt (send world->head-coords :worldpos) 2))
-      (when hmd->vive-coords
-        (setq target-coords (send world->head-coords :transform hmd->vive-coords))
-        (setq target-pos (send target-coords :worldpos))
-        (setq target-coords
-              (make-coords :pos
-                           (float-vector (* scale (elt target-pos 0))
-                                         (* scale (elt target-pos 1))
-                                         (- pr2-height
-                                            (* scale (- pr2-height (elt target-pos 2)))))
-                           :rot (send target-coords :worldrot)))
-        (send *pr2* arm :inverse-kinematics target-coords
-              :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
-        ; (unless (send *pr2* arm :inverse-kinematics target-coords :rotation-axis t :revert-if-fail t :stop 100 :debug-view nil)
-        ;   (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
-        target-coords)))
   (:head-cb ()
     (let (coords rpy)
       (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
@@ -220,12 +230,12 @@
           (when base-enable (send self :switch-joy-to-ps3joy))
           (setq base-enable nil)
           (when larm-enable
-            (setq larm-coords (send self :arm-cb :larm))
+            (setq larm-coords (send self :arm-cb :larm :head head))
             (when larm-coords
                   (send larm-coords :draw-on :flush t :size 50
                         :color #f(0 1 0) :width 5)))
           (when rarm-enable
-            (setq rarm-coords (send self :arm-cb :rarm))
+            (setq rarm-coords (send self :arm-cb :rarm :head head))
             (when rarm-coords
                   (send rarm-coords :draw-on :flush t :size 50
                         :color #f(1 0 0) :width 5)))))
