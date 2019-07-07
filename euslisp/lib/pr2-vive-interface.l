@@ -93,15 +93,12 @@
           (t nil)))
   (:arm-cb (arm &key (head t))
     (let (target-coords)
-      (setq target-coords
-            (if head
-              (send self :get-target-coords-with-head arm)
-              (send self :get-target-coords arm)))
+      (setq target-coords (send self :get-target-coords arm :head head))
       (when target-coords
         (send *pr2* arm :inverse-kinematics target-coords
               :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil))
       target-coords))
-  (:get-target-coords-with-head (arm &key (head t))
+  (:get-target-coords (arm &key (head t))
     (let (hmd->vive-coords head-coords pr2-heigh target-coords target-pos)
       (setq hmd->vive-coords (send self :get-hmd->vive-coords arm))
       (setq head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
