@@ -97,10 +97,6 @@
       (when target-coords
         (send *pr2* arm :inverse-kinematics target-coords
               :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil))
-        ;; (unless (send *pr2* arm :inverse-kinematics target-coords
-        ;;                         :rotation-axis t :revert-if-fail t :stop 100 :debug-view nil)
-        ;;   (send *pr2* arm :inverse-kinematics target-coords
-        ;;                   :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
       target-coords))
   (:get-target-coords-with-head (arm &key (head t))
     (let (hmd->vive-coords head-coords pr2-heigh target-coords target-pos)
