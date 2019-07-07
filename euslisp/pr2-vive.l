@@ -17,6 +17,7 @@
   (send *irtviewer* :draw-objects)
   (x::window-main-one))
 
-(defun main (&key (head t) (base t))
+(defun main (&key (head t) (base t) (unsafe t))
   (init)
-  (send *ti* :main-loop :head head :base base :post-process '(visualize)))
+  (send *ti* :main-loop :head head :base base :unsafe unsafe
+        :post-process '(visualize)))
