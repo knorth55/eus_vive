@@ -21,6 +21,8 @@
           larm-prev-menu
           larm-trackpad
           larm-prev-trackpad
+          larm-grip
+          larm-prev-grip
           larm-enable
           larm-vive-frame-id
           rarm-grasp
@@ -30,6 +32,8 @@
           rarm-prev-menu
           rarm-trackpad
           rarm-prev-trackpad
+          rarm-grip
+          rarm-prev-grip
           rarm-enable
           rarm-vive-frame-id
           scale
@@ -81,6 +85,8 @@
       (send self :set-arm-slot arm :prev-menu nil)
       (send self :set-arm-slot arm :trackpad nil)
       (send self :set-arm-slot arm :prev-trackpad nil)
+      (send self :set-arm-slot arm :grip nil)
+      (send self :set-arm-slot arm :prev-grip nil)
       (send self :set-arm-slot arm :enable nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm))
@@ -191,9 +197,11 @@
     (send self :set-arm-slot arm :prev-trigger (send self :get-arm-slot arm :trigger))
     (send self :set-arm-slot arm :prev-menu (send self :get-arm-slot arm :menu))
     (send self :set-arm-slot arm :prev-trackpad (send self :get-arm-slot arm :trackpad))
+    (send self :set-arm-slot arm :prev-grip (send self :get-arm-slot arm :grip))
     (send self :set-arm-slot arm :trigger (> (elt (send msg :buttons) 1) 0))
     (send self :set-arm-slot arm :menu (> (elt (send msg :buttons) 0) 0))
     (send self :set-arm-slot arm :trackpad (> (elt (send msg :buttons) 2) 0))
+    (send self :set-arm-slot arm :grip (> (elt (send msg :buttons) 3) 0))
     (cond
       ((eq arm :larm)
        (send self :set-val 'vw
@@ -219,6 +227,10 @@
     (let ((trackpad (send self :get-arm-slot arm :trackpad))
           (prev-trackpad (send self :get-arm-slot arm :prev-trackpad)))
       (and (not (eq trackpad prev-trackpad)) trackpad)))
+  (:vive-grip-p (arm)
+    (let ((grip (send self :get-arm-slot arm :grip))
+          (prev-grip (send self :get-arm-slot arm :prev-grip)))
+      (and (not (eq grip prev-grip)) grip)))
   (:send-joy-feedback (&optional (arm :larm))
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
