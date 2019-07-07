@@ -19,4 +19,4 @@
 
 (defun main (&key (head t) (base t))
   (init)
-  (send *ti* :main-loop :head head :base base :post-function '(visualize)))
+  (send *ti* :main-loop :head head :base base :post-process '(visualize)))
