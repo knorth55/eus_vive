@@ -45,7 +45,6 @@
 
 (defmethod pr2-vive-interface
   (:init ()
-    (send self :set-val 'base-enable nil)
     (send self :set-val 'hmd-frame-id "/hmd")
     (send self :set-val 'bvive-frame-id "/lighthouse_LHB_11CFA4E1")
     (send self :set-val 'cvive-frame-id "/lighthouse_LHB_8E924CC3")
@@ -68,6 +67,8 @@
     (send self :set-val 'vy-scale 1.0)
     (send self :set-val 'vw-scale 1.0)
 
+    (send self :set-val 'base-enable nil)
+    (send self :set-val 'rate 10)
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-slot arm :grasp nil)
       (send self :set-arm-slot arm :trigger nil)
@@ -75,10 +76,8 @@
       (send self :set-arm-slot arm :menu nil)
       (send self :set-arm-slot arm :prev-menu nil)
       (send self :set-arm-slot arm :enable nil)
-      (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id)
-                      sensor_msgs::Joy #'send self :vive-button-cb arm)))
-
-    (send self :set-val 'rate 10)
+      (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id))
+                      sensor_msgs::Joy #'send self :vive-button-cb arm))
     (setq *tfl* (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
