@@ -261,7 +261,12 @@
           (when base (send self :base-cb)))
         (t nil))
       (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                       :head-controller 0 :min-time 0.1 :scale av-scale)))))
+                       :head-controller 0 :min-time 0.1 :scale av-scale))))
+  (:main-loop (&key (head t) (base t))
+    (while (ros::ok)
+      (send *ti* :main-loop-step :head head :base base)
+      (ros::spin-once)
+      (ros::sleep))))
 
 (defun pr2-vive-init ()
   (pr2-init)
