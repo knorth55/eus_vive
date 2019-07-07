@@ -155,7 +155,7 @@
                 (if (and (not larm-trigger) rarm-trigger) 1 0)))
         ((or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh))
           ;; for unsafe teleop
-          (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
+          (when unsafe (setf (elt buttons 9) 1))
           (setf (elt buttons 10) 1)
           (setf (elt axes 3) (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0)))
           (setf (elt axes 2) (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0)))
