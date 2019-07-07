@@ -16,18 +16,22 @@
           joy-other-topic-name
           larm-grasp
           larm-trigger
-          prev-larm-trigger
+          larm-prev-trigger
           larm-menu
-          prev-larm-menu
+          larm-prev-menu
+          larm-trackpad
+          larm-prev-trackpad
           larm-enable
-          lvive-frame-id
+          larm-vive-frame-id
           rarm-grasp
           rarm-trigger
-          prev-rarm-trigger
+          rarm-prev-trigger
           rarm-menu
-          prev-rarm-menu
+          rarm-prev-menu
+          rarm-trackpad
+          rarm-prev-trackpad
           rarm-enable
-          rvive-frame-id
+          rarm-vive-frame-id
           scale
           av-tm
           av-scale
@@ -40,59 +44,84 @@
           vx-scale
           vy-scale
           vw-scale
+          rate
           ))
 
 (defmethod pr2-vive-interface
   (:init ()
-    (setq base-enable nil)
-    (setq hmd-frame-id "/hmd")
-    (setq bvive-frame-id "/lighthouse_LHB_11CFA4E1")
-    (setq cvive-frame-id "/lighthouse_LHB_8E924CC3")
-    (setq feedback-topic-name "/vive/set_feedback")
-    (setq joy-org-topic-name "/joy_org")
-    (setq joy-other-topic-name "/joy_other")
+    (send self :set-val 'hmd-frame-id "/hmd")
+    (send self :set-val 'bvive-frame-id "/lighthouse_LHB_11CFA4E1")
+    (send self :set-val 'cvive-frame-id "/lighthouse_LHB_8E924CC3")
+    (send self :set-val 'feedback-topic-name "/vive/set_feedback")
+    (send self :set-val 'joy-org-topic-name "/joy_org")
+    (send self :set-val 'joy-other-topic-name "/joy_other")
+    (send self :set-val 'larm-vive-frame-id "/controller_LHR_FD35BD42")
+    (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
 
-    (setq larm-grasp nil)
-    (setq larm-trigger nil)
-    (setq larm-menu nil)
-    (setq prev-larm-trigger nil)
-    (setq prev-larm-menu nil)
-    (setq larm-enable nil)
-    (setq lvive-frame-id "/controller_LHR_FD35BD42")
+    (send self :set-val 'scale 1.5)
+    (send self :set-val 'av-tm 1000)
+    (send self :set-val 'av-scale 8.0)
+    (send self :set-val 'vx 0.0)
+    (send self :set-val 'vy 0.0)
+    (send self :set-val 'vw 0.0)
+    (send self :set-val 'vx-thresh 0.3)
+    (send self :set-val 'vy-thresh 0.3)
+    (send self :set-val 'vw-thresh 0.3)
+    (send self :set-val 'vx-scale 1.0)
+    (send self :set-val 'vy-scale 1.0)
+    (send self :set-val 'vw-scale 1.0)
 
-    (setq rarm-grasp nil)
-    (setq rarm-trigger nil)
-    (setq rarm-menu nil)
-    (setq prev-rarm-trigger nil)
-    (setq prev-rarm-menu nil)
-    (setq rarm-enable nil)
-    (setq rvive-frame-id "/controller_LHR_F7AFBF47")
-
-    (setq scale 1.5)
-    (setq av-tm 1000)
-    (setq av-scale 8.0)
-    (setq vx 0.0)
-    (setq vy 0.0)
-    (setq vw 0.0)
-    (setq vx-thresh 0.3)
-    (setq vy-thresh 0.3)
-    (setq vw-thresh 0.3)
-    (setq vx-scale 1.0)
-    (setq vy-scale 1.0)
-    (setq vw-scale 1.0)
-
+    (send self :set-val 'base-enable nil)
+    (send self :set-val 'rate 10)
+    (dolist (arm (list :larm :rarm))
+      (send self :set-arm-slot arm :grasp nil)
+      (send self :set-arm-slot arm :trigger nil)
+      (send self :set-arm-slot arm :prev-trigger nil)
+      (send self :set-arm-slot arm :menu nil)
+      (send self :set-arm-slot arm :prev-menu nil)
+      (send self :set-arm-slot arm :trackpad nil)
+      (send self :set-arm-slot arm :prev-trackpad nil)
+      (send self :set-arm-slot arm :enable nil)
+      (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id))
+                      sensor_msgs::Joy #'send self :vive-button-cb arm))
     (setq *tfl* (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1)
-    (ros::subscribe (format nil "/vive~A/joy" lvive-frame-id)
-                    sensor_msgs::Joy #'send self :vive-button-cb :larm)
-    (ros::subscribe (format nil "/vive~A/joy" rvive-frame-id)
-                    sensor_msgs::Joy #'send self :vive-button-cb :rarm))
-  (:get-vive-coords (arm)
+    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
+  (:get-arm-slot (arm slot)
+    (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase slot)))))
+  (:set-arm-slot (arm slot val)
+    (send self :set-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase slot))) val))
+  (:get-arm-controller (arm)
+    (cond ((eq arm :larm) :larm-controller)
+          ((eq arm :rarm) :rarm-controller)
+          (t nil)))
+  (:arm-cb (arm &key (head t))
+    (let ((target-coords (send self :get-target-coords arm :head head)))
+      (when target-coords
+        (send *pr2* arm :inverse-kinematics target-coords
+              :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil))
+      target-coords))
+  (:get-target-coords (arm &key (head t))
+    (let* ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
+           (head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
+           (pr2-height (elt (send head-coords :worldpos) 2))
+           target-coords target-pos)
+      (when hmd->vive-coords
+        (setq target-coords (send head-coords :transform hmd->vive-coords))
+        (setq target-pos (send target-coords :worldpos))
+        (setq target-coords
+              (make-coords :pos
+                           (float-vector (* scale (elt target-pos 0))
+                                         (* scale (elt target-pos 1))
+                                         (- pr2-height
+                                            (* scale (- pr2-height (elt target-pos 2)))))
+                           :rot (send target-coords :worldrot))))
+      target-coords))
+  (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (print (format nil "~A arm is not supported ~%" arm))
-      (return-from :get-vive-coords nil))
-    (let (coords (vive-frame-id (if (eq arm :larm) lvive-frame-id rvive-frame-id)))
+      (return-from :get-hmd->vive-coords nil))
+    (let (coords (vive-frame-id (send self :get-arm-slot arm :vive-frame-id)))
       (send *tfl* :wait-for-transform hmd-frame-id vive-frame-id (ros::time 0) 0.1)
       (setq coords (send *tfl* :lookup-transform hmd-frame-id vive-frame-id (ros::time 0)))
       (when coords
@@ -101,26 +130,6 @@
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
-  (:arm-cb (arm)
-    (let (hmd->vive-coords world->head-coords pr2-heigh target-coords target-pos)
-      (setq hmd->vive-coords (send self :get-vive-coords arm))
-      (setq world->head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
-      (setq pr2-height (elt (send world->head-coords :worldpos) 2))
-      (when hmd->vive-coords
-        (setq target-coords (send world->head-coords :transform hmd->vive-coords))
-        (setq target-pos (send target-coords :worldpos))
-        (setq target-coords
-              (make-coords :pos
-                           (float-vector (* scale (elt target-pos 0))
-                                         (* scale (elt target-pos 1))
-                                         (- pr2-height
-                                            (* scale (- pr2-height (elt target-pos 2)))))
-                           :rot (send target-coords :worldrot)))
-        (send *pr2* arm :inverse-kinematics target-coords
-              :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
-        ; (unless (send *pr2* arm :inverse-kinematics target-coords :rotation-axis t :revert-if-fail t :stop 100 :debug-view nil)
-        ;   (send *pr2* arm :inverse-kinematics target-coords :rotation-axis nil :revert-if-fail nil :stop 100 :debug-view nil))
-        target-coords)))
   (:head-cb ()
     (let (coords rpy)
       (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
@@ -158,41 +167,57 @@
       (send msg :buttons buttons)
       (ros::publish joy-other-topic-name msg)))
   (:gripper-cb (arm)
-    (if (eq arm :larm)
-      (when (and (not (eq larm-trigger prev-larm-trigger)) larm-trigger)
-        (if larm-grasp
-          (send *ri* :stop-grasp :larm :wait nil)
-          (send *ri* :start-grasp :larm :wait nil))
-        (setq larm-grasp (not larm-grasp)))
-      (when (and (not (eq rarm-trigger prev-rarm-trigger)) rarm-trigger)
-        (if rarm-grasp
-          (send *ri* :stop-grasp :rarm :wait nil)
-          (send *ri* :start-grasp :rarm :wait nil))
-        (setq rarm-grasp (not rarm-grasp)))))
+    (let ((vive-trigger-p (send self :vive-trigger-p arm))
+          (grasp-p (send self :get-arm-slot arm :grasp)))
+      (when vive-trigger-p
+        (if grasp-p
+          (send *ri* :stop-grasp arm :wait nil)
+          (send *ri* :start-grasp arm :wait nil))
+        (send self :set-arm-slot arm :grasp (not grasp-p)))))
   (:enable-cb ()
-    (when (and (not (eq larm-menu prev-larm-menu)) larm-menu)
-      (setq larm-enable (not larm-enable))
-      (send self :send-joy-feedback :larm))
-    (unless larm-enable (send *ri* :cancel-angle-vector :controller-type :larm-controller))
-    (when (and (not (eq rarm-menu prev-rarm-menu)) rarm-menu)
-      (setq rarm-enable (not rarm-enable))
-      (send self :send-joy-feedback :rarm))
-    (unless rarm-enable (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
+    (send self :enable-arm :larm)
+    (send self :enable-arm :rarm))
+  (:enable-arm (arm)
+    (let ((vive-menu-p (send self :vive-menu-p arm))
+          (enable-p (send self :get-arm-slot arm :enable)))
+      (when vive-menu-p
+        (when enable-p
+          (send *ri* :cancel-angle-vector
+                :controller-type (send self :get-arm-controller arm)))
+        (send self :set-arm-slot arm :enable (not enable-p))
+        (send self :send-joy-feedback arm))))
   (:vive-button-cb (arm msg)
-    (if (eq arm :larm)
-      (progn
-        (setq prev-larm-trigger larm-trigger)
-        (setq prev-larm-menu larm-menu)
-        (setq larm-trigger (> (elt (send msg :buttons) 1) 0))
-        (setq larm-menu (> (elt (send msg :buttons) 0) 0))
-        (setq vw (* -1 (elt (send msg :axes) 0))))
-      (progn
-        (setq prev-rarm-trigger rarm-trigger)
-        (setq prev-rarm-menu rarm-menu)
-        (setq rarm-trigger (> (elt (send msg :buttons) 1) 0))
-        (setq rarm-menu (> (elt (send msg :buttons) 0) 0))
-        (setq vx (elt (send msg :axes) 1))
-        (setq vy (* -1 (elt (send msg :axes) 0))))))
+    (send self :set-arm-slot arm :prev-trigger (send self :get-arm-slot arm :trigger))
+    (send self :set-arm-slot arm :prev-menu (send self :get-arm-slot arm :menu))
+    (send self :set-arm-slot arm :prev-trackpad (send self :get-arm-slot arm :trackpad))
+    (send self :set-arm-slot arm :trigger (> (elt (send msg :buttons) 1) 0))
+    (send self :set-arm-slot arm :menu (> (elt (send msg :buttons) 0) 0))
+    (send self :set-arm-slot arm :trackpad (> (elt (send msg :buttons) 2) 0))
+    (cond
+      ((eq arm :larm)
+       (send self :set-val 'vw
+             (if (send self :get-arm-slot arm :trackpad)
+               (* -1 (elt (send msg :axes) 0)) 0)))
+      ((eq arm :rarm)
+       (send self :set-val 'vx
+             (if (send self :get-arm-slot arm :trackpad)
+               (elt (send msg :axes) 1) 0))
+       (send self :set-val 'vy
+             (if (send self :get-arm-slot arm :trackpad)
+               (* -1 (elt (send msg :axes) 0)) 0)))
+      (t nil)))
+  (:vive-trigger-p (arm)
+    (let ((trigger (send self :get-arm-slot arm :trigger))
+          (prev-trigger (send self :get-arm-slot arm :prev-trigger)))
+      (and (not (eq trigger prev-trigger)) trigger)))
+  (:vive-menu-p (arm)
+    (let ((menu (send self :get-arm-slot arm :menu))
+          (prev-menu (send self :get-arm-slot arm :prev-menu)))
+      (and (not (eq menu prev-menu)) menu)))
+  (:vive-trackpad-p (arm)
+    (let ((trackpad (send self :get-arm-slot arm :trackpad))
+          (prev-trackpad (send self :get-arm-slot arm :prev-trackpad)))
+      (and (not (eq trackpad prev-trackpad)) trackpad)))
   (:send-joy-feedback (&optional (arm :larm))
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
@@ -208,24 +233,26 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
-  (:main-loop-step (&key (head t))
+  (:main-loop-step (&key (head t) (base t) (unsafe t))
     (let (larm-coords rarm-coords)
       (when head (send self :head-cb))
       (send self :enable-cb)
       (if (and (not larm-enable) (not rarm-enable))
         (progn
-          (unless base-enable (send self :switch-joy-to-vive))
-          (setq base-enable t))
+          (when base
+            (unless base-enable (send self :switch-joy-to-vive))
+            (send self :set-val 'base-enable t)))
         (progn
-          (when base-enable (send self :switch-joy-to-ps3joy))
-          (setq base-enable nil)
+          (when base
+            (when base-enable (send self :switch-joy-to-ps3joy))
+            (send self :set-val 'base-enable nil))
           (when larm-enable
-            (setq larm-coords (send self :arm-cb :larm))
+            (setq larm-coords (send self :arm-cb :larm :head head))
             (when larm-coords
                   (send larm-coords :draw-on :flush t :size 50
                         :color #f(0 1 0) :width 5)))
           (when rarm-enable
-            (setq rarm-coords (send self :arm-cb :rarm))
+            (setq rarm-coords (send self :arm-cb :rarm :head head))
             (when rarm-coords
                   (send rarm-coords :draw-on :flush t :size 50
                         :color #f(1 0 0) :width 5)))))
@@ -246,10 +273,18 @@
           (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
                 :rarm-controller 0 :min-time 0.1 :scale av-scale))
         (base-enable
-          (send self :base-cb))
+          (when base (send self :base-cb :unsafe unsafe)))
         (t nil))
       (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                       :head-controller 0 :min-time 0.1 :scale av-scale)))))
+                       :head-controller 0 :min-time 0.1 :scale av-scale))))
+  (:main-loop (&key (head t) (base t) (unsafe t) (pre-process nil) (post-process nil))
+    (ros::rate rate)
+    (while (ros::ok)
+      (when pre-process (eval pre-process))
+      (send *ti* :main-loop-step :head head :base base :unsafe unsafe)
+      (when post-process (eval post-process))
+      (ros::spin-once)
+      (ros::sleep))))
 
 (defun pr2-vive-init ()
   (pr2-init)

@@ -13,12 +13,11 @@
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
-(defun main ()
+(defun visualize ()
+  (send *irtviewer* :draw-objects)
+  (x::window-main-one))
+
+(defun main (&key (head t) (base t) (unsafe t))
   (init)
-  (ros::rate 10)
-  (while (ros::ok)
-    (send *ti* :main-loop-step :head t)
-    (send *irtviewer* :draw-objects)
-    (x::window-main-one)
-    (ros::spin-once)
-    (ros::sleep)))
+  (send *ti* :main-loop :head head :base base :unsafe unsafe
+        :post-process '(visualize)))
