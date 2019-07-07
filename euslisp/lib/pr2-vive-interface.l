@@ -19,6 +19,8 @@
           larm-prev-trigger
           larm-menu
           larm-prev-menu
+          larm-trackpad
+          larm-prev-trackpad
           larm-enable
           larm-vive-frame-id
           rarm-grasp
@@ -26,6 +28,8 @@
           rarm-prev-trigger
           rarm-menu
           rarm-prev-menu
+          rarm-trackpad
+          rarm-prev-trackpad
           rarm-enable
           rarm-vive-frame-id
           scale
@@ -75,6 +79,8 @@
       (send self :set-arm-slot arm :prev-trigger nil)
       (send self :set-arm-slot arm :menu nil)
       (send self :set-arm-slot arm :prev-menu nil)
+      (send self :set-arm-slot arm :trackpad nil)
+      (send self :set-arm-slot arm :prev-trackpad nil)
       (send self :set-arm-slot arm :enable nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm))
@@ -183,14 +189,22 @@
   (:vive-button-cb (arm msg)
     (send self :set-arm-slot arm :prev-trigger (send self :get-arm-slot arm :trigger))
     (send self :set-arm-slot arm :prev-menu (send self :get-arm-slot arm :menu))
+    (send self :set-arm-slot arm :prev-trackpad (send self :get-arm-slot arm :trackpad))
     (send self :set-arm-slot arm :trigger (> (elt (send msg :buttons) 1) 0))
     (send self :set-arm-slot arm :menu (> (elt (send msg :buttons) 0) 0))
+    (send self :set-arm-slot arm :trackpad (> (elt (send msg :buttons) 2) 0))
     (cond
       ((eq arm :larm)
-       (send self :set-val 'vw (* -1 (elt (send msg :axes) 0))))
+       (send self :set-val 'vw
+             (if (send self :get-arm-slot arm :trackpad)
+               (* -1 (elt (send msg :axes) 0)) 0)))
       ((eq arm :rarm)
-       (send self :set-val 'vx (elt (send msg :axes) 1))
-       (send self :set-val 'vy (* -1 (elt (send msg :axes) 0))))
+       (send self :set-val 'vx
+             (if (send self :get-arm-slot arm :trackpad)
+               (elt (send msg :axes) 1) 0))
+       (send self :set-val 'vy
+             (if (send self :get-arm-slot arm :trackpad)
+               (* -1 (elt (send msg :axes) 0)) 0)))
       (t nil)))
   (:vive-trigger-p (arm)
     (let ((trigger (send self :get-arm-slot arm :trigger))
@@ -200,6 +214,10 @@
     (let ((menu (send self :get-arm-slot arm :menu))
           (prev-menu (send self :get-arm-slot arm :prev-menu)))
       (and (not (eq menu prev-menu)) menu)))
+  (:vive-trackpad-p (arm)
+    (let ((trackpad (send self :get-arm-slot arm :trackpad))
+          (prev-trackpad (send self :get-arm-slot arm :prev-trackpad)))
+      (and (not (eq trackpad prev-trackpad)) trackpad)))
   (:send-joy-feedback (&optional (arm :larm))
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
