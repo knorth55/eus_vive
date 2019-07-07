@@ -147,15 +147,16 @@
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
       (cond
-        ((or larm-trigger rarm-trigger)
+        ((and (not larm-trigger) (not rarm-trigger))
           (setf (elt buttons 10) 1)
           (setf (elt buttons 12)
-                (if (and larm-trigger (not rarm-trigger)) 1 0))
+                (if (and larm-trackpad (not rarm-trackpad)) 1 0))
           (setf (elt buttons 14)
-                (if (and (not larm-trigger) rarm-trigger) 1 0)))
-        ((or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh))
+                (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
+        ((and rarm-trigger
+              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
           ;; for unsafe teleop
-          (when unsafe (setf (elt buttons 9) 1))
+          (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
           (setf (elt buttons 10) 1)
           (setf (elt axes 3) (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0)))
           (setf (elt axes 2) (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0)))
