@@ -258,9 +258,12 @@
         (t nil))
       (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
                        :head-controller 0 :min-time 0.1 :scale av-scale))))
-  (:main-loop (&key (head t) (base t))
+  (:main-loop (&key (head t) (base t) (pre-function nil) (post-function nil) (rate 10))
+    (ros::rate rate)
     (while (ros::ok)
+      (when pre-function (eval pre-function))
       (send *ti* :main-loop-step :head head :base base)
+      (when post-function (eval post-function))
       (ros::spin-once)
       (ros::sleep))))
 
