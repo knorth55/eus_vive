@@ -147,8 +147,7 @@
                 (if (and larm-trigger (not rarm-trigger)) 1 0))
           (setf (elt buttons 14)
                 (if (and (not larm-trigger) rarm-trigger) 1 0)))
-        ((and rarm-trigger
-              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
+        ((or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh))
           ;; for unsafe teleop
           (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
           (setf (elt buttons 10) 1)
