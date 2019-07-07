@@ -218,17 +218,19 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
-  (:main-loop-step (&key (head t))
+  (:main-loop-step (&key (head t) (base t))
     (let (larm-coords rarm-coords)
       (when head (send self :head-cb))
       (send self :enable-cb)
       (if (and (not larm-enable) (not rarm-enable))
         (progn
-          (unless base-enable (send self :switch-joy-to-vive))
-          (setq base-enable t))
+          (when base
+            (unless base-enable (send self :switch-joy-to-vive))
+            (setq base-enable t)))
         (progn
-          (when base-enable (send self :switch-joy-to-ps3joy))
-          (setq base-enable nil)
+          (when base
+            (when base-enable (send self :switch-joy-to-ps3joy))
+            (setq base-enable nil))
           (when larm-enable
             (setq larm-coords (send self :arm-cb :larm :head head))
             (when larm-coords
@@ -256,7 +258,7 @@
           (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
                 :rarm-controller 0 :min-time 0.1 :scale av-scale))
         (base-enable
-          (send self :base-cb))
+          (when base (send self :base-cb)))
         (t nil))
       (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
                        :head-controller 0 :min-time 0.1 :scale av-scale)))))
