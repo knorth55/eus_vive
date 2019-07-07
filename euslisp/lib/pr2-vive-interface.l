@@ -150,7 +150,8 @@
                 (if (and larm-menu (not rarm-menu)) 1 0))
           (setf (elt buttons 14)
                 (if (and (not larm-menu) rarm-menu) 1 0)))
-        ((and rarm-trigger (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
+        ((and rarm-trigger
+              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
           ;; for unsafe teleop
           (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
           (setf (elt buttons 10) 1)
@@ -179,9 +180,10 @@
           (enable-p (send self :get-arm-slot arm :enable)))
       (when vive-menu-p
         (when enable-p
-          (send *ri* :cancel-angle-vector :controller-type (send self :get-arm-controller arm))
+          (send *ri* :cancel-angle-vector
+                :controller-type (send self :get-arm-controller arm))
         (send self :set-arm-slot arm :enable (not enable-p))
-        (send self :send-joy-feedback arm))))
+        (send self :send-joy-feedback arm)))))
   (:vive-button-cb (arm msg)
     (send self :set-arm-slot arm :prev-trigger (send self :get-arm-slot arm :trigger))
     (send self :set-arm-slot arm :prev-menu (send self :get-arm-slot arm :menu))
