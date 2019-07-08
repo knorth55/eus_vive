@@ -52,6 +52,8 @@
           vy-scale
           vw-scale
           rate
+          arm-length
+          dx
           ))
 
 
@@ -78,6 +80,8 @@
     (send self :set-val 'vx-scale 1.0)
     (send self :set-val 'vy-scale 1.0)
     (send self :set-val 'vw-scale 1.0)
+    (send self :set-val 'arm-length 800)
+    (send self :set-val 'dx 200)
 
     (send self :set-val 'base-enable nil)
     (send self :set-val 'rate 10)
@@ -127,7 +131,7 @@
         (setq target-pos (send target-coords :worldpos))
         (setq target-coords
               (make-coords :pos
-                           (float-vector (* scale (elt target-pos 0))
+                           (float-vector (+ dx (* scale (elt target-pos 0)))
                                          (* scale (elt target-pos 1))
                                          (- pr2-height
                                             (* scale (- pr2-height (elt target-pos 2)))))
@@ -147,6 +151,37 @@
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
+  (:calib-vive (arm)
+    (let (first-coords second-coords)
+      (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
+      (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
+      (setq first-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
+      (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
+      (setq second-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
+      (if (and first-coords second-coords)
+        (progn
+          (send self :set-val 'scale
+                (/ (send self :get-val 'arm-length)
+                   (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
+          (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
+          (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
+          t)
+        (progn
+          (ros::ros-error "Calibration is failed.~%")
+          nil))))
+  (:get-bvive->vive-coords (arm &key (wait-trigger nil))
+    (let ((vive-frame-id (send self :get-arm-slot arm :vive-frame-id))
+          coords vive-trigger-p)
+      (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
+      (when wait-trigger
+        (ros::rate rate)
+        (while (and (ros::ok) (not vive-trigger-p))
+          (setq vive-trigger-p (send self :vive-trigger-p arm))
+          (ros::spin-once)
+          (ros::sleep)))
+      (send *tfl* :wait-for-transform bvive-frame-id vive-frame-id (ros::time 0) 0.1)
+      (setq coords (send *tfl* :lookup-transform bvive-frame-id vive-frame-id (ros::time 0)))
+      coords))
   (:head-cb ()
     (let (coords rpy)
       (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
