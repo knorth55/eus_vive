@@ -1,6 +1,7 @@
 ;; -*- mode: lisp;-*-
 
 (load "package://pr2eus/pr2-interface.l")
+(ros::load-ros-manifest "actionlib_msgs")
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
 
@@ -15,6 +16,7 @@
           joy-org-topic-name
           joy-other-topic-name
           larm-grasp
+          larm-grasping-p
           larm-trigger
           larm-prev-trigger
           larm-menu
@@ -26,6 +28,7 @@
           larm-enable
           larm-vive-frame-id
           rarm-grasp
+          rarm-grasping-p
           rarm-trigger
           rarm-prev-trigger
           rarm-menu
@@ -80,6 +83,7 @@
     (send self :set-val 'rate 10)
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-slot arm :grasp nil)
+      (send self :set-arm-slot arm :grasping-p nil)
       (send self :set-arm-slot arm :trigger nil)
       (send self :set-arm-slot arm :prev-trigger nil)
       (send self :set-arm-slot arm :menu nil)
@@ -90,7 +94,9 @@
       (send self :set-arm-slot arm :prev-grip nil)
       (send self :set-arm-slot arm :enable nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-slot arm :vive-frame-id))
-                      sensor_msgs::Joy #'send self :vive-button-cb arm))
+                      sensor_msgs::Joy #'send self :vive-button-cb arm)
+      (ros::subscribe (format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r"))
+                      actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm))
     (setq *tfl* (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
@@ -187,6 +193,11 @@
           (send *ri* :stop-grasp arm :wait nil)
           (send *ri* :start-grasp arm :wait nil))
         (send self :set-arm-slot arm :grasp (not grasp-p)))))
+  (:gripper-status-cb (arm msg)
+    (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status))))
+      (when grasping-p
+        (send *ri* :cancel-angle-vector :controller-type (send self :get-arm-controller arm)))
+      (send self :set-arm-slot arm :grasping-p grasping-p)))
   (:enable-cb ()
     (send self :enable-arm :larm)
     (send self :enable-arm :rarm))
@@ -264,23 +275,19 @@
            (when base-enable (send self :switch-joy-to-ps3joy))
            (send self :set-val 'base-enable nil))))
       (cond
-        ((and larm-enable rarm-enable)
-         (send self :gripper-cb :larm)
-         (send self :gripper-cb :rarm)
-         (setq larm-coords (send self :arm-cb :larm :head head))
-         (setq rarm-coords (send self :arm-cb :rarm :head head)))
-        ((and larm-enable (not rarm-enable))
-         (send self :gripper-cb :larm)
-         (setq larm-coords (send self :arm-cb :larm :head head)))
-        ((and (not larm-enable) rarm-enable)
-         (send self :gripper-cb :rarm)
-         (setq rarm-coords (send self :arm-cb :rarm :head head)))
+        ((or larm-enable rarm-enable)
+         (when (and larm-enable (not larm-grasping-p))
+           (send self :gripper-cb :larm)
+           (setq larm-coords (send self :arm-cb :larm :head head)))
+         (when (and rarm-enable (not rarm-grasping-p))
+           (send self :gripper-cb :rarm)
+           (setq rarm-coords (send self :arm-cb :rarm :head head))))
         (base-enable (when base (send self :base-cb :unsafe unsafe)))
         (t nil))
       (when head (send self :head-cb))
       (when visualize
-        (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0))
-        (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0))
+        (when larm-coords (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0)))
+        (when rarm-coords (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
         (send *irtviewer* :draw-objects)
         (x::window-main-one))))
   (:main-loop (&key (head t) (base t) (unsafe t) (visualize t)
