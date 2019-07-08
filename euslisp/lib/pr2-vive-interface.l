@@ -137,7 +137,8 @@
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (print (format nil "~A arm is not supported ~%" arm))
       (return-from :get-hmd->vive-coords nil))
-    (let (coords (vive-frame-id (send self :get-arm-slot arm :vive-frame-id)))
+    (let ((vive-frame-id (send self :get-arm-slot arm :vive-frame-id))
+          coords)
       (send *tfl* :wait-for-transform hmd-frame-id vive-frame-id (ros::time 0) 0.1)
       (setq coords (send *tfl* :lookup-transform hmd-frame-id vive-frame-id (ros::time 0)))
       (when coords
