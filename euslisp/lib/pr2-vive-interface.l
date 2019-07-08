@@ -98,9 +98,10 @@
   (:set-arm-slot (arm slot val)
     (send self :set-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase slot))) val))
   (:get-arm-controller (arm)
-    (cond ((eq arm :larm) :larm-controller)
-          ((eq arm :rarm) :rarm-controller)
-          (t nil)))
+    (cond
+      ((eq arm :larm) :larm-controller)
+      ((eq arm :rarm) :rarm-controller)
+      (t nil)))
   (:arm-cb (arm &key (head t))
     (let ((target-coords (send self :get-target-coords arm :head head)))
       (when target-coords
@@ -153,20 +154,20 @@
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
       (cond
-        ((and (not larm-trigger) (not rarm-trigger))
-          (setf (elt buttons 10) 1)
-          (setf (elt buttons 12)
-                (if (and larm-trackpad (not rarm-trackpad)) 1 0))
-          (setf (elt buttons 14)
-                (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
+        ((not (or larm-trigger rarm-trigger))
+         (setf (elt buttons 10) 1)
+         (setf (elt buttons 12)
+               (if (and larm-trackpad (not rarm-trackpad)) 1 0))
+         (setf (elt buttons 14)
+               (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
         ((and rarm-trigger
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
-          ;; for unsafe teleop
-          (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
-          (setf (elt buttons 10) 1)
-          (setf (elt axes 3) (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0)))
-          (setf (elt axes 2) (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0)))
-          (setf (elt axes 0) (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0))))
+         ;; for unsafe teleop
+         (when (and unsafe larm-trigger) (setf (elt buttons 9) 1))
+         (setf (elt buttons 10) 1)
+         (setf (elt axes 3) (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0)))
+         (setf (elt axes 2) (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0)))
+         (setf (elt axes 0) (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0))))
         (t nil))
       (setq msg (instance sensor_msgs::Joy :init))
       (send msg :header :stamp (ros::time-now))
@@ -271,22 +272,21 @@
                         :color #f(1 0 0) :width 5)))))
       (cond
         ((and larm-enable rarm-enable)
-          (send self :gripper-cb :larm)
-          (send self :gripper-cb :rarm)
-          (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                :larm-controller 0 :min-time 0.1 :scale av-scale)
-          (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                :rarm-controller 0 :min-time 0.1 :scale av-scale))
+         (send self :gripper-cb :larm)
+         (send self :gripper-cb :rarm)
+         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
+               :larm-controller 0 :min-time 0.1 :scale av-scale)
+         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
+               :rarm-controller 0 :min-time 0.1 :scale av-scale))
         ((and larm-enable (not rarm-enable))
-          (send self :gripper-cb :larm)
-          (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                :larm-controller 0 :min-time 0.1 :scale av-scale))
+         (send self :gripper-cb :larm)
+         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
+               :larm-controller 0 :min-time 0.1 :scale av-scale))
         ((and (not larm-enable) rarm-enable)
-          (send self :gripper-cb :rarm)
-          (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                :rarm-controller 0 :min-time 0.1 :scale av-scale))
-        (base-enable
-          (when base (send self :base-cb :unsafe unsafe)))
+         (send self :gripper-cb :rarm)
+         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
+               :rarm-controller 0 :min-time 0.1 :scale av-scale))
+        (base-enable (when base (send self :base-cb :unsafe unsafe)))
         (t nil))
       (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
                        :head-controller 0 :min-time 0.1 :scale av-scale))))
