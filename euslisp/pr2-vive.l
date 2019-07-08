@@ -2,6 +2,7 @@
 
 (load "package://eus_vive/euslisp/lib/pr2-vive-interface.l")
 
+
 (defun init ()
   (ros::roseus "vive_pr2eus")
   (pr2-vive-init)
@@ -13,11 +14,8 @@
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
-(defun visualize ()
-  (send *irtviewer* :draw-objects)
-  (x::window-main-one))
 
-(defun main (&key (head t) (base t) (unsafe t))
+(defun main (&key (head t) (base t) (unsafe t) (visualize t))
   (init)
-  (send *ti* :main-loop :head head :base base :unsafe unsafe
-        :post-process '(visualize)))
+  (send *ti* :main-loop :head head :base base
+        :unsafe unsafe :visualize visualize))

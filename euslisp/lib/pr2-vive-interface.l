@@ -51,6 +51,7 @@
           rate
           ))
 
+
 (defmethod pr2-vive-interface
   (:init ()
     (send self :set-val 'hmd-frame-id "/hmd")
@@ -105,8 +106,10 @@
   (:arm-cb (arm &key (head t))
     (let ((target-coords (send self :get-target-coords arm :head head)))
       (when target-coords
-        (send *pr2* arm :inverse-kinematics target-coords
-              :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil))
+        (send *ri* :angle-vector
+              (send *pr2* arm :inverse-kinematics target-coords
+                    :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
+              av-tm (send self :get-arm-controller arm) 0 :min-time 0.1 :scale av-scale))
       target-coords))
   (:get-target-coords (arm &key (head t))
     (let* ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
@@ -149,7 +152,9 @@
                 (cadr (send coords :rpy-angle))))
         (pprint (send coords :rpy-angle))
         (send *pr2* :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
-        (send *pr2* :head-neck-y :joint-angle (rad2deg (elt rpy 1))))))
+        (send *pr2* :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
+              :head-controller 0 :min-time 0.1 :scale av-scale))))
   (:base-cb (&key (unsafe t))
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
@@ -247,57 +252,47 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
-  (:main-loop-step (&key (head t) (base t) (unsafe t))
+  (:main-loop-step (&key (head t) (base t) (unsafe t) (visualize t))
     (let (larm-coords rarm-coords)
-      (when head (send self :head-cb))
       (send self :enable-cb)
-      (if (and (not larm-enable) (not rarm-enable))
-        (progn
-          (when base
-            (unless base-enable (send self :switch-joy-to-vive))
-            (send self :set-val 'base-enable t)))
-        (progn
-          (when base
-            (when base-enable (send self :switch-joy-to-ps3joy))
-            (send self :set-val 'base-enable nil))
-          (when larm-enable
-            (setq larm-coords (send self :arm-cb :larm :head head))
-            (when larm-coords
-                  (send larm-coords :draw-on :flush t :size 50
-                        :color #f(0 1 0) :width 5)))
-          (when rarm-enable
-            (setq rarm-coords (send self :arm-cb :rarm :head head))
-            (when rarm-coords
-                  (send rarm-coords :draw-on :flush t :size 50
-                        :color #f(1 0 0) :width 5)))))
+      (when base
+        (cond
+          ((and (not larm-enable) (not rarm-enable))
+           (unless base-enable (send self :switch-joy-to-vive))
+           (send self :set-val 'base-enable t))
+          (t
+           (when base-enable (send self :switch-joy-to-ps3joy))
+           (send self :set-val 'base-enable nil))))
       (cond
         ((and larm-enable rarm-enable)
          (send self :gripper-cb :larm)
          (send self :gripper-cb :rarm)
-         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-               :larm-controller 0 :min-time 0.1 :scale av-scale)
-         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-               :rarm-controller 0 :min-time 0.1 :scale av-scale))
+         (setq larm-coords (send self :arm-cb :larm :head head))
+         (setq rarm-coords (send self :arm-cb :rarm :head head)))
         ((and larm-enable (not rarm-enable))
          (send self :gripper-cb :larm)
-         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-               :larm-controller 0 :min-time 0.1 :scale av-scale))
+         (setq larm-coords (send self :arm-cb :larm :head head)))
         ((and (not larm-enable) rarm-enable)
          (send self :gripper-cb :rarm)
-         (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-               :rarm-controller 0 :min-time 0.1 :scale av-scale))
+         (setq rarm-coords (send self :arm-cb :rarm :head head)))
         (base-enable (when base (send self :base-cb :unsafe unsafe)))
         (t nil))
-      (when head (send *ri* :angle-vector (send *pr2* :angle-vector) av-tm
-                       :head-controller 0 :min-time 0.1 :scale av-scale))))
-  (:main-loop (&key (head t) (base t) (unsafe t) (pre-process nil) (post-process nil))
+      (when head (send self :head-cb))
+      (when visualize
+        (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0))
+        (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0))
+        (send *irtviewer* :draw-objects)
+        (x::window-main-one))))
+  (:main-loop (&key (head t) (base t) (unsafe t) (visualize t)
+                    (pre-process nil) (post-process nil))
     (ros::rate rate)
     (while (ros::ok)
       (when pre-process (eval pre-process))
-      (send *ti* :main-loop-step :head head :base base :unsafe unsafe)
+      (send *ti* :main-loop-step :head head :base base :unsafe unsafe :visualize visualize)
       (when post-process (eval post-process))
       (ros::spin-once)
       (ros::sleep))))
+
 
 (defun pr2-vive-init ()
   (pr2-init)
