@@ -53,7 +53,10 @@
           vw-scale
           rate
           arm-length
-          dx
+          head->shoulder-x-distance
+          head->shoulder-z-distance
+          bvive->shoulder-x-distance
+          bvive->shoulder-z-distance
           ))
 
 
@@ -81,10 +84,13 @@
     (send self :set-val 'vy-scale 1.0)
     (send self :set-val 'vw-scale 1.0)
     (send self :set-val 'arm-length 800)
-    (send self :set-val 'dx 200)
-
-    (send self :set-val 'base-enable nil)
+    (send self :set-val 'head->shoulder-x-distance 200)
+    (send self :set-val 'head->shoulder-z-distance 50)
     (send self :set-val 'rate 10)
+
+    (send self :set-val 'bvive->shoulder-x-distance nil)
+    (send self :set-val 'bvive->shoulder-z-distance nil)
+    (send self :set-val 'base-enable nil)
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-slot arm :grasp nil)
       (send self :set-arm-slot arm :grasping-p nil)
@@ -122,20 +128,35 @@
               av-tm (send self :get-arm-controller arm) 0 :min-time 0.1 :scale av-scale))
       target-coords))
   (:get-target-coords (arm &key (head t))
-    (let* ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
-           (head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
+    (let* ((head-coords (send (send *pr2* :head-end-coords) :copy-worldcoords))
            (pr2-height (elt (send head-coords :worldpos) 2))
-           target-coords target-pos)
-      (when hmd->vive-coords
-        (setq target-coords (send head-coords :transform hmd->vive-coords))
-        (setq target-pos (send target-coords :worldpos))
+          target-pos target-rot target-coords)
+      (if head
+        (let ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
+               vive-coords)
+          (when hmd->vive-coords
+            (setq vive-coords (send head-coords :transform hmd->vive-coords))
+            (setq target-pos (send vive-coords :worldpos))
+            (setq target-rot (send vive-coords :worldrot))))
+        (let ((bvive->vive-coords (send self :get-bvive->vive-coords arm :wait-trigger nil))
+              bvive->vive-pos)
+          (when bvive->vive-coords
+            (send bvive->vive-coords :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
+            (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
+            (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+            (setq bvive->vive-pos (send bvive->vive-coords :worldpos))
+            (setq target-pos
+                  (float-vector (+ (elt bvive->vive-pos 0) bvive->shoulder-x-distance)
+                                (elt bvive->vive-pos 1)
+                                (- (+ pr2-height (elt bvive->vive-pos 2))
+                                   (+ bvive->shoulder-z-distance head->shoulder-z-distance))))
+            (setq target-rot (send bvive->vive-coords :worldrot)))))
+      (when (and target-pos target-rot)
         (setq target-coords
-              (make-coords :pos
-                           (float-vector (+ dx (* scale (elt target-pos 0)))
-                                         (* scale (elt target-pos 1))
-                                         (- pr2-height
-                                            (* scale (- pr2-height (elt target-pos 2)))))
-                           :rot (send target-coords :worldrot))))
+              (make-coords :pos (float-vector (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
+                                              (* scale (elt target-pos 1))
+                                              (- pr2-height (* scale (- pr2-height (elt target-pos 2)))))
+                           :rot target-rot)))
       target-coords))
   (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
@@ -165,6 +186,9 @@
                   (/ (send self :get-val 'arm-length)
                      (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
             (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale)))
+          (send self :set-val 'bvive->shoulder-x-distance
+                (- head->shoulder-x-distance (elt (send second-coords :worldpos) 2)))
+          (send self :set-val 'bvive->shoulder-z-distance (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
           t)
         (progn

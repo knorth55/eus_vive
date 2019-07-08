@@ -1,6 +1,6 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="gazebo" default="false" />
+  <arg name="head" default="true" />
   <arg name="kinfu" default="false" />
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
@@ -73,5 +73,11 @@
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
   </include>
-  <node if="$(arg main)" pkg="eus_vive" type="pr2-vive.l" name="main" args="&quot;(main)&quot;" output="screen" />
+
+  <group if="$(arg main)">
+    <node if="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+          args="&quot;(main :head t)&quot;" output="screen" />
+    <node unless="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+          args="&quot;(main :head nil)&quot;" output="screen" />
+  </group>
 </launch>

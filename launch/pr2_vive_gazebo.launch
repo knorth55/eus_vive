@@ -1,9 +1,13 @@
 <launch>
   <arg name="main" default="true" />
+  <arg name="head" default="true" />
+  <arg name="kinfu" default="false" />
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
   <include file="$(find eus_vive)/launch/pr2_vive.launch">
     <arg name="image_left" value="/wide_stereo/left/image_rect_color" />
     <arg name="image_right" value="/wide_stereo/right/image_rect_color" />
-    <arg name="gazebo" value="true" />
+    <arg name="main" value="$(arg main)" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="kinfu" value="$(arg kinfu)" />
   </include>
 </launch>
