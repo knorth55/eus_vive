@@ -37,3 +37,10 @@ Base mode is enabled when both arms are disabled in Arm mode.
 | 2 / Trackpad | Torso control: right: down / left: up |
 | 2 / Trackpad + 7 / Trigger (right) | Safe base control: right: x, y / left: w |
 | 2 / Trackpad + 7 / Trigger (right + left) | Unsafe base control: right: x, y / left: w |
+
+## Demo
+
+### PR2 Fridge demo
+- Trial 1: https://drive.google.com/open?id=1NsNnplM9bZQi78BY5IJC7CGwROcHd_Nc
+- Trial 2: https://drive.google.com/open?id=1BSpfWCgKMXQykrTQrrrhYMP5UryFPHr7
+- Trial 3: https://drive.google.com/open?id=13E_h0JvgZn_RpvnEMDYGR6lNazLvFG0w
