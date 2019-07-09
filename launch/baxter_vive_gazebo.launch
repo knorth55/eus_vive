@@ -1,9 +1,13 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="head" default="false" />
-  <include file="$(find baxter_gazebo)/launch/baxter_world.launch" />
-  <include file="$(find eus_vive)/launch/baxter_vive.launch">
-    <arg name="main" value="$(arg main)" />
-    <arg name="head" value="$(arg head)" />
-  </include>
+
+  <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
+  <include file="$(find eus_vive)/launch/include/vive.launch" />
+  <group if="$(arg main)">
+    <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+          args="&quot;(main :head t)&quot;" output="screen" />
+    <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+          args="&quot;(main :head nil)&quot;" output="screen" />
+  </group>
 </launch>
