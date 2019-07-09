@@ -1,0 +1,9 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="head" default="false" />
+  <include file="$(find baxter_gazebo)/launch/baxter_world.launch" />
+  <include file="$(find eus_vive)/launch/baxter_vive.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="head" value="$(arg head)" />
+  </include>
+</launch>
