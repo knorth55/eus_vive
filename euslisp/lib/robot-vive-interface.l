@@ -112,7 +112,7 @@
             (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
             (setq bvive->vive-pos (send bvive->vive-coords :worldpos))
             (setq target-pos
-                  (float-vector (+ (elt bvive->vive-pos 0) bvive->shoulder-x-distance)
+                  (float-vector (- (elt bvive->vive-pos 0) bvive->shoulder-x-distance)
                                 (elt bvive->vive-pos 1)
                                 (- (+ robot-height (elt bvive->vive-pos 2))
                                    (+ bvive->shoulder-z-distance head->shoulder-z-distance))))
