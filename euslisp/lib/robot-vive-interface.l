@@ -139,7 +139,7 @@
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
-  (:calib-vive (arm &key (scale nil))
+  (:calib-vive (arm)
     (let (first-coords second-coords)
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
       (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
@@ -148,11 +148,10 @@
       (setq second-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
       (if (and first-coords second-coords)
         (progn
-          (when scale
-            (send self :set-val 'scale
-                  (/ (send self :get-val 'arm-length)
-                     (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
-            (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale)))
+          (send self :set-val 'scale
+                (/ (send self :get-val 'arm-length)
+                   (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
+          (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
           (send self :set-val 'bvive->shoulder-x-distance
                 (- head->shoulder-x-distance (elt (send second-coords :worldpos) 2)))
           (send self :set-val 'bvive->shoulder-z-distance (elt (send second-coords :worldpos) 1))
