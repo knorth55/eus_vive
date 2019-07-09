@@ -7,7 +7,7 @@
   (ros::roseus "baxtereus_vive")
   (baxter-vive-init)
   (send *ri* :angle-vector-raw (send *baxter* :reset-pose))
-  (send *ri* :stop-grasp :arms)
+  (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
