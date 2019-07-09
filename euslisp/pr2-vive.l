@@ -4,7 +4,7 @@
 
 
 (defun init ()
-  (ros::roseus "vive_pr2eus")
+  (ros::roseus "pr2eus_vive")
   (pr2-vive-init)
   (send *ri* :angle-vector (send *pr2* :reset-pose))
   (send *ri* :stop-grasp :arms)
