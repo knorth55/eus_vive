@@ -4,7 +4,7 @@
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 (defclass pr2-vive-interface
-  :super robot-move-base-vive-interface 
+  :super robot-move-base-vive-interface
   :slots ())
 
 
@@ -32,4 +32,5 @@
 
 (defun pr2-vive-init ()
   (pr2-init)
+  (objects (list *pr2*))
   (setq *ti* (instance pr2-vive-interface :init)))

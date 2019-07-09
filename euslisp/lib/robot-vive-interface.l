@@ -10,6 +10,7 @@
   :slots (robot
           robot-interface
           irtviewer
+          tfl
           hmd-frame-id
           bvive-frame-id
           cvive-frame-id
@@ -113,7 +114,8 @@
         (let ((bvive->vive-coords (send self :get-bvive->vive-coords arm :wait-trigger nil))
               bvive->vive-pos)
           (when bvive->vive-coords
-            (send bvive->vive-coords :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
+            (send bvive->vive-coords
+                  :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
             (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
             (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
             (setq bvive->vive-pos (send bvive->vive-coords :worldpos))
@@ -125,9 +127,10 @@
             (setq target-rot (send bvive->vive-coords :worldrot)))))
       (when (and target-pos target-rot)
         (setq target-coords
-              (make-coords :pos (float-vector (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
-                                              (* scale (elt target-pos 1))
-                                              (- robot-height (* scale (- robot-height (elt target-pos 2)))))
+              (make-coords :pos (float-vector
+                                  (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
+                                  (* scale (elt target-pos 1))
+                                  (- robot-height (* scale (- robot-height (elt target-pos 2)))))
                            :rot target-rot)))
       target-coords))
   (:get-hmd->vive-coords (arm)
@@ -205,7 +208,8 @@
   (:gripper-status-cb (arm msg)
     (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status))))
       (when grasping-p
-        (send robot-interface :cancel-angle-vector :controller-type (send self :get-arm-controller arm)))
+        (send robot-interface :cancel-angle-vector
+              :controller-type (send self :get-arm-controller arm)))
       (send self :set-arm-val arm :grasping-p grasping-p)))
   (:vive-button-cb (arm msg)
     (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
@@ -254,7 +258,7 @@
                 :controller-type (send self :get-arm-controller arm)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
-  (:motion-cb ()
+  (:motion-cb (&key (head t))
     (cond
       ((or larm-enable rarm-enable)
        (when (and larm-enable (not larm-grasping-p))
@@ -267,7 +271,7 @@
   (:main-loop-step (&key (head t) (visualize t))
     (let (larm-coords rarm-coords)
       (send self :enable-cb)
-      (send self :motion-cb)
+      (send self :motion-cb :head head)
       (when head (send self :head-cb))
       (when visualize (send self :visualize larm-coords rarm-coords))))
   (:main-loop (&rest args)
@@ -368,7 +372,7 @@
        (when base-enable (send self :switch-joy-to-ps3joy))
        (send self :set-val 'base-enable nil))
       (t nil)))
-  (:motion-cb (&key (unsafe t))
+  (:motion-cb (&key (head t) (base t) (unsafe t))
     (cond
       ((or larm-enable rarm-enable)
        (when (and larm-enable (not larm-grasping-p))
@@ -382,7 +386,7 @@
   (:main-loop-step (&key (head t) (base t) (unsafe t) (visualize t))
     (let (larm-coords rarm-coords)
       (send self :enable-cb :base base)
-      (send self :motion-cb :unsafe unsafe)
+      (send self :motion-cb :head head :base base :unsafe unsafe)
       (when head (send self :head-cb))
       (when visualize (send self :visualize larm-coords rarm-coords)))))
 
