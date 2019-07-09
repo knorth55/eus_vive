@@ -1,0 +1,8 @@
+- git:
+    local-name: knorth55/eus_vive
+    uri: https://github.com/knorth55/eus_vive.git
+    version: master
+- git:
+    local-name: knorth55/vive_ros
+    uri: https://github.com/knorth55/vive_ros.git
+    version: use-camera
