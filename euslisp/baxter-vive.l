@@ -6,7 +6,7 @@
 (defun init ()
   (ros::roseus "baxtereus_vive")
   (baxter-vive-init)
-  (send *ri* :angle-vector-raw (send *baxter* :reset-pose))
+  (send *ri* :angle-vector-raw (send *baxter* :reset-pose) 5000)
   (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
   (send *ti* :send-joy-feedback :larm)

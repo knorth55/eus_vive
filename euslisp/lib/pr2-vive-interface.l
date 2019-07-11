@@ -28,6 +28,7 @@
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 500)
     (send self :set-val 'av-scale 8.0)
+    (send self :set-val 'min-time 0.1)
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
     (send self :set-val 'vw-thresh 0.3)

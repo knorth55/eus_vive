@@ -23,8 +23,9 @@
     (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
     ;; for baxter
     (send self :set-val 'scale 1.5)
-    (send self :set-val 'av-tm 500)
-    (send self :set-val 'av-scale 10.0)
+    (send self :set-val 'av-tm :fast)
+    (send self :set-val 'av-scale 1.0)
+    (send self :set-val 'min-time 0.1)
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 0)
     (send self :set-val 'head->shoulder-z-distance 30)

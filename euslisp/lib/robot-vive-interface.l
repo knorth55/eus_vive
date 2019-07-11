@@ -42,6 +42,7 @@
           scale
           av-tm
           av-scale
+          min-time
           rate
           arm-length
           head->shoulder-x-distance
@@ -90,7 +91,7 @@
         (send self :angle-vector
               (send robot arm :inverse-kinematics target-coords
                     :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
-              av-tm (send self :get-arm-controller arm) 0 :min-time 0.1 :scale av-scale))
+              av-tm (send self :get-arm-controller arm) 0 :min-time min-time :scale av-scale))
       target-coords))
   (:get-target-coords (arm &key (head t))
     (let* ((head-coords (send (send robot :head-end-coords) :copy-worldcoords))
@@ -157,9 +158,13 @@
                 (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
           (send self :set-val 'bvive->shoulder-z (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
+          (send self :send-joy-feedback arm)
           t)
         (progn
           (ros::ros-error "Calibration is failed.~%")
+          (send self :send-joy-feedback arm)
+          (ros::duration-sleep 1)
+          (send self :send-joy-feedback arm)
           nil))))
   (:get-bvive->vive-coords (arm &key (wait-trigger nil))
     (let ((vive-frame-id (send self :get-arm-val arm :vive-frame-id))
@@ -187,7 +192,7 @@
         (send robot :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
         (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
         (send self :angle-vector (send robot :angle-vector) av-tm
-              :head-controller 0 :min-time 0.1 :scale av-scale))))
+              :head-controller 0 :min-time min-time :scale av-scale))))
   (:gripper-cb (arm)
     (let ((vive-trigger-p (send self :vive-trigger-p arm))
           (grasp-p (send self :get-arm-val arm :grasp)))
