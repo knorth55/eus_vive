@@ -141,6 +141,7 @@
         coords)))
   (:calib-vive (arm)
     (let (first-coords second-coords)
+      (ros::rate rate)
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
       (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
       (setq first-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
@@ -163,9 +164,8 @@
   (:get-bvive->vive-coords (arm &key (wait-trigger nil))
     (let ((vive-frame-id (send self :get-arm-val arm :vive-frame-id))
           coords vive-trigger-p)
-      (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
       (when wait-trigger
-        (ros::rate rate)
+        (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
         (while (and (ros::ok) (not vive-trigger-p))
           (setq vive-trigger-p (send self :vive-trigger-p arm))
           (ros::spin-once)
