@@ -25,7 +25,7 @@
     (send self :set-val 'joy-other-topic-name "/joy_other")
     ;; for pr2
     (send self :set-val 'scale 1.5)
-    (send self :set-val 'av-tm :fast)
+    (send self :set-val 'av-tm 0.3)
     (send self :set-val 'av-scale 8.0)
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'vx-thresh 0.3)
