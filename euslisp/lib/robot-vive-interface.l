@@ -14,6 +14,7 @@
           bvive-frame-id
           cvive-frame-id
           feedback-topic-name
+          gripper-status-topic-name
           larm-grasp
           larm-grasping-p
           larm-trigger
@@ -69,7 +70,7 @@
       (send self :set-arm-val arm :enable nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
-      (ros::subscribe (format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r"))
+      (ros::subscribe (eval gripper-status-topic-name)
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm))
     (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1))

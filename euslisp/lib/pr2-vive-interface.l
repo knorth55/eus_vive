@@ -37,6 +37,8 @@
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
+    (send self :set-val 'gripper-status-topic-name
+          '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
     (send-super :init))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args)))
