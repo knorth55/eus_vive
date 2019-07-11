@@ -274,7 +274,7 @@
   (:main-loop-step (&key (head t) (visualize t))
     (let (arm-coords)
       (send self :enable-cb)
-      (setq coords (send self :motion-cb :head head))
+      (setq arm-coords (send self :motion-cb :head head))
       (when head (send self :head-cb))
       (when visualize (send self :visualize arm-coords))))
   (:main-loop (&rest args)
