@@ -1,0 +1,26 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="head" default="false" />
+  <arg name="launch_robot_state_publisher" default="true" />
+  <arg name="sanity_check_joint_trajectory" default="false" />
+  <include file="$(find jsk_baxter_startup)/baxter.launch">
+    <arg name="load_robot_description" value="true" />
+    <arg name="launch_robot_state_publisher" value="$(arg launch_robot_state_publisher)" />
+    <arg name="sanity_check_joint_trajectory" value="$(arg sanity_check_joint_trajectory)" />
+    <arg name="launch_moveit" value="false" />
+    <arg name="launch_time_signal" value="false" />
+    <arg name="launch_gripper_action" value="true" />
+    <arg name="left_electric_gripper" value="true" />
+    <arg name="right_electric_gripper" value="true" />
+    <arg name="arm_interpolation" value="bezier" />
+    <arg name="arm_control_mode" value="velocity" />
+  </include>
+  <include file="$(find eus_vive)/launch/include/vive.launch" />
+
+  <group if="$(arg main)">
+    <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+          args="&quot;(main :head t)&quot;" output="screen" />
+    <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+          args="&quot;(main :head nil)&quot;" output="screen" />
+  </group>
+</launch>

@@ -4,19 +4,18 @@
 
 
 (defun init ()
-  (ros::roseus "vive_pr2eus")
+  (ros::roseus "pr2eus_vive")
   (pr2-vive-init)
   (send *ri* :angle-vector (send *pr2* :reset-pose))
-  (send *ri* :stop-grasp :arms)
+  (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
   (send *ri* :clear-costmap)
-  (objects (list *pr2*))
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
 
 (defun main (&key (head t) (base t) (unsafe t) (visualize t))
   (init)
-  (send *ti* :calib-vive :rarm :scale t)
+  (send *ti* :calib-vive :rarm)
   (send *ti* :main-loop :head head :base base
         :unsafe unsafe :visualize visualize))

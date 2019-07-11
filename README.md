@@ -4,9 +4,39 @@
 
 ### PR2
 
+**Real Robot**
+
 ```bash
 steam
+rossetip
+rossetmaster pr1040
 roslaunch eus_vive pr2_vive.launch
+```
+
+**Gazebo**
+
+```bash
+steam
+roslaunch eus_vive pr2_vive_gazebo.launch
+```
+
+### Baxter
+
+**Real Robot**
+
+```bash
+steam
+rossetip
+rossetmaster baxter
+roslaunch eus_vive baxter_vive.launch
+```
+
+**Gazebo**
+
+```bash
+steam
+roslaunch baxter_gazebo baxter_world.launch
+roslaunch eus_vive baxter_vive.launch
 ```
 
 ## How to use
