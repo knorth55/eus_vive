@@ -9,7 +9,6 @@
   :super propertied-object
   :slots (robot
           robot-interface
-          irtviewer
           tfl
           hmd-frame-id
           bvive-frame-id
@@ -240,7 +239,7 @@
   (:visualize (larm-coords rarm-coords)
     (when larm-coords (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0)))
     (when rarm-coords (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
-    (send irtviewer :draw-objects)
+    (send *irtviewer* :draw-objects)
     (x::window-main-one))
   (:enable-cb ()
     (send self :enable-arm :larm)

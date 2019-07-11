@@ -12,7 +12,6 @@
   (:init ()
     (send self :set-val 'robot *baxter*)
     (send self :set-val 'robot-interface *ri*)
-    (send self :set-val 'irtviewer *irtviewer*)
     (send self :set-val 'rate 10)
     ;; for vive
     (send self :set-val 'hmd-frame-id "/hmd")
