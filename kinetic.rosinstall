@@ -6,3 +6,7 @@
     local-name: knorth55/vive_ros
     uri: https://github.com/knorth55/vive_ros.git
     version: use-camera
+- git:
+    local-name: knorth55/jsk_robot
+    uri: https://github.com/knorth55/jsk_robot.git
+    version: baxter-vive-control
