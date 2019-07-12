@@ -85,12 +85,14 @@
       (t nil)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
+  (:inverse-kinematics (arm target-coords)
+    (send robot :inverse-kinematics target-coords
+          :rotation-axis t :move-target (send robot arm :end-coords)
+          :revert-if-fail nil :stop 3 :debug-view nil))
   (:arm-cb (arm &key (head t))
     (let ((target-coords (send self :get-target-coords arm :head head)))
       (when target-coords
-        (send self :angle-vector
-              (send robot arm :inverse-kinematics target-coords
-                    :rotation-axis t :revert-if-fail nil :stop 3 :debug-view nil)
+        (send self :angle-vector (send self :inverse-kinematics arm target-coords)
               av-tm (send self :get-arm-controller arm) 0 :min-time min-time :scale av-scale))
       target-coords))
   (:get-target-coords (arm &key (head t))

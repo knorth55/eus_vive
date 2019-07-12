@@ -32,7 +32,11 @@
           '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
     (send-super :init))
   (:angle-vector (&rest args)
-    (send* robot-interface :angle-vector-raw args)))
+    (send* robot-interface :angle-vector-raw args))
+  (:inverse-kinematics (arm target-coords)
+    (send robot :inverse-kinematics-raw target-coords
+          :rotation-axis t :move-target (send robot arm :end-coords)
+          :revert-if-fail nil :stop 3 :debug-view nil)))
 
 
 (defun baxter-vive-init ()
