@@ -25,6 +25,7 @@
     (send self :set-val 'joy-org-topic-name "/joy_org")
     (send self :set-val 'joy-other-topic-name "/joy_other")
     ;; for pr2
+    (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 0.3)
     (send self :set-val 'av-scale 8.0)

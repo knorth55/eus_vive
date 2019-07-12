@@ -21,6 +21,7 @@
     (send self :set-val 'larm-vive-frame-id "/controller_LHR_FD35BD42")
     (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
     ;; for baxter
+    (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm :fast)
     (send self :set-val 'av-scale 1.0)
@@ -33,10 +34,10 @@
     (send-super :init))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
-  (:inverse-kinematics (arm target-coords)
-    (send robot :inverse-kinematics-raw target-coords
-          :rotation-axis t :move-target (send robot arm :end-coords)
-          :revert-if-fail nil :stop 3 :debug-view nil)))
+  (:inverse-kinematics (arm target-coords &rest args)
+    (send* robot :inverse-kinematics target-coords
+           :rotation-axis t :move-target (send robot arm :end-coords)
+           :revert-if-fail nil :stop ik-stop-step :debug-view nil args)))
 
 
 (defun baxter-vive-init ()

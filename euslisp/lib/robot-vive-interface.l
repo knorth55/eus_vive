@@ -39,6 +39,7 @@
           rarm-prev-grip
           rarm-enable
           rarm-vive-frame-id
+          ik-stop-step
           scale
           av-tm
           av-scale
@@ -88,7 +89,7 @@
   (:inverse-kinematics (arm target-coords)
     (send robot :inverse-kinematics target-coords
           :rotation-axis t :move-target (send robot arm :end-coords)
-          :revert-if-fail nil :stop 3 :debug-view nil))
+          :revert-if-fail nil :stop ik-stop-step :debug-view nil))
   (:arm-cb (arm &key (head t))
     (let ((target-coords (send self :get-target-coords arm :head head)))
       (when target-coords
