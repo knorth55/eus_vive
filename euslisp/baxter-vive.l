@@ -16,4 +16,4 @@
 (defun main (&key (head nil) (visualize t))
   (init)
   (send *ti* :calib-vive :rarm)
-  (send *ti* :main-loop :head head :visualize visualize))
+  (send *ti* :main-loop :head head :torso nil :visualize visualize))

@@ -27,9 +27,12 @@
     ;; for pr2
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
-    (send self :set-val 'av-tm 0.3)
+    (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 8.0)
     (send self :set-val 'min-time 0.3)
+    (send self :set-val 'torso-av-tm 500)
+    (send self :set-val 'torso-av-scale 1.5)
+    (send self :set-val 'torso-min-time 0.5)
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
     (send self :set-val 'vw-thresh 0.3)
@@ -43,11 +46,7 @@
           '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
     (send-super :init))
   (:angle-vector (&rest args)
-    (send* robot-interface :angle-vector args))
-  (:inverse-kinematics (arm target-coords)
-    (send robot :inverse-kinematics target-coords
-          :rotation-axis t :move-target (send robot arm :end-coords)
-          :revert-if-fail nil :stop 10 :use-torso nil :debug-view nil)))
+    (send* robot-interface :angle-vector args)))
 
 
 (defun pr2-vive-init ()

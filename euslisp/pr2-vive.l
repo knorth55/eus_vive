@@ -14,8 +14,8 @@
   (send *ti* :send-joy-feedback :rarm))
 
 
-(defun main (&key (head t) (base t) (unsafe t) (visualize t))
+(defun main (&key (head t) (torso t) (base t) (unsafe t) (visualize t))
   (init)
   (send *ti* :calib-vive :rarm)
-  (send *ti* :main-loop :head head :base base
+  (send *ti* :main-loop :head head :torso torso :base base
         :unsafe unsafe :visualize visualize))
