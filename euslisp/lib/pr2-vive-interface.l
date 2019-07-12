@@ -3,6 +3,7 @@
 (load "package://pr2eus/pr2-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
+
 (defclass pr2-vive-interface
   :super robot-move-base-vive-interface
   :slots ())
@@ -41,7 +42,11 @@
           '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
     (send-super :init))
   (:angle-vector (&rest args)
-    (send* robot-interface :angle-vector args)))
+    (send* robot-interface :angle-vector args))
+  (:inverse-kinematics (arm target-coords)
+    (send robot :inverse-kinematics target-coords
+          :rotation-axis t :move-target (send robot arm :end-coords)
+          :revert-if-fail nil :stop 10 :use-torso nil :debug-view nil)))
 
 
 (defun pr2-vive-init ()
