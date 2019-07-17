@@ -49,6 +49,12 @@
     (send* robot-interface :angle-vector args)))
 
 
+(defun ros::roseus-sigint-handler (sig code)
+  (when (boundp '*ti*) (send *ti* :switch-joy-to-ps3joy))
+  (ros::ROS-WARN (format nil "ros::roseus-sigint-handler ~A" sig))
+  (exit 1))
+
+
 (defun pr2-vive-init ()
   (pr2-init)
   (objects (list *pr2*))
