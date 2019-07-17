@@ -22,7 +22,7 @@
     (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
     ;; for baxter
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 1.5)
+    (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm :fast)
     (send self :set-val 'av-scale 1.0)
     (send self :set-val 'min-time 0.1)
