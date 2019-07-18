@@ -6,6 +6,10 @@
 (defun init ()
   (ros::roseus "baxtereus_vive")
   (baxter-vive-init)
+  ;; overwrite e0 joint limit
+  ;; do not rotate e0 joint and stay arm in front of the robot
+  (send *baxter* :left_e0 :max-angle 40)
+  (send *baxter* :right_e0 :min-angle -40)
   (send *ri* :angle-vector-raw (send *baxter* :reset-pose) 5000)
   (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
