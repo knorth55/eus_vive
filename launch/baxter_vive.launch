@@ -12,7 +12,7 @@
     <arg name="launch_gripper_action" value="true" />
     <arg name="left_electric_gripper" value="true" />
     <arg name="right_electric_gripper" value="true" />
-    <arg name="arm_interpolation" value="bezier" />
+    <arg name="arm_interpolation" value="bezier_with_velocity" />
     <arg name="arm_control_mode" value="velocity" />
   </include>
   <include file="$(find eus_vive)/launch/include/vive.launch" />
