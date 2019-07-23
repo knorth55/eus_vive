@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="head" default="true" />
+  <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
@@ -75,9 +76,17 @@
   </include>
 
   <group if="$(arg main)">
-    <node if="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
-          args="&quot;(main :head t)&quot;" output="screen" />
-    <node unless="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
-          args="&quot;(main :head nil)&quot;" output="screen" />
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+            args="&quot;(main :head t :mirror t)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+            args="&quot;(main :head nil :mirror t)&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+            args="&quot;(main :head t :mirror nil)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
+            args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
+    </group>
   </group>
 </launch>
