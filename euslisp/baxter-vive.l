@@ -17,7 +17,8 @@
   (send *ti* :send-joy-feedback :rarm))
 
 
-(defun main (&key (head nil) (visualize t))
+(defun main (&key (head nil) (mirror nil) (visualize t))
   (init)
   (send *ti* :calib-vive :rarm)
-  (send *ti* :main-loop :head head :torso nil :visualize visualize))
+  (send *ti* :main-loop :head head :torso nil
+        :mirror mirror :visualize visualize))

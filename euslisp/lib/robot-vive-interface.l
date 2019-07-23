@@ -87,6 +87,11 @@
       ((eq arm :larm) :larm-controller)
       ((eq arm :rarm) :rarm-controller)
       (t nil)))
+  (:get-opposite-arm (arm)
+    (cond
+      ((eq arm :larm) :rarm)
+      ((eq arm :rarm) :larm)
+      (t nil)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -97,10 +102,12 @@
       (send* robot :inverse-kinematics target-coords :rotation-axis t
              :move-target (send robot arm :end-coords)
              :revert-if-fail nil :stop ik-stop-step :debug-view nil args)))
-  (:arm-cb (arm &key (head t) (torso t))
+  (:arm-cb (arm &key (head t) (torso t) (mirror nil))
     (if (eq arm :arms)
-      (let* ((larm-target-coords (send self :get-target-coords :larm :head head))
-             (rarm-target-coords (send self :get-target-coords :rarm :head head))
+      (let* ((larm-target-coords
+               (send self :get-target-coords :larm :head head :mirror mirror))
+             (rarm-target-coords
+               (send self :get-target-coords :rarm :head head :mirror mirror))
              (target-coords (list larm-target-coords rarm-target-coords)))
         (cond
           ((and larm-target-coords rarm-target-coords)
@@ -127,7 +134,8 @@
              (send self :angle-vector (send robot :angle-vector)
                    torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale))))
         target-coords)
-      (let ((target-coords (send self :get-target-coords arm :head head)))
+      (let ((target-coords
+              (send self :get-target-coords arm :head head :mirror mirror)))
         (when target-coords
           (send self :inverse-kinematics arm target-coords :use-torso torso)
           (send self :angle-vector (send robot :angle-vector)
@@ -137,18 +145,22 @@
             (send self :angle-vector (send robot :angle-vector)
                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
         target-coords)))
-  (:get-target-coords (arm &key (head t))
+  (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((head-coords (send (send robot :head-end-coords) :copy-worldcoords))
            (robot-height (elt (send head-coords :worldpos) 2))
           target-pos target-rot target-coords)
       (if head
-        (let ((hmd->vive-coords (send self :get-hmd->vive-coords arm))
+        (let ((hmd->vive-coords
+                (send self :get-hmd->vive-coords
+                      (if mirror (send self :get-opposite-arm arm) arm)))
                vive-coords)
           (when hmd->vive-coords
             (setq vive-coords (send head-coords :transform hmd->vive-coords))
             (setq target-pos (send vive-coords :worldpos))
             (setq target-rot (send vive-coords :worldrot))))
-        (let ((bvive->vive-coords (send self :get-bvive->vive-coords arm :wait-trigger nil))
+        (let ((bvive->vive-coords
+                (send self :get-bvive->vive-coords
+                      (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
               bvive->vive-pos)
           (when bvive->vive-coords
             (send bvive->vive-coords
@@ -162,6 +174,8 @@
                                 (- (+ robot-height (elt bvive->vive-pos 2))
                                    (+ bvive->shoulder-z head->shoulder-z-distance))))
             (setq target-rot (send bvive->vive-coords :worldrot)))))
+      (when mirror
+        (setf (elt target-pos 1) (* -1.0 (elt target-pos 1))))
       (when (and target-pos target-rot)
         (setq target-coords
               (make-coords :pos (float-vector
@@ -237,8 +251,9 @@
         (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
         (send self :angle-vector (send robot :angle-vector) av-tm
               :head-controller 0 :min-time min-time :scale av-scale))))
-  (:gripper-cb (arm)
-    (let ((vive-trigger-p (send self :vive-trigger-p arm))
+  (:gripper-cb (arm &key (mirror nil))
+    (let ((vive-trigger-p
+            (send self :vive-trigger-p (if mirror (send self :get-opposite-arm arm) arm)))
           (grasp-p (send self :get-arm-val arm :grasp)))
       (when vive-trigger-p
         (if grasp-p
@@ -291,56 +306,60 @@
         (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
       (send *irtviewer* :draw-objects)
       (x::window-main-one)))
-  (:enable-cb ()
-    (send self :enable-arm :larm)
-    (send self :enable-arm :rarm))
-  (:enable-arm (arm)
-    (let ((vive-menu-p (send self :vive-menu-p arm))
-          (enable-p (send self :get-arm-val arm :enable)))
+  (:enable-cb (&key (mirror nil))
+    (send self :enable-arm :larm :mirror mirror)
+    (send self :enable-arm :rarm :mirror mirror))
+  (:enable-arm (arm &key (mirror nil))
+    (let ((vive-menu-p
+            (send self :vive-menu-p (if mirror (send self :get-opposite-arm arm) arm)))
+          (enable-p
+            (send self :get-arm-val (if mirror (send self :get-opposite-arm arm) arm) :enable)))
       (when vive-menu-p
         (when enable-p
           (send robot-interface :cancel-angle-vector
                 :controller-type (send self :get-arm-controller arm)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
-  (:arm-motion-cb (&key (head t) (torso t))
+  (:arm-motion-cb (&key (head t) (torso t) (mirror nil))
     (let ((arm-coords (list nil nil)))
       (if (and torso (not (or larm-grasping-p rarm-grasping-p)))
         (cond
           ((and larm-enable rarm-enable)
-           (send self :gripper-cb :larm)
-           (send self :gripper-cb :rarm)
-           (setq arm-coords (send self :arm-cb :arms :head head :torso torso)))
+           (send self :gripper-cb :larm :mirror mirror)
+           (send self :gripper-cb :rarm :mirror mirror)
+           (setq arm-coords
+                 (send self :arm-cb :arms :head head :torso torso :mirror mirror)))
           ((and larm-enable (not rarm-enable))
-           (send self :gripper-cb :larm)
+           (send self :gripper-cb :larm :mirror mirror)
            (setf (elt arm-coords 0)
-                 (send self :arm-cb :larm :head head :torso torso)))
+                 (send self :arm-cb :larm :head head :torso torso :mirror mirror)))
           ((and (not larm-enable) rarm-enable)
-           (send self :gripper-cb :rarm)
+           (send self :gripper-cb :rarm :mirror mirror)
            (setf (elt arm-coords 1)
-                 (send self :arm-cb :rarm :head head :torso torso)))
+                 (send self :arm-cb :rarm :head head :torso torso :mirror mirror)))
           (t nil))
         (progn
           (when (and larm-enable (not larm-grasping-p))
-            (send self :gripper-cb :larm)
+            (send self :gripper-cb :larm :mirror mirror)
             (setf (elt arm-coords 0)
-                  (send self :arm-cb :larm :head head :torso nil)))
+                  (send self :arm-cb :larm :head head :torso nil :mirror mirror)))
           (when (and rarm-enable (not rarm-grasping-p))
-            (send self :gripper-cb :rarm)
+            (send self :gripper-cb :rarm :mirror mirror)
             (setf (elt arm-coords 1)
-                  (send self :arm-cb :rarm :head head :torso nil)))))
+                  (send self :arm-cb :rarm :head head :torso nil :mirror mirror)))))
       arm-coords))
-  (:motion-cb (&key (head t) (torso t))
+  (:motion-cb (&key (head t) (torso t) (mirror nil))
     (let (arm-coords)
       (cond
         ((or larm-enable rarm-enable)
-         (setq arm-coords (send self :arm-motion-cb :head head :torso torso)))
+         (setq arm-coords
+               (send self :arm-motion-cb :head head :torso torso :mirror mirror)))
         (t nil))
       arm-coords))
-  (:main-loop-step (&key (head t) (torso t) (visualize t))
+  (:main-loop-step (&key (head t) (torso t) (mirror nil) (visualize t))
     (let (arm-coords)
-      (send self :enable-cb)
-      (setq arm-coords (send self :motion-cb :head head :torso torso))
+      (send self :enable-cb :mirror mirror)
+      (setq arm-coords (send self :motion-cb :head head :torso torso :mirror mirror))
       (when head (send self :head-cb))
       (when visualize (send self :visualize arm-coords))))
   (:main-loop (&rest args)
@@ -376,7 +395,7 @@
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil)
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
-  (:base-cb (&key (unsafe t))
+  (:base-cb (&key (unsafe t) (mirror nil))
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
       (cond
@@ -425,8 +444,8 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
-  (:enable-cb (&key (base t))
-    (send-super :enable-cb)
+  (:enable-cb (&key (mirror nil) (base t))
+    (send-super :enable-cb :mirror mirror)
     (when base (send self :enable-base)))
   (:enable-base ()
     (cond
@@ -437,19 +456,21 @@
        (when base-enable (send self :switch-joy-to-ps3joy))
        (send self :set-val 'base-enable nil))
       (t nil)))
-  (:motion-cb (&key (head t) (torso t) (base t) (unsafe t))
+  (:motion-cb (&key (head t) (torso t) (base t) (unsafe t) (mirror nil))
     (let (arm-coords)
       (cond
         ((or larm-enable rarm-enable)
-         (setq arm-coords (send self :arm-motion-cb :head head :torso torso)))
+         (setq arm-coords
+               (send self :arm-motion-cb :head head :torso torso :mirror mirror)))
         (base-enable (when base (send self :base-cb :unsafe unsafe)))
         (t nil))
       arm-coords))
-  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (visualize t))
+  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (visualize t))
     (let (arm-coords)
-      (send self :enable-cb :base base)
+      (send self :enable-cb :mirror mirror :base base)
       (setq arm-coords
-            (send self :motion-cb :head head :torso torso :base base :unsafe unsafe))
+            (send self :motion-cb :head head :torso torso
+                  :base base :unsafe unsafe :mirror mirror))
       (when head (send self :head-cb))
       (when visualize (send self :visualize arm-coords)))))
 
