@@ -44,3 +44,12 @@
   (baxter-init)
   (objects (list *baxter*))
   (setq *ti* (instance baxter-vive-interface :init)))
+
+
+(defun signal-hook (sig code)
+  (when (boundp '*ri)
+    (send *ri* :cancel-angle-vector :controller-type :default-controller)))
+
+
+(unix:signal 2 'signal-hook)
+(unix:signal 15 'signal-hook)
