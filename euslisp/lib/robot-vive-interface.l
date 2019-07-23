@@ -174,9 +174,15 @@
                                 (- (+ robot-height (elt bvive->vive-pos 2))
                                    (+ bvive->shoulder-z head->shoulder-z-distance))))
             (setq target-rot (send bvive->vive-coords :worldrot)))))
-      (when mirror
-        (setf (elt target-pos 1) (* -1.0 (elt target-pos 1))))
       (when (and target-pos target-rot)
+        (when mirror
+          (let* ((mirror-coords (make-coords :rot target-rot))
+                 (rpy-angle (car (send mirror-coords :rpy-angle))))
+            (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
+            (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
+            (setq mirror-coords (make-coords :rpy rpy-angle))
+            (setq target-rot (send mirror-coords :worldrot))
+            (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
         (setq target-coords
               (make-coords :pos (float-vector
                                   (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
