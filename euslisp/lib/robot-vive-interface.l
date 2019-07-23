@@ -312,8 +312,7 @@
   (:enable-arm (arm &key (mirror nil))
     (let ((vive-menu-p
             (send self :vive-menu-p (if mirror (send self :get-opposite-arm arm) arm)))
-          (enable-p
-            (send self :get-arm-val (if mirror (send self :get-opposite-arm arm) arm) :enable)))
+          (enable-p (send self :get-arm-val arm :enable)))
       (when vive-menu-p
         (when enable-p
           (send robot-interface :cancel-angle-vector
