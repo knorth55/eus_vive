@@ -12,7 +12,7 @@
   (send *baxter* :left_e0 :max-angle 30)
   (send *baxter* :right_s0 :min-angle -30)
   (send *baxter* :right_e0 :min-angle -30)
-  (send *ri* :angle-vector-raw (send *baxter* :reset-pose) 5000)
+  (send *ri* :angle-vector-raw (send *baxter* :untuck-pose) 5000)
   (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
   (send *ti* :send-joy-feedback :larm)
