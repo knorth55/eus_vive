@@ -21,6 +21,6 @@
 
 (defun main (&key (head nil) (mirror nil) (visualize t))
   (init)
-  (send *ti* :calib-vive :rarm)
+  (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso nil
         :mirror mirror :visualize visualize))

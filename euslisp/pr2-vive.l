@@ -16,6 +16,6 @@
 
 (defun main (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (visualize t))
   (init)
-  (send *ti* :calib-vive :rarm)
+  (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso torso :base base
         :unsafe unsafe :mirror mirror :visualize visualize))
