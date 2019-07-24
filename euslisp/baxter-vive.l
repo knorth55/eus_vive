@@ -6,9 +6,11 @@
 (defun init ()
   (ros::roseus "baxtereus_vive")
   (baxter-vive-init)
-  ;; overwrite e0 joint limit
-  ;; do not rotate e0 joint and stay arm in front of the robot
+  ;; overwrite s0, e0 joint limit
+  ;; do not rotate s0, e0 joint and stay arm in front of the robot
+  (send *baxter* :left_s0 :max-angle 30)
   (send *baxter* :left_e0 :max-angle 30)
+  (send *baxter* :right_s0 :min-angle -30)
   (send *baxter* :right_e0 :min-angle -30)
   (send *ri* :angle-vector-raw (send *baxter* :reset-pose) 5000)
   (send *ri* :stop-grasp :arms :wait nil)
@@ -17,7 +19,8 @@
   (send *ti* :send-joy-feedback :rarm))
 
 
-(defun main (&key (head nil) (visualize t))
+(defun main (&key (head nil) (mirror nil) (visualize t))
   (init)
-  (send *ti* :calib-vive :rarm)
-  (send *ti* :main-loop :head head :torso nil :visualize visualize))
+  (while (not (send *ti* :calib-vive :rarm)))
+  (send *ti* :main-loop :head head :torso nil
+        :mirror mirror :visualize visualize))

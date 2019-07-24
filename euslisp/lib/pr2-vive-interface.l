@@ -49,13 +49,19 @@
     (send* robot-interface :angle-vector args)))
 
 
-(defun switch-handler (sig code)
-  (when (boundp '*ti*) (send *ti* :switch-joy-to-ps3joy)))
-
-(unix:signal 2 'switch-handler)
-(unix:signal 15 'switch-handler)
-
 (defun pr2-vive-init ()
   (pr2-init)
   (objects (list *pr2*))
   (setq *ti* (instance pr2-vive-interface :init)))
+
+
+(defun signal-hook (sig code)
+  (when (boundp '*ri*)
+    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+    (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
+    (send *ri* :cancel-angle-vector :controller-type :torso-controller))
+  (when (boundp '*ti*)
+    (send *ti* :switch-joy-to-ps3joy)))
+
+(unix:signal 2 'signal-hook)
+(unix:signal 15 'signal-hook)

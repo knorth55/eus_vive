@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
   <arg name="launch_robot_state_publisher" default="true" />
   <arg name="sanity_check_joint_trajectory" default="false" />
   <include file="$(find jsk_baxter_startup)/baxter.launch">
@@ -18,9 +19,17 @@
   <include file="$(find eus_vive)/launch/include/vive.launch" />
 
   <group if="$(arg main)">
-    <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
-          args="&quot;(main :head t)&quot;" output="screen" />
-    <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
-          args="&quot;(main :head nil)&quot;" output="screen" />
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+            args="&quot;(main :head t :mirror t)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+            args="&quot;(main :head nil :mirror t)&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+            args="&quot;(main :head t :mirror nil)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
+            args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
+    </group>
   </group>
 </launch>
