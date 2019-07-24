@@ -56,7 +56,7 @@
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri)
+  (when (boundp '*ri*)
     (send *ri* :cancel-angle-vector :controller-type :larm-controller)
     (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
     (send *ri* :cancel-angle-vector :controller-type :torso-controller))
