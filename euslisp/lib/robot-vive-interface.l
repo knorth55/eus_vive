@@ -212,7 +212,9 @@
       (setq first-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
       (setq second-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
-      (if (and first-coords second-coords)
+      (if (and (and first-coords second-coords)
+               (> (elt (send first-coords :worldpos) 2)
+                  (elt (send second-coords :worldpos) 2)))
         (progn
           (send self :set-val 'scale
                 (/ (send self :get-val 'arm-length)
