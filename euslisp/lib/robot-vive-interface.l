@@ -252,7 +252,6 @@
               (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
                 (car (send coords :rpy-angle))
                 (cadr (send coords :rpy-angle))))
-        (pprint (send coords :rpy-angle))
         (send robot :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
         (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
         (send self :angle-vector (send robot :angle-vector) av-tm
