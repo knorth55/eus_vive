@@ -48,7 +48,8 @@
 
 (defun signal-hook (sig code)
   (when (boundp '*ri)
-    (send *ri* :cancel-angle-vector :controller-type :default-controller)))
+    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+    (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
 
 
 (unix:signal 2 'signal-hook)

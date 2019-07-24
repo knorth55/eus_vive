@@ -57,7 +57,9 @@
 
 (defun signal-hook (sig code)
   (when (boundp '*ri)
-    (send *ri* :cancel-angle-vector :controller-type :default-controller))
+    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+    (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
+    (send *ri* :cancel-angle-vector :controller-type :torso-controller))
   (when (boundp '*ti*)
     (send *ti* :switch-joy-to-ps3joy)))
 
