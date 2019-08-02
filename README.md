@@ -1,5 +1,45 @@
 # eus_vive
 
+## Tested Environment
+
+- NVidia driver: `396.37`
+- OpenVR: `1.3.22`
+- Steam VR: `1.6.10`
+
+## Installation
+
+### Dependency installation
+
+**Install dependencies**
+
+```bash
+sudo apt-get install --reinstall xserver-xorg-video-intel libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
+sudo dpkg-reconfigure xserver-xorg
+```
+
+**Install `nvidia-396`**
+
+```bash
+sudo apt install nvidia-396
+```
+
+**Install `OpenVR`, `steam` and `steamVR`**
+
+Follow [here](https://github.com/knorth55/vive_ros))
+
+### ROS Workspace build
+
+```bash
+mkdir ~/ros/vive_ws/src -p
+cd ~/ros/vive_ws/src
+wget https://raw.githubusercontent.com/knorth55/eus_vive/master/kinetic.rosinstall?token=ACG6QX52S5VO7PR2KBUVDBC5JUNWY -O .rosinstall
+wstool up
+rosdep install --ignore-src --from-path . -y -r -i
+cd ~/ros/vive_ws
+catkin config
+catkin build
+```
+
 ## How to start 
 
 ### PR2
