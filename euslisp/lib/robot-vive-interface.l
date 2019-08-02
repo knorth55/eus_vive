@@ -330,9 +330,10 @@
             (send self :vive-menu-p (if mirror (send self :get-opposite-arm arm) arm)))
           (enable-p (send self :get-arm-val arm :enable)))
       (when vive-menu-p
-        (when enable-p
+        (if enable-p
           (send robot-interface :cancel-angle-vector
-                :controller-type (send self :get-arm-controller arm)))
+                :controller-type (send self :get-arm-controller arm))
+          (send robot :angle-vector (send robot-interface :state :potentio-vector)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
   (:arm-motion-cb (&key (head t) (torso t) (mirror nil))
