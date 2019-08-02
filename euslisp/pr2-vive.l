@@ -18,4 +18,4 @@
   (init)
   (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso torso :base base
-        :unsafe unsafe :mirror mirror :visualize visualize))
+        :unsafe unsafe :mirror mirror :enable-button :menu :visualize visualize))

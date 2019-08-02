@@ -23,4 +23,4 @@
   (init)
   (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso nil
-        :mirror mirror :visualize visualize))
+        :mirror mirror :enable-button :trackpad :visualize visualize))

@@ -291,6 +291,13 @@
     (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
     (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
     (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0)))
+  (:vive-button-p (arm button)
+    (cond
+      ((eq button :trigger) (send self :vive-trigger-p arm))
+      ((eq button :menu) (send self :vive-menu-p arm))
+      ((eq button :trackpad) (send self :vive-trackpad-p arm))
+      ((eq button :grip) (send self :vive-grip-p arm))
+      (t nil)))
   (:vive-trigger-p (arm)
     (let ((trigger (send self :get-arm-val arm :trigger))
           (prev-trigger (send self :get-arm-val arm :prev-trigger)))
@@ -322,14 +329,15 @@
         (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
       (send *irtviewer* :draw-objects)
       (x::window-main-one)))
-  (:enable-cb (&key (mirror nil))
-    (send self :enable-arm :larm :mirror mirror)
-    (send self :enable-arm :rarm :mirror mirror))
-  (:enable-arm (arm &key (mirror nil))
-    (let ((vive-menu-p
-            (send self :vive-menu-p (if mirror (send self :get-opposite-arm arm) arm)))
+  (:enable-cb (&key (mirror nil) (button :menu))
+    (send self :enable-arm :larm :mirror mirror :button button)
+    (send self :enable-arm :rarm :mirror mirror :button button))
+  (:enable-arm (arm &key (mirror nil) (button :menu))
+    (let ((enable-button-p
+            (send self :vive-button-p
+                  (if mirror (send self :get-opposite-arm arm) arm) button))
           (enable-p (send self :get-arm-val arm :enable)))
-      (when vive-menu-p
+      (when enable-button-p
         (if enable-p
           (send robot-interface :cancel-angle-vector
                 :controller-type (send self :get-arm-controller arm))
@@ -372,9 +380,9 @@
                (send self :arm-motion-cb :head head :torso torso :mirror mirror)))
         (t nil))
       arm-coords))
-  (:main-loop-step (&key (head t) (torso t) (mirror nil) (visualize t))
+  (:main-loop-step (&key (head t) (torso t) (mirror nil) (enable-button :menu) (visualize t))
     (let (arm-coords)
-      (send self :enable-cb :mirror mirror)
+      (send self :enable-cb :mirror mirror :button enable-button)
       (setq arm-coords (send self :motion-cb :head head :torso torso :mirror mirror))
       (when head (send self :head-cb))
       (when visualize (send self :visualize arm-coords))))
@@ -466,8 +474,8 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
-  (:enable-cb (&key (mirror nil) (base t))
-    (send-super :enable-cb :mirror mirror)
+  (:enable-cb (&key (mirror nil) (base t) (button :menu))
+    (send-super :enable-cb :mirror mirror :button button)
     (when base (send self :enable-base)))
   (:enable-base ()
     (cond
@@ -487,9 +495,9 @@
         (base-enable (when base (send self :base-cb :unsafe unsafe :mirror mirror)))
         (t nil))
       arm-coords))
-  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (visualize t))
+  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (enable-button :menu) (visualize t))
     (let (arm-coords)
-      (send self :enable-cb :mirror mirror :base base)
+      (send self :enable-cb :mirror mirror :base base :button enable-button)
       (setq arm-coords
             (send self :motion-cb :head head :torso torso
                   :base base :unsafe unsafe :mirror mirror))
