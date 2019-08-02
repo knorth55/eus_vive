@@ -33,6 +33,7 @@
     (send self :set-val 'torso-av-tm 500)
     (send self :set-val 'torso-av-scale 1.5)
     (send self :set-val 'torso-min-time 0.5)
+    (send self :set-val 'grasp-timeout-time nil)
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
     (send self :set-val 'vw-thresh 0.3)

@@ -27,6 +27,8 @@
           larm-prev-grip
           larm-enable
           larm-vive-frame-id
+          larm-grasp-timeout-p
+          larm-grasp-start-time
           rarm-grasp
           rarm-grasping-p
           rarm-trigger
@@ -39,6 +41,8 @@
           rarm-prev-grip
           rarm-enable
           rarm-vive-frame-id
+          rarm-grasp-timeout-p
+          rarm-grasp-start-time
           ik-stop-step
           scale
           av-tm
@@ -47,6 +51,7 @@
           torso-av-tm
           torso-av-scale
           torso-min-time
+          grasp-timeout-time
           rate
           arm-length
           head->shoulder-x-distance
@@ -277,11 +282,24 @@
           (send robot-interface :start-grasp arm :wait nil))
         (send self :set-arm-val arm :grasp (not grasp-p)))))
   (:gripper-status-cb (arm msg)
-    (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status))))
-      (when grasping-p
+    (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status)))
+          (prev-grasping-p (send self :get-arm-val arm :grasping-p))
+          (grasp-start-time (send self :get-arm-val arm :grasp-start-time))
+          (grasp-timeout-p nil))
+      (when (and grasping-p (not prev-grasping-p))
         (send robot-interface :cancel-angle-vector
               :controller-type (send self :get-arm-controller arm)))
-      (send self :set-arm-val arm :grasping-p grasping-p)))
+      (when (and grasp-start-time (not grasping-p)) (setq grasp-start-time nil))
+      (when (and grasping-p grasp-timeout-time)
+         (unless grasp-start-time (setq grasp-start-time (ros::time-now)))
+         (setq grasp-timeout-p
+               (> (- (send (ros::time-now) :to-nsec) (send grasp-start-time :to-nsec))
+                  (* grasp-timeout-time 1e9))))
+      (when (and grasping-p grasp-timeout-p)
+        (ros::ros-error "grasp timeout for ~A seconds: ~A" grasp-timeout-time arm))
+      (send self :set-arm-val arm :grasping-p grasping-p)
+      (send self :set-arm-val arm :grasp-start-time grasp-start-time)
+      (send self :set-arm-val arm :grasp-timeout-p grasp-timeout-p)))
   (:vive-button-cb (arm msg)
     (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
     (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
@@ -344,9 +362,12 @@
           (send robot :angle-vector (send robot-interface :state :potentio-vector)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
+  (:grasping-p (arm)
+     (and (send self :get-arm-val arm :grasping-p)
+          (not (send self :get-arm-val arm :grasp-timeout-p))))
   (:arm-motion-cb (&key (head t) (torso t) (mirror nil))
     (let ((arm-coords (list nil nil)))
-      (if (and torso (not (or larm-grasping-p rarm-grasping-p)))
+      (if (and torso (not (or (send self grasping-p :larm) (send self grasping-p :rarm))))
         (cond
           ((and larm-enable rarm-enable)
            (send self :gripper-cb :larm :mirror mirror)
@@ -363,11 +384,11 @@
                  (send self :arm-cb :rarm :head head :torso torso :mirror mirror)))
           (t nil))
         (progn
-          (when (and larm-enable (not larm-grasping-p))
+          (when (and larm-enable (not (send self :grasping-p :larm)))
             (send self :gripper-cb :larm :mirror mirror)
             (setf (elt arm-coords 0)
                   (send self :arm-cb :larm :head head :torso nil :mirror mirror)))
-          (when (and rarm-enable (not rarm-grasping-p))
+          (when (and rarm-enable (not (send self :grasping-p :rarm)))
             (send self :gripper-cb :rarm :mirror mirror)
             (setf (elt arm-coords 1)
                   (send self :arm-cb :rarm :head head :torso nil :mirror mirror)))))
