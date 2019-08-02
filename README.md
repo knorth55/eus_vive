@@ -25,7 +25,7 @@ sudo apt install nvidia-396
 
 **Install `OpenVR`, `steam` and `steamVR`**
 
-Follow [here](https://github.com/knorth55/vive_ros))
+Follow [here](https://github.com/knorth55/vive_ros)
 
 ### ROS Workspace build
 
