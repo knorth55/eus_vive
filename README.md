@@ -22,9 +22,12 @@ sudo apt-get install --reinstall xserver-xorg-video-intel libgl1-mesa-glx libgl1
 sudo dpkg-reconfigure xserver-xorg
 ```
 
-**Install `nvidia-396`**
+**Install nvidia-driver**
 
 ```bash
+# for melodic, run command below
+sudo apt install nvidia-driver-390
+# for kinetic, install cuda-9.2 deb (local) manually and run command below.
 sudo apt install nvidia-396
 ```
 
