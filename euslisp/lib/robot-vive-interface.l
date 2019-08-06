@@ -1,8 +1,11 @@
 ;; -*- mode: lisp;-*-
 
 (ros::load-ros-manifest "actionlib_msgs")
+(ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
+
+(load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 
 
 (defclass robot-vive-interface
@@ -18,6 +21,7 @@
           gripper-status-topic-name
           collision-status-topic-name
           collision-status-topic-type
+          robot-state-visualize-topic-name
           larm-grasp
           larm-grasping-p
           larm-trigger
@@ -72,6 +76,7 @@
   (:init ()
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
+    (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-val arm :grasp nil)
       (send self :set-arm-val arm :grasping-p nil)
@@ -97,7 +102,8 @@
     (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
-    (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1))
+    (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
+    (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
   (:set-arm-val (arm name val)
@@ -378,6 +384,9 @@
         (ros::publish rarm-coords-visualize-topic-name
                       (send self :coords->pose-stamped rarm-coords))
         (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
+      (ros::publish robot-state-visualize-topic-name
+                    (angle-vector-to-display-robot-state
+                      robot (send (send robot :link base-frame-id) :copy-worldcoords)))
       (send *irtviewer* :draw-objects)
       (x::window-main-one)))
   (:enable-cb (&key (mirror nil) (button :menu))
