@@ -24,9 +24,9 @@
     ;; for baxter
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 3.0)
-    (send self :set-val 'av-tm 100)
-    (send self :set-val 'av-scale 2.0)
-    (send self :set-val 'min-time 0.1)
+    (send self :set-val 'av-tm 300)
+    (send self :set-val 'av-scale 3.0)
+    (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 0)
