@@ -212,7 +212,7 @@
       target-coords))
   (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
-      (print (format nil "~A arm is not supported ~%" arm))
+      (ros::ros-error (format nil "~A arm is not supported ~%" arm))
       (return-from :get-hmd->vive-coords nil))
     (let ((vive-frame-id (send self :get-arm-val arm :vive-frame-id))
           coords)
