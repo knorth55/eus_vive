@@ -22,16 +22,24 @@
           collision-status-topic-name
           collision-status-topic-type
           robot-state-visualize-topic-name
+          trigger-wait-count
+          menu-wait-count
+          trackpad-wait-count
+          grip-wait-count
           larm-grasp
           larm-grasping-p
           larm-trigger
           larm-prev-trigger
+          larm-trigger-count
           larm-menu
           larm-prev-menu
+          larm-menu-count
           larm-trackpad
           larm-prev-trackpad
+          larm-trackpad-count
           larm-grip
           larm-prev-grip
+          larm-grip-count
           larm-enable
           larm-vive-frame-id
           larm-grasp-timeout-p
@@ -42,12 +50,16 @@
           rarm-grasping-p
           rarm-trigger
           rarm-prev-trigger
+          rarm-trigger-count
           rarm-menu
           rarm-prev-menu
+          rarm-menu-count
           rarm-trackpad
           rarm-prev-trackpad
+          rarm-trackpad-count
           rarm-grip
           rarm-prev-grip
+          rarm-grip-count
           rarm-enable
           rarm-vive-frame-id
           rarm-grasp-timeout-p
@@ -76,18 +88,21 @@
   (:init ()
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
-    (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-val arm :grasp nil)
       (send self :set-arm-val arm :grasping-p nil)
       (send self :set-arm-val arm :trigger nil)
       (send self :set-arm-val arm :prev-trigger nil)
+      (send self :set-arm-val arm :trigger-count 0)
       (send self :set-arm-val arm :menu nil)
       (send self :set-arm-val arm :prev-menu nil)
+      (send self :set-arm-val arm :menu-count 0)
       (send self :set-arm-val arm :trackpad nil)
       (send self :set-arm-val arm :prev-trackpad nil)
+      (send self :set-arm-val arm :trackpad-count 0)
       (send self :set-arm-val arm :grip nil)
       (send self :set-arm-val arm :prev-grip nil)
+      (send self :set-arm-val arm :grip-count 0)
       (send self :set-arm-val arm :enable nil)
       (send self :set-arm-val arm :collision-p nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-val arm :vive-frame-id))
@@ -236,6 +251,7 @@
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
       (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
       (setq first-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
+      (ros::sleep)
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
       (setq second-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
       (if (and (and first-coords second-coords)
@@ -345,20 +361,48 @@
       (t nil)))
   (:vive-trigger-p (arm)
     (let ((trigger (send self :get-arm-val arm :trigger))
-          (prev-trigger (send self :get-arm-val arm :prev-trigger)))
-      (and (not (eq trigger prev-trigger)) trigger)))
+          (prev-trigger (send self :get-arm-val arm :prev-trigger))
+          (trigger-count (send self :get-arm-val arm :trigger-count)))
+      (if (> trigger-count 0)
+        (progn
+          (send self :set-arm-val arm :trigger-count (- trigger-count 1))
+          nil)
+        (let ((vive-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
+          (when vive-trigger-p (send self :set-arm-val arm :trigger-count trigger-wait-count))
+          vive-trigger-p))))
   (:vive-menu-p (arm)
     (let ((menu (send self :get-arm-val arm :menu))
-          (prev-menu (send self :get-arm-val arm :prev-menu)))
-      (and (not (eq menu prev-menu)) menu)))
+          (prev-menu (send self :get-arm-val arm :prev-menu))
+          (menu-count (send self :get-arm-val arm :menu-count)))
+      (if (> menu-count 0)
+        (progn
+          (send self :set-arm-val arm :menu-count (- menu-count 1))
+          nil)
+        (let ((vive-menu-p (and (not (eq menu prev-menu)) menu)))
+          (when vive-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
+          vive-menu-p))))
   (:vive-trackpad-p (arm)
     (let ((trackpad (send self :get-arm-val arm :trackpad))
-          (prev-trackpad (send self :get-arm-val arm :prev-trackpad)))
-      (and (not (eq trackpad prev-trackpad)) trackpad)))
+          (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
+          (trackpad-count (send self :get-arm-val arm :trackpad-count)))
+      (if (> trackpad-count 0)
+        (progn
+          (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
+          nil)
+        (let ((vive-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
+          (when vive-trackpad-p (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
+          vive-trackpad-p))))
   (:vive-grip-p (arm)
     (let ((grip (send self :get-arm-val arm :grip))
-          (prev-grip (send self :get-arm-val arm :prev-grip)))
-      (and (not (eq grip prev-grip)) grip)))
+          (prev-grip (send self :get-arm-val arm :prev-grip))
+          (grip-count (send self :get-arm-val arm :grip-count)))
+      (if (> grip-count 0)
+        (progn
+          (send self :set-arm-val arm :grip-count (- grip-count 1))
+          nil)
+        (let ((vive-grip-p (and (not (eq grip prev-grip)) grip)))
+          (when vive-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
+          vive-grip-p))))
   (:send-joy-feedback (&optional (arm :larm))
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
@@ -399,9 +443,13 @@
           (enable-p (send self :get-arm-val arm :enable)))
       (when enable-button-p
         (if enable-p
-          (send robot-interface :cancel-angle-vector
-                :controller-type (send self :get-arm-controller arm))
-          (send robot :angle-vector (send robot-interface :state :potentio-vector)))
+          (progn
+            (send robot-interface :cancel-angle-vector
+                  :controller-type (send self :get-arm-controller arm))
+            (ros::ros-error "arm: ~A stopping" arm enable-p))
+          (progn
+            (send robot :angle-vector (send robot-interface :state :potentio-vector))
+            (ros::ros-error "arm: ~A starting" arm enable-p)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
   (:grasping-p (arm)
