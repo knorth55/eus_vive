@@ -15,6 +15,8 @@
           cvive-frame-id
           feedback-topic-name
           gripper-status-topic-name
+          collision-status-topic-name
+          collision-status-topic-type
           larm-grasp
           larm-grasping-p
           larm-trigger
@@ -29,6 +31,7 @@
           larm-vive-frame-id
           larm-grasp-timeout-p
           larm-grasp-start-time
+          larm-collision-p
           rarm-grasp
           rarm-grasping-p
           rarm-trigger
@@ -43,6 +46,7 @@
           rarm-vive-frame-id
           rarm-grasp-timeout-p
           rarm-grasp-start-time
+          rarm-collision-p
           ik-stop-step
           scale
           av-tm
@@ -77,10 +81,14 @@
       (send self :set-arm-val arm :grip nil)
       (send self :set-arm-val arm :prev-grip nil)
       (send self :set-arm-val arm :enable nil)
+      (send self :set-arm-val arm :collision-p nil)
       (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
       (ros::subscribe (eval gripper-status-topic-name)
-                      actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm))
+                      actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
+      (when (and collision-status-topic-name collision-status-topic-type)
+        (ros::subscribe (eval collision-status-topic-name) collision-status-topic-type
+                        #'send self :collision-status-cb arm)))
     (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1))
   (:get-arm-val (arm name)
@@ -300,6 +308,12 @@
       (send self :set-arm-val arm :grasping-p grasping-p)
       (send self :set-arm-val arm :grasp-start-time grasp-start-time)
       (send self :set-arm-val arm :grasp-timeout-p grasp-timeout-p)))
+  (:collision-status-cb (arm msg)
+    (let ((collision-p (send msg :collision_state)))
+      (when collision-p
+        (send self :send-joy-feedback arm)
+        (ros::ros-error "arm ~A collision detected, stopped" arm))
+      (send self :set-arm-val arm :collision-p collision-p)))
   (:vive-button-cb (arm msg)
     (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
     (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))

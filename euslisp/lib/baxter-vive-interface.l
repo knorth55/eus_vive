@@ -1,4 +1,5 @@
 ;; -*- mode: lisp;-*-
+(ros::load-ros-manifest "baxter_core_msgs")
 
 (load "package://baxtereus/baxter-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
@@ -32,6 +33,9 @@
     (send self :set-val 'head->shoulder-z-distance 30)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
+    (send self :set-val 'collision-status-topic-name
+          '(format nil "/robot/limb/~A/collision_detection_state" (if (eq arm :larm) "left" "right")))
+    (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
     (send-super :init))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
