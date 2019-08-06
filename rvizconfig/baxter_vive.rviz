@@ -4,9 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
         - /Status1
-      Splitter Ratio: 0.44411763548851013
+      Splitter Ratio: 0.44281524419784546
     Tree Height: 728
   - Class: rviz/Selection
     Name: Selection
@@ -38,7 +37,7 @@ Visualization Manager:
       Cell Size: 1
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.029999999329447746
         Value: Lines
@@ -51,7 +50,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -375,46 +374,43 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: false
+        All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        Link Tree Style: false
+        Link Tree Style: Links in Alphabetic Order
         base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
         collision_head_link_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         collision_head_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         display:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         dummyhead1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
         head:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         head_camera:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
         l_gripper_l_finger:
           Alpha: 1
           Show Axes: false
@@ -439,17 +435,14 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         left_arm_mount:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         left_gripper:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         left_gripper_base:
           Alpha: 1
           Show Axes: false
@@ -474,7 +467,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         left_hand_range:
           Alpha: 1
           Show Axes: false
@@ -499,7 +491,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         left_upper_elbow:
           Alpha: 1
           Show Axes: false
@@ -534,7 +525,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         r_gripper_l_finger:
           Alpha: 1
           Show Axes: false
@@ -559,17 +550,14 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         right_arm_mount:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         right_gripper:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         right_gripper_base:
           Alpha: 1
           Show Axes: false
@@ -594,7 +582,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         right_hand_range:
           Alpha: 1
           Show Axes: false
@@ -619,7 +606,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         right_upper_elbow:
           Alpha: 1
           Show Axes: false
@@ -654,17 +640,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         sonar_ring:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         torso:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
       Name: RobotState
       Robot Alpha: 1
       Robot Description: robot_description
@@ -673,6 +659,25 @@ Visualization Manager:
       Show Highlights: true
       Value: true
       Visual Enabled: true
+    - Align Bottom: false
+      Background Alpha: 0.800000011920929
+      Background Color: 0; 0; 0
+      Class: jsk_rviz_plugin/OverlayText
+      Enabled: true
+      Foreground Alpha: 0.800000011920929
+      Foreground Color: 25; 255; 240
+      Name: OverlayText
+      Overtake Color Properties: true
+      Overtake Position Properties: true
+      Topic: /rosconsole_overlay_text/output
+      Value: true
+      font: DejaVu Sans Mono
+      height: 300
+      left: 20
+      line width: 2
+      text size: 10
+      top: 20
+      width: 400
   Enabled: true
   Global Options:
     Background Color: 211; 215; 207
@@ -701,7 +706,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.2815613746643066
+      Distance: 2.8254520893096924
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -716,10 +721,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4603976011276245
+      Pitch: 0.4603979289531708
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.5803985595703125
+      Yaw: 0.015400069765746593
     Saved: ~
 Window Geometry:
   Displays:
