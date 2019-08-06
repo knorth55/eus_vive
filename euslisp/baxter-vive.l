@@ -16,7 +16,9 @@
   (send *ri* :stop-grasp :arms :wait nil)
   (send *ri* :wait-interpolation)
   (send *ti* :send-joy-feedback :larm)
-  (send *ti* :send-joy-feedback :rarm))
+  (send *ti* :send-joy-feedback :rarm)
+  (send *irtviewer* :draw-objects)
+  (x::window-main-one))
 
 
 (defun main (&key (head nil) (mirror nil) (visualize t))

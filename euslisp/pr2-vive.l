@@ -11,7 +11,9 @@
   (send *ri* :wait-interpolation)
   (send *ri* :clear-costmap)
   (send *ti* :send-joy-feedback :larm)
-  (send *ti* :send-joy-feedback :rarm))
+  (send *ti* :send-joy-feedback :rarm)
+  (send *irtviewer* :draw-objects)
+  (x::window-main-one))
 
 
 (defun main (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (visualize t))
