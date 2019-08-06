@@ -13,6 +13,7 @@
           hmd-frame-id
           bvive-frame-id
           cvive-frame-id
+          base-frame-id
           feedback-topic-name
           gripper-status-topic-name
           collision-status-topic-name
@@ -32,6 +33,7 @@
           larm-grasp-timeout-p
           larm-grasp-start-time
           larm-collision-p
+          larm-coords-visualize-topic-name
           rarm-grasp
           rarm-grasping-p
           rarm-trigger
@@ -47,6 +49,7 @@
           rarm-grasp-timeout-p
           rarm-grasp-start-time
           rarm-collision-p
+          rarm-coords-visualize-topic-name
           ik-stop-step
           scale
           av-tm
@@ -88,9 +91,13 @@
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
       (when (and collision-status-topic-name collision-status-topic-type)
         (ros::subscribe (eval collision-status-topic-name) collision-status-topic-type
-                        #'send self :collision-status-cb arm)))
+                        #'send self :collision-status-cb arm))
+      (send self :set-arm-val arm :coords-visualize-topic-name
+            (format nil "/eus_vive/~A/target_pose_stamped" (if (eq arm :larm) "left" "right"))))
     (send self :set-val 'tfl (instance ros::transform-listener :init))
-    (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1))
+    (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
+    (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
+    (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
   (:set-arm-val (arm name val)
@@ -351,13 +358,30 @@
       (setq msg (instance sensor_msgs::JoyFeedback :init
                           :type 1 :id id :intensity 3000))
       (ros::publish feedback-topic-name msg)))
+  (:coords->pose-stamped (coords)
+    (let ((msg (instance geometry_msgs::PoseStamped :init))
+          (quat (matrix2quaternion (send coords :worldrot)))
+          (pos (send coords :worldpos)))
+      (send msg :header :frame_id base-frame-id)
+      (send msg :pose :position :x (/ (elt pos 0) 1000.0))
+      (send msg :pose :position :y (/ (elt pos 1) 1000.0))
+      (send msg :pose :position :z (/ (elt pos 2) 1000.0))
+      (send msg :pose :orientation :w (elt quat 0))
+      (send msg :pose :orientation :x (elt quat 1))
+      (send msg :pose :orientation :y (elt quat 2))
+      (send msg :pose :orientation :z (elt quat 3))
+      msg))
   (:visualize (arm-coords)
     (let (larm-coords rarm-coords)
       (setq larm-coords (car arm-coords))
       (when larm-coords
+        (ros::publish larm-coords-visualize-topic-name
+                      (send self :coords->pose-stamped larm-coords))
         (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0)))
       (setq rarm-coords (cadr arm-coords))
       (when rarm-coords
+        (ros::publish rarm-coords-visualize-topic-name
+                      (send self :coords->pose-stamped rarm-coords))
         (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
       (send *irtviewer* :draw-objects)
       (x::window-main-one)))

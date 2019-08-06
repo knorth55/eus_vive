@@ -21,6 +21,7 @@
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     (send self :set-val 'larm-vive-frame-id "/controller_LHR_FD35BD42")
     (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
+    (send self :set-val 'base-frame-id "base")
     ;; for baxter
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 3.0)
