@@ -32,4 +32,6 @@
             args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
     </group>
   </group>
+  <node name="$(anon rviz)" pkg="rviz" type="rviz"
+        args="-d $(find eus_vive)/rvizconfig/baxter_vive.rviz" />
 </launch>
