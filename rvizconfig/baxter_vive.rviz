@@ -56,7 +56,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: true
+        All Links Enabled: false
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -69,17 +69,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         collision_head_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         display:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         dummyhead1:
           Alpha: 1
           Show Axes: false
@@ -88,7 +88,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         head_camera:
           Alpha: 1
           Show Axes: false
@@ -207,7 +207,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         r_gripper_l_finger:
           Alpha: 1
           Show Axes: false
@@ -322,17 +322,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         sonar_ring:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         torso:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -374,7 +374,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: true
+        All Links Enabled: false
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -387,17 +387,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         collision_head_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         display:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         dummyhead1:
           Alpha: 1
           Show Axes: false
@@ -406,7 +406,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         head_camera:
           Alpha: 1
           Show Axes: false
@@ -525,7 +525,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         r_gripper_l_finger:
           Alpha: 1
           Show Axes: false
@@ -640,17 +640,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         sonar_ring:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         torso:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
       Name: RobotState
       Robot Alpha: 1
       Robot Description: robot_description
@@ -706,25 +706,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.8254520893096924
+      Distance: 2.07348370552063
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.2340845763683319
+        Y: 0.07277911901473999
+        Z: 0.2688637971878052
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4603979289531708
+      Pitch: 0.7553974986076355
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.015400069765746593
+      Yaw: 3.1154019832611084
     Saved: ~
 Window Geometry:
   Displays:
