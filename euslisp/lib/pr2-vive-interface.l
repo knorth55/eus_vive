@@ -68,7 +68,8 @@
     (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
     (send *ri* :cancel-angle-vector :controller-type :torso-controller))
   (when (boundp '*ti*)
-    (send *ti* :switch-joy-to-ps3joy)))
+    (send *ti* :switch-joy-to-ps3joy))
+  (reset))
 
 (unix:signal 2 'signal-hook)
 (unix:signal 15 'signal-hook)
