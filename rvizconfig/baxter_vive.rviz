@@ -374,7 +374,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: false
+        All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -387,17 +387,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         collision_head_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         display:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         dummyhead1:
           Alpha: 1
           Show Axes: false
@@ -406,7 +406,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         head_camera:
           Alpha: 1
           Show Axes: false
@@ -525,7 +525,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         r_gripper_l_finger:
           Alpha: 1
           Show Axes: false
@@ -640,17 +640,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         sonar_ring:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         torso:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
       Name: RobotState
       Robot Alpha: 1
       Robot Description: robot_description
@@ -721,10 +721,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7553974986076355
+      Pitch: 0.255397230386734
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.1154019832611084
+      Yaw: 6.203588962554932
     Saved: ~
 Window Geometry:
   Displays:
