@@ -4,7 +4,7 @@
 
 
 (defun init ()
-  (ros::roseus "baxtereus_vive")
+  (ros::roseus "baxter_vive_main" :anonymous nil)
   (baxter-vive-init)
   ;; overwrite s0, e0 joint limit
   ;; do not rotate s0, e0 joint and stay arm in front of the robot

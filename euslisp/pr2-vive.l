@@ -4,7 +4,7 @@
 
 
 (defun init ()
-  (ros::roseus "pr2eus_vive")
+  (ros::roseus "pr2_vive_main" :anonymous nil)
   (pr2-vive-init)
   (send *ri* :angle-vector (send *pr2* :reset-pose))
   (send *ri* :stop-grasp :arms :wait nil)
