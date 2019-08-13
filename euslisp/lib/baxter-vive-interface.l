@@ -20,12 +20,12 @@
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     ;; for vive
-    (send self :set-val 'hmd-frame-id "/hmd")
-    (send self :set-val 'bvive-frame-id "/lighthouse_LHB_11CFA4E1")
-    (send self :set-val 'cvive-frame-id "/lighthouse_LHB_8E924CC3")
+    (send self :set-val 'hmd-frame-id "hmd")
+    (send self :set-val 'bvive-frame-id "lighthouse_LHB_11CFA4E1")
+    (send self :set-val 'cvive-frame-id "lighthouse_LHB_8E924CC3")
+    (send self :set-val 'larm-vive-frame-id "controller_LHR_FD35BD42")
+    (send self :set-val 'rarm-vive-frame-id "controller_LHR_F7AFBF47")
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    (send self :set-val 'larm-vive-frame-id "/controller_LHR_FD35BD42")
-    (send self :set-val 'rarm-vive-frame-id "/controller_LHR_F7AFBF47")
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'ik-stop-step 10)

@@ -105,7 +105,7 @@
       (send self :set-arm-val arm :grip-count 0)
       (send self :set-arm-val arm :enable nil)
       (send self :set-arm-val arm :collision-p nil)
-      (ros::subscribe (format nil "/vive~A/joy" (send self :get-arm-val arm :vive-frame-id))
+      (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
       (ros::subscribe (eval gripper-status-topic-name)
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
