@@ -19,7 +19,9 @@
 (defun main (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                   (visualize t))
   (init)
-  (while (not (send *ti* :calib-vive :rarm)))
+  (unless head
+    (while (not (send *ti* :calib-vive :rarm))
+      (ros::spin-once)))
   (send *ti* :main-loop :head head :torso torso :base base
         :safe-arm safe-arm :safe-base safe-base :mirror mirror
         :enable-button :menu :visualize visualize))
