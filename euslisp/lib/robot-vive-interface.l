@@ -46,6 +46,7 @@
           larm-grasp-start-time
           larm-collision-p
           larm-coords-visualize-topic-name
+          larm-current-end-coords
           rarm-grasp
           rarm-grasping-p
           rarm-trigger
@@ -66,6 +67,7 @@
           rarm-grasp-start-time
           rarm-collision-p
           rarm-coords-visualize-topic-name
+          rarm-current-end-coords
           ik-stop-step
           scale
           av-tm
@@ -105,6 +107,7 @@
       (send self :set-arm-val arm :grip-count 0)
       (send self :set-arm-val arm :enable nil)
       (send self :set-arm-val arm :collision-p nil)
+      (send self :set-arm-val arm :current-end-coords nil)
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
       (ros::subscribe (eval gripper-status-topic-name)
@@ -447,6 +450,12 @@
             (ros::ros-info "arm: ~A starting" arm)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
+  (:update-current-coords ()
+     (send robot :angle-vector (send robot-interface :state :potentio-vector))
+     (send self :set-val 'larm-current-end-coords
+           (send robot :larm :end-coords :copy-worldcoords))
+     (send self :set-val 'rarm-current-end-coords
+           (send robot :rarm :end-coords :copy-worldcoords)))
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
@@ -488,6 +497,7 @@
       arm-coords))
   (:main-loop-step (&key (head t) (torso t) (mirror nil) (enable-button :menu) (visualize t))
     (let (arm-coords)
+      (send self :update-current-coords)
       (send self :enable-cb :mirror mirror :button enable-button)
       (setq arm-coords (send self :motion-cb :head head :torso torso :mirror mirror))
       (when head (send self :head-cb))
@@ -603,6 +613,7 @@
       arm-coords))
   (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (enable-button :menu) (visualize t))
     (let (arm-coords)
+      (send self :update-current-coords)
       (send self :enable-cb :mirror mirror :base base :button enable-button)
       (setq arm-coords
             (send self :motion-cb :head head :torso torso
