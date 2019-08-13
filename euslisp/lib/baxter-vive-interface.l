@@ -20,7 +20,7 @@
     (send self :set-val 'trackpad-wait-count 5)
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
-    (send self :set-val 'end-coords-pos-diff-thresh 300)
+    (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
