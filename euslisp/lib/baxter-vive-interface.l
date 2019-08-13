@@ -46,9 +46,13 @@
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
-    (send* robot :inverse-kinematics target-coords
-           :rotation-axis t :move-target (send robot arm :end-coords)
-           :revert-if-fail nil :stop ik-stop-step :debug-view nil args)))
+    (if (eq arm :arms)
+      (send* robot :inverse-kinematics-raw target-coords :rotation-axis (list t t)
+             :move-target (list (send robot :larm :end-coords) (send robot :rarm :end-coords))
+             :revert-if-fail nil :stop ik-stop-step :debug-view nil args)
+      (send* robot :inverse-kinematics-raw target-coords
+             :rotation-axis t :move-target (send robot arm :end-coords)
+             :revert-if-fail nil :stop ik-stop-step :debug-view nil args))))
 
 
 (defun baxter-vive-init ()
