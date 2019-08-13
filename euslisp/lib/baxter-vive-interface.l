@@ -13,6 +13,7 @@
   (:init ()
     (send self :set-val 'robot *baxter*)
     (send self :set-val 'robot-interface *ri*)
+    (send self :set-val 'camera-model *camera-model*)
     (send self :set-val 'rate 10)
     (send self :set-val 'trigger-wait-count 5)
     (send self :set-val 'menu-wait-count 5)
@@ -20,6 +21,7 @@
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'end-coords-pos-diff-thresh 300)
+    (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
     (send self :set-val 'bvive-frame-id "lighthouse_LHB_11CFA4E1")
@@ -61,6 +63,18 @@
 (defun baxter-vive-init ()
   (baxter-init)
   (objects (list *baxter*))
+  (setq *camera-model*
+        (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+                                :name "camera"))
+  (send *camera-model* :translate #f(2000 0 0))
+  (send *camera-model* :rotate -1.57 :y :world)
+  (send *camera-model* :rotate -1.57 :x :world)
+  (send *irtviewer* :change-background (float-vector 1 1 1))
+  (send *irtviewer* :draw-floor 100)
+  (send *irtviewer* :floor-color #f(0 0 0))
+  (setq *background-cube* (make-cube 10 6000 6000))
+  (send *background-cube* :set-color #f(1 1 1))
+  (send *background-cube* :translate #f(-1000 0 0))
   (setq *ti* (instance baxter-vive-interface :init)))
 
 

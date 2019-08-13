@@ -16,12 +16,15 @@
           hmd-frame-id
           bvive-frame-id
           cvive-frame-id
+          camera-model
           base-frame-id
           feedback-topic-name
           gripper-status-topic-name
           collision-status-topic-name
           collision-status-topic-type
           robot-state-visualize-topic-name
+          irtviewer-visualize-topic-name
+          draw-object-list
           trigger-wait-count
           menu-wait-count
           trackpad-wait-count
@@ -91,6 +94,7 @@
   (:init ()
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
+    (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-val arm :grasp nil)
       (send self :set-arm-val arm :grasping-p nil)
@@ -122,7 +126,8 @@
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
-    (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1))
+    (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
+    (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
   (:set-arm-val (arm name val)
@@ -438,21 +443,33 @@
       (send msg :pose :orientation (ros::rot->tf-quaternion rot))
       msg))
   (:visualize (arm-coords)
-    (let (larm-coords rarm-coords)
+    (let ((camera-draw-object-list draw-object-list)
+          larm-cube larm-coords rarm-cube rarm-coords)
       (setq larm-coords (car arm-coords))
       (when larm-coords
         (ros::publish larm-coords-visualize-topic-name
                       (send self :coords->pose-stamped larm-coords))
-        (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0)))
+        (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0))
+        (setq larm-cube (make-cube 100 100 100))
+        (send larm-cube :set-color :green)
+        (send larm-cube :4x4 (send larm-coords :4x4))
+        (setq camera-draw-object-list (append camera-draw-object-list (list larm-cube))))
       (setq rarm-coords (cadr arm-coords))
       (when rarm-coords
         (ros::publish rarm-coords-visualize-topic-name
                       (send self :coords->pose-stamped rarm-coords))
-        (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0)))
+        (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0))
+        (setq rarm-cube (make-cube 100 100 100))
+        (send rarm-cube :set-color :red)
+        (send rarm-cube :4x4 (send rarm-coords :4x4))
+        (setq camera-draw-object-list (append camera-draw-object-list (list rarm-cube))))
       (ros::publish robot-state-visualize-topic-name
                     (angle-vector-to-display-robot-state
                       robot (send (send robot :link base-frame-id) :copy-worldcoords)))
       (send *irtviewer* :draw-objects)
+      (send camera-model :draw-objects camera-draw-object-list)
+      (ros::publish irtviewer-visualize-topic-name
+                    (ros::image->sensor_msgs/Image (send camera-model :get-image)))
       (x::window-main-one)))
   (:enable-cb (&key (mirror nil) (button :menu))
     (send self :enable-arm :larm :mirror mirror :button button)
