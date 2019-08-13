@@ -16,8 +16,10 @@
   (x::window-main-one))
 
 
-(defun main (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (visualize t))
+(defun main (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
+                  (visualize t))
   (init)
   (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso torso :base base
-        :unsafe unsafe :mirror mirror :enable-button :menu :visualize visualize))
+        :safe-arm safe-arm :safe-base safe-base :mirror mirror
+        :enable-button :menu :visualize visualize))

@@ -21,8 +21,8 @@
   (x::window-main-one))
 
 
-(defun main (&key (head nil) (mirror nil) (visualize t))
+(defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t))
   (init)
   (while (not (send *ti* :calib-vive :rarm)))
   (send *ti* :main-loop :head head :torso nil
-        :mirror mirror :enable-button :menu :visualize visualize))
+        :safe-arm safe-arm :mirror mirror :enable-button :menu :visualize visualize))

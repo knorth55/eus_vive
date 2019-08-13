@@ -19,6 +19,7 @@
     (send self :set-val 'trackpad-wait-count 5)
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
+    (send self :set-val 'end-coords-pos-diff-thresh 300)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
     (send self :set-val 'bvive-frame-id "lighthouse_LHB_11CFA4E1")
