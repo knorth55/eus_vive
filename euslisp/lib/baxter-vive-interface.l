@@ -49,10 +49,12 @@
     (if (eq arm :arms)
       (send* robot :inverse-kinematics-raw target-coords :rotation-axis (list t t)
              :move-target (list (send robot :larm :end-coords) (send robot :rarm :end-coords))
-             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step :debug-view nil args)
+             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :debug-view nil args)
       (send* robot :inverse-kinematics-raw target-coords
              :rotation-axis t :move-target (send robot arm :end-coords)
-             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step :debug-view nil args))))
+             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :debug-view nil args))))
 
 
 (defun baxter-vive-init ()

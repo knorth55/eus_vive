@@ -176,7 +176,8 @@
                  av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
            (when torso
              (send self :angle-vector (send robot :angle-vector)
-                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale))))
+                   torso-av-tm :torso-controller 0 :min-time torso-min-time
+                   :scale torso-av-scale))))
         target-coords)
       (let ((target-coords
               (send self :get-target-coords arm :head head :mirror mirror)))
@@ -611,7 +612,8 @@
         (base-enable (when base (send self :base-cb :unsafe unsafe :mirror mirror)))
         (t nil))
       arm-coords))
-  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil) (enable-button :menu) (visualize t))
+  (:main-loop-step (&key (head t) (torso t) (base t) (unsafe t) (mirror nil)
+                         (enable-button :menu) (visualize t))
     (let (arm-coords)
       (send self :update-current-coords)
       (send self :enable-cb :mirror mirror :base base :button enable-button)
