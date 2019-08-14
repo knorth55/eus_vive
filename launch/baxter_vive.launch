@@ -2,6 +2,8 @@
   <arg name="main" default="true" />
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
+  <arg name="realsense" default="false" />
+  <arg name="mask_rcnn" default="false" />
   <arg name="launch_robot_state_publisher" default="true" />
   <arg name="sanity_check_joint_trajectory" default="false" />
   <include file="$(find jsk_baxter_startup)/baxter.launch">
@@ -62,6 +64,11 @@
   <node name="irtviewer_xdisplay"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
         args="/eus_vive_status_visualizer/output/image" />
+
+  <include file="$(find eus_vive)/launch/include/realsense.launch" if="$(eval realsense or mask_rcnn)" />
+  <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
+    <arg name="INPUT_IMAGE" value="/realsense/color/image_rect_color" />
+  </include>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter_vive.rviz" />
