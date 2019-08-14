@@ -53,9 +53,15 @@
     </rosparam>
   </node>
 
+  <node name="eus_vive_status_visualizer"
+      pkg="eus_vive" type="eus_vive_status_visualizer.py">
+    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
+    <remap from="~input/status" to="/eus_vive/status" />
+  </node>
+
   <node name="irtviewer_xdisplay"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
-        args="/eus_vive/irtviewer/image" />
+        args="/eus_vive_status_visualizer/output/image" />
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter_vive.rviz" />
