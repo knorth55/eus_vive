@@ -16,9 +16,12 @@
   <depend>baxtereus</depend>
   <depend>jsk_interactive_marker</depend>
   <depend>jsk_topic_tools</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
   <depend>pr2eus</depend>
   <depend>roseus</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>topic_tools</depend>
   <depend>vive_ros</depend>
 
