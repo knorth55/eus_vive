@@ -98,6 +98,7 @@
   (:init ()
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
+    (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
     (dolist (arm (list :larm :rarm))
