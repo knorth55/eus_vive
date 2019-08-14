@@ -1,6 +1,7 @@
 ;; -*- mode: lisp;-*-
 
 (ros::load-ros-manifest "actionlib_msgs")
+(ros::load-ros-manifest "eus_vive")
 (ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
@@ -24,6 +25,7 @@
           collision-status-topic-type
           robot-state-visualize-topic-name
           irtviewer-visualize-topic-name
+          eus-vive-status-topic-name
           draw-object-list
           trigger-wait-count
           menu-wait-count
@@ -50,6 +52,7 @@
           larm-collision-p
           larm-coords-visualize-topic-name
           larm-current-end-coords
+          larm-track-error-p
           rarm-grasp
           rarm-grasping-p
           rarm-trigger
@@ -71,6 +74,7 @@
           rarm-collision-p
           rarm-coords-visualize-topic-name
           rarm-current-end-coords
+          rarm-track-error-p
           ik-stop-step
           scale
           av-tm
@@ -95,6 +99,7 @@
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
+    (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
     (dolist (arm (list :larm :rarm))
       (send self :set-arm-val arm :grasp nil)
       (send self :set-arm-val arm :grasping-p nil)
@@ -113,6 +118,7 @@
       (send self :set-arm-val arm :enable nil)
       (send self :set-arm-val arm :collision-p nil)
       (send self :set-arm-val arm :current-end-coords nil)
+      (send self :set-arm-val arm :track-error-p nil)
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
       (ros::subscribe (eval gripper-status-topic-name)
@@ -127,6 +133,7 @@
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
+    (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
@@ -161,8 +168,11 @@
           (send self :send-joy-feedback arm)
           (ros::ros-error "arm ~A target-coords is too far from current position: ~A > ~A"
                           arm end-coords-pos-diff end-coords-pos-diff-thresh)
+          (send self :set-arm-val arm :track-error-p t)
           nil)
-        target-coords)))
+        (progn
+          (send self :set-arm-val arm :track-error-p nil)
+          target-coords))))
   (:arm-cb (arm &key (head t) (torso t) (safe t) (mirror nil))
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
@@ -442,8 +452,24 @@
       (send msg :pose :position (ros::pos->tf-translation pos))
       (send msg :pose :orientation (ros::rot->tf-quaternion rot))
       msg))
+  (:generate-eus-vive-status-msg ()
+    (let ((eus-vive-status-msg (instance eus_vive::EusViveStatusArray :init))
+          (now (ros::time-now))
+          (eus-vive-status nil))
+      (send eus-vive-status-msg :header :stamp now)
+      (dolist (arm (list :larm :rarm))
+        (let ((msg (instance eus_vive::EusViveStatus :init)))
+          (send msg :header :stamp now)
+          (send msg :part_name (string-downcase arm))
+          (send msg :enable (send self :get-arm-val arm :enable))
+          (send msg :collision (send self :get-arm-val arm :collision-p))
+          (send msg :track_error (send self :get-arm-val arm :track-error-p))
+          (setq eus-vive-status (append eus-vive-status (list msg)))))
+      (send eus-vive-status-msg :status eus-vive-status)
+      eus-vive-status-msg))
   (:visualize (arm-coords)
     (let ((camera-draw-object-list draw-object-list)
+          (eus-vive-status-msg (send self :generate-eus-vive-status-msg))
           larm-cube larm-coords rarm-cube rarm-coords)
       (setq larm-coords (car arm-coords))
       (when larm-coords
@@ -451,7 +477,9 @@
                       (send self :coords->pose-stamped larm-coords))
         (send larm-coords :draw-on :flush t :size 50 :width 5 :color #f(0 1 0))
         (setq larm-cube (make-cube 100 100 100))
-        (send larm-cube :set-color :green)
+        (if (or (send self :get-arm-val :larm :collision-p) (send self :get-arm-val :larm :track-error-p))
+          (send larm-cube :set-color :red)
+          (send larm-cube :set-color :green))
         (send larm-cube :4x4 (send larm-coords :4x4))
         (setq camera-draw-object-list (append camera-draw-object-list (list larm-cube))))
       (setq rarm-coords (cadr arm-coords))
@@ -460,12 +488,15 @@
                       (send self :coords->pose-stamped rarm-coords))
         (send rarm-coords :draw-on :flush t :size 50 :width 5 :color #f(1 0 0))
         (setq rarm-cube (make-cube 100 100 100))
-        (send rarm-cube :set-color :red)
+        (if (or (send self :get-arm-val :rarm :collision-p) (send self :get-arm-val :rarm :track-error-p))
+          (send rarm-cube :set-color :red)
+          (send rarm-cube :set-color :blue))
         (send rarm-cube :4x4 (send rarm-coords :4x4))
         (setq camera-draw-object-list (append camera-draw-object-list (list rarm-cube))))
       (ros::publish robot-state-visualize-topic-name
                     (angle-vector-to-display-robot-state
                       robot (send (send robot :link base-frame-id) :copy-worldcoords)))
+      (ros::publish eus-vive-status-topic-name eus-vive-status-msg)
       (send *irtviewer* :draw-objects)
       (send camera-model :draw-objects camera-draw-object-list)
       (ros::publish irtviewer-visualize-topic-name
