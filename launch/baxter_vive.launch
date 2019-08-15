@@ -6,8 +6,23 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="launch_robot_state_publisher" default="true" />
   <arg name="sanity_check_joint_trajectory" default="false" />
+  <arg name="finger" default="standard_narrow" />
+  <arg name="finger_tip" default="paddle_tip" />
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro $(find eus_vive)/urdf/baxter.urdf.xacro gazebo:=false
+                  left_electric_gripper:=true right_electric_gripper:=true
+                  finger:=$(arg finger) finger_tip:=$(arg finger_tip)"/>
+
+  <param name="robot_description_semantic"
+         command="$(find xacro)/xacro.py --inorder
+                  $(find baxter_moveit_config)/config/baxter.srdf.xacro
+                  left_electric_gripper:=true right_electric_gripper:=true
+                  left_tip_name:=left_gripper right_tip_name:=right_gripper"/>
+
+
   <include file="$(find jsk_baxter_startup)/baxter.launch">
-    <arg name="load_robot_description" value="true" />
+    <arg name="load_robot_description" value="false" />
     <arg name="launch_robot_state_publisher" value="$(arg launch_robot_state_publisher)" />
     <arg name="sanity_check_joint_trajectory" value="$(arg sanity_check_joint_trajectory)" />
     <arg name="launch_moveit" value="false" />
@@ -18,6 +33,7 @@
     <arg name="arm_interpolation" value="bezier_with_velocity" />
     <arg name="arm_control_mode" value="velocity" />
   </include>
+
   <include file="$(find eus_vive)/launch/include/vive.launch" />
 
   <group if="$(arg main)">
@@ -34,12 +50,6 @@
             args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
     </group>
   </group>
-
-  <param name="robot_description_semantic"
-         command="$(find xacro)/xacro.py --inorder
-                  $(find baxter_moveit_config)/config/baxter.srdf.xacro
-                  left_electric_gripper:=true right_electric_gripper:=true
-                  left_tip_name:=left_gripper right_tip_name:=right_gripper"/>
 
   <node name="rosconsole_overlay_text"
         pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
