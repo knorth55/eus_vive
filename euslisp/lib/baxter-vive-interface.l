@@ -65,9 +65,10 @@
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
                                 :name "camera"))
-  (send *camera-model* :translate #f(1500 0 300))
+  (send *camera-model* :translate #f(1500 0 600))
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
+  (send *camera-model* :rotate -0.30 :y :world)
   (send *irtviewer* :change-background (float-vector 1 1 1))
   (send *irtviewer* :draw-floor 100)
   (send *irtviewer* :floor-color #f(0 0 0))
