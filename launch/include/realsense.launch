@@ -2,5 +2,6 @@
   <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
     <arg name="camera" value="realsense" />
     <arg name="enable_pointcloud" value="true" />
+    <arg name="align_depth" value="false"/>
   </include>
 </launch>

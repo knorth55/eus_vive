@@ -3,6 +3,7 @@
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
   <arg name="realsense" default="false" />
+  <arg name="logging" default="true" />
   <arg name="mask_rcnn" default="false" />
   <arg name="launch_robot_state_publisher" default="true" />
   <arg name="sanity_check_joint_trajectory" default="false" />
@@ -27,6 +28,8 @@
     <arg name="sanity_check_joint_trajectory" value="$(arg sanity_check_joint_trajectory)" />
     <arg name="launch_moveit" value="false" />
     <arg name="launch_time_signal" value="false" />
+    <arg name="launch_db" value="false"/>
+    <arg name="launch_twitter" value="false"/>
     <arg name="launch_gripper_action" value="true" />
     <arg name="left_electric_gripper" value="true" />
     <arg name="right_electric_gripper" value="true" />
@@ -75,10 +78,22 @@
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
         args="/eus_vive_status_visualizer/output/image" />
 
-  <include file="$(find eus_vive)/launch/include/realsense.launch" if="$(eval realsense or mask_rcnn)" />
+  <include file="$(find eus_vive)/launch/include/realsense.launch" if="$(eval realsense or mask_rcnn or logging)" />
   <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
     <arg name="INPUT_IMAGE" value="/realsense/color/image_rect_color" />
   </include>
+
+  <group if="$(arg logging)">
+    <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
+      <arg name="use_daemon" value="false"/>
+      <arg name="port" value="27017" />
+      <arg name="repl_set_mode" value="false" />
+    </include>
+    <include file="$(find eus_vive)/launch/include/db_client.launch">
+      <arg name="twitter" value="true" />
+    </include>
+  </group>
+
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter_vive.rviz" />
