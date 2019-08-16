@@ -24,7 +24,11 @@
 (defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t))
   (init)
   (unless head
-    (while (not (send *ti* :calib-vive :rarm))
-      (ros::spin-once)))
+    (let (calib-p)
+      (while (not calib-p)
+        (setq calib-p (send *ti* :calib-vive :rarm))
+        (unless calib-p (send *ri* :speak "Please try calibration again." :wait t))
+        (ros::spin-once))))
+  (send *ri* :nod)
   (send *ti* :main-loop :head head :torso nil
         :safe-arm safe-arm :mirror mirror :enable-button :menu :visualize visualize))
