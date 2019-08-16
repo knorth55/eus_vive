@@ -74,6 +74,12 @@
     <remap from="~input/status" to="/eus_vive/status" />
   </node>
 
+  <node name="eus_vive_status_sounder"
+      pkg="eus_vive" type="eus_vive_status_sounder.py">
+    <remap from="~output/sound" to="/robotsound" />
+    <remap from="~input/status" to="/eus_vive/status" />
+  </node>
+
   <node name="irtviewer_xdisplay"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
         args="/eus_vive_status_visualizer/output/image" />
