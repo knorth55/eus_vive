@@ -533,7 +533,7 @@
           (not (send self :get-arm-val arm :grasp-timeout-p))))
   (:arm-motion-cb (&key (head t) (torso t) (safe t) (mirror nil))
     (let ((visualize-arm-coords (list nil nil)))
-      (if (and torso (not (or (send self grasping-p :larm) (send self grasping-p :rarm))))
+      (if (and torso (not (or (send self :grasping-p :larm) (send self :grasping-p :rarm))))
         (cond
           ((and larm-enable rarm-enable)
            (send self :gripper-cb :larm :mirror mirror)
