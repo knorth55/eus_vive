@@ -63,7 +63,7 @@
   (objects (list *pr2*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5))
-  (send *camera-model* :translate #f(2000 0 0))
+  (send *camera-model* :translate #f(1500 0 800))
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
   (setq *ti* (instance pr2-vive-interface :init)))
