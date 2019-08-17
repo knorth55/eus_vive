@@ -1,9 +1,12 @@
 <launch>
   <arg name="main" default="true" />
+  <arg name="vive" default="true" />
   <arg name="head" default="false" />
 
   <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
-  <include file="$(find eus_vive)/launch/include/vive.launch" />
+
+  <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" />
+
   <group if="$(arg main)">
     <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
           args="&quot;(main :head t)&quot;" output="screen" />

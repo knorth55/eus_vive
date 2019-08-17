@@ -1,8 +1,10 @@
 <launch>
   <arg name="main" default="true" />
+  <arg name="vive" default="true" />
   <arg name="head" default="true" />
   <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
+
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
@@ -70,7 +72,8 @@
     <arg name="IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
     <arg name="IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
   </include>
-  <include file="$(find eus_vive)/launch/include/vive.launch">
+
+  <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)">
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
   </include>
