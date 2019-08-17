@@ -29,30 +29,44 @@ class EusViveStatusSounder(ConnectionBasedTransport):
         self.status_sub.unregister()
 
     def _timer_cb(self, event):
-        if any(self.collision.values()) or any(self.track_error.values()):
+        larm_enable = self.enable['larm']
+        larm_collision = self.collision['larm'] if larm_enable else False
+        larm_track_error = self.track_error['larm'] if larm_enable else False
+        rarm_enable = self.enable['rarm']
+        rarm_collision = self.collision['rarm'] if rarm_enable else False
+        rarm_track_error = self.track_error['rarm'] if rarm_enable else False
+        if larm_collision or rarm_collision:
+            sound_msg = SoundRequest()
+            sound_msg.sound = SoundRequest.PLAY_FILE
+            sound_msg.command = SoundRequest.PLAY_ONCE
+            sound_msg.volume = 0.7
+            sound_msg.arg = os.path.join(
+                self.rospack.get_path('eus_vive'), 'sounds/alert.wav')
+            self.pub.publish(sound_msg)
+            rospy.sleep(1.5)
+            warning_msg = SoundRequest()
+            warning_msg.sound = SoundRequest.SAY
+            warning_msg.command = SoundRequest.PLAY_ONCE
+            warning_msg.volume = 1.0
+            warning_msg.arg = "collision error"
+            self.pub.publish(warning_msg)
+            rospy.sleep(1.0)
+        elif larm_track_error or rarm_track_error:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
             sound_msg.volume = 1.0
             sound_msg.arg = os.path.join(
-                self.rospack.get_path('eus_vive'), 'sounds/alert.wav')
+                self.rospack.get_path('eus_vive'), 'sounds/warn.wav')
             self.pub.publish(sound_msg)
-            rospy.sleep(1.0)
+            rospy.sleep(1.5)
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
             warning_msg.volume = 1.0
-            if any(self.collision.values()):
-                warning_msg.arg = "collision error"
-            else:
-                warning_msg.arg = "tracking error"
+            warning_msg.arg = "tracking error"
             self.pub.publish(warning_msg)
             rospy.sleep(1.0)
-        else:
-            sound_msg = SoundRequest()
-            sound_msg.command = SoundRequest.PLAY_STOP
-            sound_msg.volume = 0.0
-            self.pub.publish(sound_msg)
 
     def _status_cb(self, msg):
         for status in msg.status:
