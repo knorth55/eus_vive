@@ -5,6 +5,14 @@
 
   <arg name="twitter" default="true" />
   <arg name="output" default="screen" />
+  <arg name="manager" default="mongodb_record_nodelet_manager" />
+  <arg name="log_rate" default="5.0" />
+  <arg name="respawn" default="false" />
+  <arg name="enable_monitor" default="false" />
+  <arg name="vital_check" default="true" />
+
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        output="screen" respawn="$(arg respawn)" />
 
   <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch">
     <arg name="save_rgb" value="true" />
@@ -26,10 +34,13 @@
     <arg name="depth_topic" value="image_rect_raw" />
     <arg name="joint_states_topic" value="robot/joint_states" />
 
-    <arg name="enable_monitor" value="false" />
-    <arg name="log_rate" value="1.0" />
-    <arg name="launch_manager" value="true" />
+    <arg name="enable_monitor" value="$(arg enable_monitor)" />
+    <arg name="log_rate" value="$(arg log_rate)" />
+    <arg name="launch_manager" value="false" />
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="respawn" value="$(arg respawn)" />
     <arg name="approximate_sync" value="true"/>
+    <arg name="vital_check" value="$(arg vital_check)" />
   </include>
 
   <rosparam ns="lifelog/joint_states_throttle">
@@ -51,6 +62,27 @@
       - sound_play/SoundRequestActionResult
       - sound_play/SoundRequestActionGoal
   </rosparam>
+
+  <group ns="lifelog">
+    <node name="eus_vive_status_throttle"
+          pkg="nodelet" type="nodelet"
+          args="load jsk_topic_tools/LightweightThrottle /$(arg manager)"
+          respawn="$(arg respawn)">
+      <remap from="~input" to="/eus_vive/status" />
+      <rosparam subst_value="true">
+        update_rate: $(arg log_rate)
+      </rosparam>
+    </node>
+    <node name="eus_vive_status_logger"
+          pkg="jsk_robot_startup" type="lightweight_logger" respawn="$(arg respawn)">
+      <remap from="~input" to="eus_vive_status_throttle" />
+      <rosparam subst_value="true">
+        enable_monitor: $(arg enable_monitor)
+        monitor_topic: /eus_vive/status
+        vital_check: $(arg vital_check)
+      </rosparam>
+    </node>
+  </group>
 
   <!-- tweeting robot warning data and etc. -->
   <include file="$(find jsk_robot_startup)/lifelog/tweet.launch" if="$(arg twitter)">
