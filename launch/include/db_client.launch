@@ -19,6 +19,8 @@
     <arg name="save_depth" value="true" />
     <arg name="save_tf" value="true" />
     <arg name="save_joint_states" value="true" />
+    <arg name="save_smach" value="false" />
+    <arg name="save_speech" value="false" />
     <arg name="save_base_trajectory" value="false" />
     <arg name="save_object_detection" value="false" />
     <arg name="save_action" value="true" />
@@ -65,8 +67,7 @@
 
   <group ns="lifelog">
     <node name="eus_vive_status_throttle"
-          pkg="nodelet" type="nodelet"
-          args="load jsk_topic_tools/LightweightThrottle /$(arg manager)"
+          pkg="jsk_topic_tools" type="lightweight_throttle"
           respawn="$(arg respawn)">
       <remap from="~input" to="/eus_vive/status" />
       <rosparam subst_value="true">
@@ -74,8 +75,9 @@
       </rosparam>
     </node>
     <node name="eus_vive_status_logger"
-          pkg="jsk_robot_startup" type="lightweight_logger" respawn="$(arg respawn)">
-      <remap from="~input" to="eus_vive_status_throttle" />
+          pkg="jsk_robot_startup" type="lightweight_logger"
+          respawn="$(arg respawn)">
+      <remap from="~input" to="eus_vive_status_throttle/output" />
       <rosparam subst_value="true">
         enable_monitor: $(arg enable_monitor)
         monitor_topic: /eus_vive/status
