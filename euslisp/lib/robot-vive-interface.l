@@ -530,12 +530,16 @@
             (send self :set-arm-val arm :track-error-p nil)
             (send self :set-arm-val arm :collision-p nil)
             (send robot-interface :speak
-                  (format nil "Disable ~A arm" (if (eq arm :larm) "left" "right")))
+                  (format nil "Disable ~A arm"
+                          (if mirror (if (eq arm :larm) "right" "left")
+                            (if (eq arm :larm) "left" "right"))))
             (ros::ros-info "arm: ~A stopping" arm))
           (progn
             (send robot :angle-vector (send robot-interface :state :potentio-vector))
             (send robot-interface :speak
-                  (format nil "Enable ~A arm" (if (eq arm :larm) "left" "right")))
+                  (format nil "Enable ~A arm"
+                          (if mirror (if (eq arm :larm) "right" "left")
+                            (if (eq arm :larm) "left" "right"))))
             (ros::ros-info "arm: ~A starting" arm)))
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
