@@ -35,6 +35,11 @@ class EusViveStatusSounder(ConnectionBasedTransport):
         rarm_enable = self.enable['rarm']
         rarm_collision = self.collision['rarm'] if rarm_enable else False
         rarm_track_error = self.track_error['rarm'] if rarm_enable else False
+        # reset
+        self.collision['larm'] = False
+        self.track_error['larm'] = False
+        self.collision['rarm'] = False
+        self.track_error['rarm'] = False
         if larm_collision or rarm_collision:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
