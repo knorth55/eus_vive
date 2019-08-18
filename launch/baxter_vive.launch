@@ -10,10 +10,10 @@
 
   <arg name="finger" default="standard_narrow" />
   <arg name="finger_tip" default="paddle_tip" />
-  <arg name="xdisplay_max_height" default="1024" if="$(arg miraikan)" />
-  <arg name="xdisplay_max_height" default="1920" unless="$(arg miraikan)" />
-  <arg name="xdisplay_max_width" default="600" if="$(arg miraikan)" />
-  <arg name="xdisplay_max_width" default="1200" unless="$(arg miraikan)" />
+  <arg name="xdisplay_max_width" default="1024" if="$(arg miraikan)" />
+  <arg name="xdisplay_max_width" default="1920" unless="$(arg miraikan)" />
+  <arg name="xdisplay_max_height" default="600" if="$(arg miraikan)" />
+  <arg name="xdisplay_max_height" default="1200" unless="$(arg miraikan)" />
 
   <param name="robot_description"
          command="$(find xacro)/xacro $(find eus_vive)/urdf/baxter.urdf.xacro gazebo:=false
@@ -89,8 +89,8 @@
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
         args="/eus_vive_status_visualizer/output/image">
     <rosparam subst_value="true">
-      max_height: $(arg xdisplay_max_height)
       max_width: $(arg xdisplay_max_width)
+      max_height: $(arg xdisplay_max_height)
     </rosparam>
   </node>
 

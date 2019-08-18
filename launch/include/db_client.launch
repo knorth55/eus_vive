@@ -5,14 +5,10 @@
 
   <arg name="twitter" default="true" />
   <arg name="output" default="screen" />
-  <arg name="manager" default="mongodb_record_nodelet_manager" />
   <arg name="log_rate" default="5.0" />
-  <arg name="respawn" default="false" />
+  <arg name="respawn" default="true" />
   <arg name="enable_monitor" default="false" />
   <arg name="vital_check" default="true" />
-
-  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
-        output="screen" respawn="$(arg respawn)" />
 
   <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch">
     <arg name="save_rgb" value="true" />
@@ -38,8 +34,7 @@
 
     <arg name="enable_monitor" value="$(arg enable_monitor)" />
     <arg name="log_rate" value="$(arg log_rate)" />
-    <arg name="launch_manager" value="false" />
-    <arg name="manager" value="$(arg manager)" />
+    <arg name="launch_manager" value="true" />
     <arg name="respawn" value="$(arg respawn)" />
     <arg name="approximate_sync" value="true"/>
     <arg name="vital_check" value="$(arg vital_check)" />
