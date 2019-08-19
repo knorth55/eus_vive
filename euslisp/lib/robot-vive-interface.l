@@ -189,8 +189,15 @@
              (raw-target-coords (list larm-raw-target-coords rarm-raw-target-coords))
              (target-coords (list larm-target-coords rarm-target-coords)))
         (cond
+          ((and larm-raw-target-coords rarm-raw-target-coords)
+           (send self :inverse-kinematics :arms raw-target-coords :use-torso torso))
+          ((and larm-raw-target-coords (not rarm-raw-target-coords))
+           (send self :inverse-kinematics :larm larm-raw-target-coords :use-torso torso))
+          ((and (not larm-raw-target-coords) rarm-raw-target-coords)
+           (send self :inverse-kinematics :rarm rarm-raw-target-coords :use-torso torso))
+          (t nil))
+        (cond
           ((and larm-target-coords rarm-target-coords)
-           (send self :inverse-kinematics :arms target-coords :use-torso torso)
            (send self :angle-vector (send robot :angle-vector)
                  av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
            (send self :angle-vector (send robot :angle-vector)
@@ -199,28 +206,28 @@
              (send self :angle-vector (send robot :angle-vector)
                    torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
           ((and larm-target-coords (not rarm-target-coords))
-           (send self :inverse-kinematics :larm larm-target-coords :use-torso torso)
            (send self :angle-vector (send robot :angle-vector)
                  av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
            (when torso
              (send self :angle-vector (send robot :angle-vector)
                    torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
           ((and (not larm-target-coords) rarm-target-coords)
-           (send self :inverse-kinematics :rarm rarm-target-coords :use-torso torso)
            (send self :angle-vector (send robot :angle-vector)
                  av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
            (when torso
              (send self :angle-vector (send robot :angle-vector)
                    torso-av-tm :torso-controller 0 :min-time torso-min-time
-                   :scale torso-av-scale))))
+                   :scale torso-av-scale)))
+          (t nil))
         raw-target-coords)
       (let* ((raw-target-coords
                (send self :get-target-coords arm :head head :mirror mirror))
              (target-coords
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords)))
+        (when raw-target-coords
+          (send self :inverse-kinematics arm raw-target-coords :use-torso torso))
         (when target-coords
-          (send self :inverse-kinematics arm target-coords :use-torso torso)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
                 0 :min-time min-time :scale av-scale)
