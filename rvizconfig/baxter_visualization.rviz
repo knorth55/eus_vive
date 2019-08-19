@@ -384,9 +384,9 @@ Visualization Manager:
       height: 300
       left: 20
       line width: 2
-      text size: 10
+      text size: 12
       top: 20
-      width: 400
+      width: 500
     - Class: jsk_rviz_plugin/OverlayImage
       Enabled: true
       Name: Realsense
@@ -397,7 +397,7 @@ Visualization Manager:
       keep aspect ratio: true
       left: 20
       top: 500
-      width: 400
+      width: 500
     - Alpha: 0.5
       Class: rviz/Effort
       Enabled: true
@@ -440,32 +440,6 @@ Visualization Manager:
       Unreliable: false
       Value: true
       Width: 0.0199999996
-    - Alpha: 0.800000012
-      Arrow Width: 0.5
-      Class: rviz/WrenchStamped
-      Enabled: true
-      Force Arrow Scale: 0.0500000007
-      Force Color: 204; 51; 51
-      History Length: 1
-      Name: LeftWrench
-      Topic: /robot/end_effector/left/wrench
-      Torque Arrow Scale: 0.0500000007
-      Torque Color: 204; 204; 51
-      Unreliable: false
-      Value: true
-    - Alpha: 0.800000012
-      Arrow Width: 0.5
-      Class: rviz/WrenchStamped
-      Enabled: true
-      Force Arrow Scale: 0.0500000007
-      Force Color: 204; 51; 51
-      History Length: 1
-      Name: RightWrench
-      Topic: /robot/end_effector/right/wrench
-      Torque Arrow Scale: 0.0500000007
-      Torque Color: 204; 204; 51
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 211; 215; 207
@@ -491,25 +465,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.38356972
+      Distance: 2.31541729
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0826498941
-        Y: 0.00159721472
-        Z: 0.214115605
+        X: 0.0681219846
+        Y: -0.566373467
+        Z: 0.141379267
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.255397141
+      Pitch: 0.185397208
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.263587
+      Yaw: 0.165402085
     Saved: ~
 Window Geometry:
   Displays:
