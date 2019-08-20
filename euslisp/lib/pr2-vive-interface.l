@@ -28,6 +28,13 @@
     (send self :set-val 'larm-vive-frame-id "controller_LHR_FD35BD42")
     (send self :set-val 'rarm-vive-frame-id "controller_LHR_F7AFBF47")
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
+    ;; for workspace
+    (send self :set-val 'target-coords-max-x nil)
+    (send self :set-val 'target-coords-max-y nil)
+    (send self :set-val 'target-coords-max-z nil)
+    (send self :set-val 'target-coords-min-x nil)
+    (send self :set-val 'target-coords-min-y nil)
+    (send self :set-val 'target-coords-min-z nil)
     ;; for move base
     (send self :set-val 'joy-org-topic-name "/joy_org")
     (send self :set-val 'joy-other-topic-name "/joy_other")
