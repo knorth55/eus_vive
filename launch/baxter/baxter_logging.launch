@@ -1,10 +1,13 @@
 <launch>
+  <arg name="twitter" default="true" />
+  <arg name="debug" default="false" />
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
     <arg name="use_daemon" value="false"/>
     <arg name="port" value="27017" />
     <arg name="repl_set_mode" value="false" />
   </include>
   <include file="$(find eus_vive)/launch/include/db_client.launch">
-    <arg name="twitter" value="true" />
+    <arg name="twitter" value="$(arg twitter)" />
+    <arg name="debug" value="$(arg debug)" />
   </include>
 </launch>

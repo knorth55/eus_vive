@@ -5,6 +5,8 @@
   <arg name="mirror" default="false" />
   <arg name="realsense" default="true" />
   <arg name="logging" default="true" />
+  <arg name="twitter" default="true" />
+  <arg name="debug" default="false" />
   <arg name="mask_rcnn" default="false" />
   <arg name="miraikan" default="false" />
 
@@ -104,7 +106,10 @@
     <remap from="sound_play" to="robotsound" />
   </node>
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)" />
+  <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
+    <arg name="twitter" value="$(arg twitter)" />
+    <arg name="debug" value="$(arg debug)" />
+  </include>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive.rviz" />

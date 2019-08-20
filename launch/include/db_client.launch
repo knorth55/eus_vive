@@ -9,6 +9,7 @@
   <arg name="respawn" default="true" />
   <arg name="enable_monitor" default="false" />
   <arg name="vital_check" default="true" />
+  <arg name="debug" default="false" />
 
   <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch">
     <arg name="save_rgb" value="true" />
@@ -38,6 +39,7 @@
     <arg name="respawn" value="$(arg respawn)" />
     <arg name="approximate_sync" value="true"/>
     <arg name="vital_check" value="$(arg vital_check)" />
+    <arg name="debug" value="$(arg debug)" />
   </include>
 
   <rosparam ns="lifelog/joint_states_throttle">
