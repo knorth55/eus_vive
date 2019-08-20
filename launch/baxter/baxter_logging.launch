@@ -1,6 +1,7 @@
 <launch>
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
+  <arg name="home_dir" default="$(env HOME)" />
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
     <arg name="use_daemon" value="false"/>
     <arg name="port" value="27017" />
@@ -10,4 +11,12 @@
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
   </include>
+  <node name="baxter_rosbag" pkg="rosbag" type="record"
+        args="/eus_vive/status /tf /robot/joint_states
+              /lifelog/rgb/image_rect_color/compressed
+              /lifelog/rgb/camera_info
+              /lifelog/depth/image_rect_raw/compressedDepth
+              /lifelog/depth/camera_info
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vive"
+        output="screen" />
 </launch>
