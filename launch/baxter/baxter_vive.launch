@@ -104,8 +104,8 @@
     <remap from="sound_play" to="robotsound" />
   </node>
 
-  <include file="$(find eus_vive)/launch/baxter_logging.launch" if="$(arg logging)" />
+  <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)" />
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
-        args="-d $(find eus_vive)/rvizconfig/baxter_vive.rviz" />
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive.rviz" />
 </launch>
