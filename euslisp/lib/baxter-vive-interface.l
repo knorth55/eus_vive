@@ -87,7 +87,9 @@
 
 (defun signal-hook (sig code)
   (when (boundp '*ri*)
+    (ros::ros-info "cancel larm controller")
     (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+    (ros::ros-info "cancel rarm controller")
     (send *ri* :cancel-angle-vector :controller-type :rarm-controller))
   (reset))
 
