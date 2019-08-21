@@ -34,7 +34,7 @@
     (send self :set-val 'target-coords-max-z 1200.0)
     (send self :set-val 'target-coords-min-x 300.0)
     (send self :set-val 'target-coords-min-y -750.0)
-    (send self :set-val 'target-coords-min-z -200.0)
+    (send self :set-val 'target-coords-min-z 0.0)
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'ik-stop-step 10)
