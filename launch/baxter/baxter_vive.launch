@@ -116,6 +116,8 @@
     <arg name="debug" value="$(arg debug)" />
   </include>
 
+  <node name="$(anon rqt_service_caller)" pkg="rqt_service_caller" type="rqt_service_caller" />
+
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive.rviz" />
 </launch>
