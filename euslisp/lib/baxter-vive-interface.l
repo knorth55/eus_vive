@@ -4,6 +4,19 @@
 (load "package://baxtereus/baxter-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
+
+(defmethod baxter-robot
+  (:reset-teleop-pose ()
+    (let ((larm-coords (make-coords :pos (float-vector 875.0 380.0 420.0)))
+          (rarm-coords (make-coords :pos (float-vector 875.0 -380.0 420.0))))
+      (send self :untuck-pose)
+      (send self :inverse-kinematics
+            (list larm-coords rarm-coords)
+            :rotation-axis (list t t)
+            :move-target (list (send self :larm :end-coords)
+                               (send self :rarm :end-coords))))))
+
+
 (defclass baxter-vive-interface
   :super robot-vive-interface
   :slots ())
@@ -52,6 +65,14 @@
           '(format nil "/robot/limb/~A/collision_detection_state" (if (eq arm :larm) "left" "right")))
     (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
     (send-super :init))
+  (:reset-service (req)
+    (let ((res (instance std_srvs::TriggerResponse :init)))
+      (send self :reset)
+      (send robot-interface :stop-grasp :arms :wait nil)
+      (send self :angle-vector (send robot :reset-teleop-pose) 5000)
+      (send robot-interface :wait-interpolation)
+      (send res :success t)
+      res))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)

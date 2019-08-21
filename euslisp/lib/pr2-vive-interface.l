@@ -61,6 +61,14 @@
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
     (send-super :init))
+  (:reset-service (req)
+    (let ((res (instance std_srvs::TriggerResponse :init)))
+      (send self :reset)
+      (send robot-interface :stop-grasp :arms :wait nil)
+      (send self :angle-vector (send robot :reset-pose) 5000)
+      (send robot-interface :wait-interpolation)
+      (send res :success t)
+      res))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args)))
 
