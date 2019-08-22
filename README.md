@@ -87,6 +87,14 @@ roslaunch baxter_gazebo baxter_world.launch
 roslaunch eus_vive baxter_vive.launch
 ```
 
+**Miraikan Demo 2019/08/23-24**
+
+```bash
+steam
+roslaunch eus_vive vive.launch
+roslaunch eus_vive baxter_miraikan.launch
+```
+
 ## How to use
 
 ![Vive controller](https://www.vive.com/media/filer_public/e3/da/e3daf208-4d4e-4adf-b911-22f9458ab883/guid-2d5454b7-1225-449c-b5e5-50a5ea4184d6-web.png)
