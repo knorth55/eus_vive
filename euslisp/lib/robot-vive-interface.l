@@ -29,6 +29,7 @@
           eus-vive-status-topic-name
           eus-vive-reset-service-name
           eus-vive-enable-service-name
+          eus-vive-disable-service-name
           loop-enable
           draw-object-list
           trigger-wait-count
@@ -465,14 +466,15 @@
         (ros::ros-error "arm ~A collision detected, stopped" arm))
       (send self :set-arm-val arm :collision-p collision-p)))
   (:vive-button-cb (arm msg)
-    (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
-    (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
-    (send self :set-arm-val arm :prev-trackpad (send self :get-arm-val arm :trackpad))
-    (send self :set-arm-val arm :prev-grip (send self :get-arm-val arm :grip))
-    (send self :set-arm-val arm :trigger (> (elt (send msg :buttons) 1) 0))
-    (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
-    (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
-    (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0)))
+    (when loop-enable
+      (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
+      (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
+      (send self :set-arm-val arm :prev-trackpad (send self :get-arm-val arm :trackpad))
+      (send self :set-arm-val arm :prev-grip (send self :get-arm-val arm :grip))
+      (send self :set-arm-val arm :trigger (> (elt (send msg :buttons) 1) 0))
+      (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
+      (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
+      (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
   (:vive-button-p (arm button)
     (cond
       ((eq button :trigger) (send self :vive-trigger-p arm))
