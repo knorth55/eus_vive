@@ -7,3 +7,6 @@
 - name: 'Disable'
   service: '/eus_vive/disable'
   column: 2
+- name: 'Calibrate'
+  service: '/eus_vive/calibrate'
+  column: 3

@@ -30,6 +30,7 @@
           eus-vive-reset-service-name
           eus-vive-enable-service-name
           eus-vive-disable-service-name
+          eus-vive-calib-service-name
           loop-enable
           draw-object-list
           trigger-wait-count
@@ -116,6 +117,7 @@
     (send self :set-val 'eus-vive-reset-service-name "/eus_vive/reset")
     (send self :set-val 'eus-vive-enable-service-name "/eus_vive/enable")
     (send self :set-val 'eus-vive-disable-service-name "/eus_vive/disable")
+    (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
@@ -138,6 +140,8 @@
                             #'send self :enable-service)
     (ros::advertise-service eus-vive-disable-service-name std_srvs::Empty
                             #'send self :disable-service)
+    (ros::advertise-service eus-vive-calib-service-name std_srvs::Empty
+                            #'send self :calib-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset (&key (loop-enable t))
     (send self :set-val 'loop-enable loop-enable)
@@ -169,17 +173,32 @@
     (send self :reset :loop-enable t))
   (:disable ()
     (send self :reset :loop-enable nil))
+  (:calibrate (arm)
+    (let (calib-p)
+      (setq calib-p (send *ti* :calib-vive arm))
+      (unless calib-p (send *ri* :speak "Please try calibration again." :wait t))
+      calib-p))
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Reset button pressed. I go back to reset pose." :wait nil)
       (send self :reset :loop-enable nil)
       res))
   (:enable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Enable button pressed. Demo started." :wait nil)
       (send self :enable)
       res))
   (:disable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Disable button pressed. Demo stopped." :wait nil)
       (send self :disable)
+      res))
+  (:calib-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Calibrate button pressed." :wait t)
+      (send self :reset :loop-enable t)
+      (send self :calibrate :rarm)
+      (send self :reset :loop-enable nil)
       res))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))

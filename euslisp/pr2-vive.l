@@ -20,7 +20,7 @@
                   (visualize t) (loop-enable t))
   (init :loop-enable t)
   (unless head
-    (while (not (send *ti* :calib-vive :rarm))
+    (while (not (send *ti* :calibrate :rarm))
       (ros::spin-once)))
   (unless loop-enable (send *ti* :disable))
   (send *ti* :main-loop :head head :torso torso :base base
