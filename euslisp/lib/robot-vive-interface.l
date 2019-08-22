@@ -106,8 +106,8 @@
 
 
 (defmethod robot-vive-interface
-  (:init ()
-    (send self :reset)
+  (:init (&key (loop-enable t))
+    (send self :reset :loop-enable loop-enable)
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
@@ -139,8 +139,8 @@
     (ros::advertise-service eus-vive-disable-service-name std_srvs::Empty
                             #'send self :disable-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
-  (:reset ()
-    (send self :set-val 'loop-enable nil)
+  (:reset (&key (loop-enable t))
+    (send self :set-val 'loop-enable loop-enable)
     (send self :reset-arm :larm)
     (send self :reset-arm :rarm))
   (:reset-arm (arm)
@@ -165,19 +165,21 @@
     (send self :set-arm-val arm :collision-p nil)
     (send self :set-arm-val arm :current-end-coords nil)
     (send self :set-arm-val arm :track-error-p nil))
+  (:enable ()
+    (send self :reset :loop-enable t))
+  (:disable ()
+    (send self :reset :loop-enable nil))
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
+      (send self :reset :loop-enable nil)
       res))
   (:enable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
-      (send self :set-val 'loop-enable t)
+      (send self :enable)
       res))
   (:disable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
-      (send self :set-val 'loop-enable nil)
+      (send self :disable)
       res))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
@@ -264,29 +266,30 @@
           ((and (not larm-raw-target-coords) rarm-raw-target-coords)
            (send self :inverse-kinematics :rarm rarm-raw-target-coords :use-torso torso))
           (t nil))
-        (cond
-          ((and larm-target-coords rarm-target-coords)
-           (send self :angle-vector (send robot :angle-vector)
-                 av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
-           (send self :angle-vector (send robot :angle-vector)
-                 av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
-           (when torso
+        (when loop-enable
+          (cond
+            ((and larm-target-coords rarm-target-coords)
              (send self :angle-vector (send robot :angle-vector)
-                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
-          ((and larm-target-coords (not rarm-target-coords))
-           (send self :angle-vector (send robot :angle-vector)
-                 av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
-           (when torso
+                   av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
              (send self :angle-vector (send robot :angle-vector)
-                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
-          ((and (not larm-target-coords) rarm-target-coords)
-           (send self :angle-vector (send robot :angle-vector)
-                 av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
-           (when torso
+                   av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
+             (when torso
+               (send self :angle-vector (send robot :angle-vector)
+                     torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
+            ((and larm-target-coords (not rarm-target-coords))
              (send self :angle-vector (send robot :angle-vector)
-                   torso-av-tm :torso-controller 0 :min-time torso-min-time
-                   :scale torso-av-scale)))
-          (t nil))
+                   av-tm (send self :get-arm-controller :larm) 0 :min-time min-time :scale av-scale)
+             (when torso
+               (send self :angle-vector (send robot :angle-vector)
+                     torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
+            ((and (not larm-target-coords) rarm-target-coords)
+             (send self :angle-vector (send robot :angle-vector)
+                   av-tm (send self :get-arm-controller :rarm) 0 :min-time min-time :scale av-scale)
+             (when torso
+               (send self :angle-vector (send robot :angle-vector)
+                     torso-av-tm :torso-controller 0 :min-time torso-min-time
+                     :scale torso-av-scale)))
+            (t nil)))
         raw-target-coords)
       (let* ((raw-target-coords
                (send self :get-target-coords arm :head head :mirror mirror))
@@ -295,7 +298,7 @@
                  raw-target-coords)))
         (when raw-target-coords
           (send self :inverse-kinematics arm raw-target-coords :use-torso torso))
-        (when target-coords
+        (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
                 0 :min-time min-time :scale av-scale)
@@ -672,12 +675,12 @@
       (send self :enable-cb :mirror mirror :button enable-button)
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso :safe-arm safe-arm :mirror mirror))
-      (when head (send self :head-cb))
+      (when (and head loop-enable) (send self :head-cb))
       (when visualize (send self :visualize visualize-arm-coords))))
   (:main-loop (&rest args)
     (ros::rate rate)
     (while (ros::ok)
-      (when loop-enable (send* self :main-loop-step args))
+      (send* self :main-loop-step args)
       (ros::spin-once)
       (ros::sleep))))
 
@@ -782,7 +785,8 @@
         ((or larm-enable rarm-enable)
          (setq visualize-arm-coords
                (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror)))
-        (base-enable (when base (send self :base-cb :safe safe-base :mirror mirror)))
+        ((and loop-enable base-enable)
+         (when base (send self :base-cb :safe safe-base :mirror mirror)))
         (t nil))
       visualize-arm-coords))
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
@@ -793,7 +797,7 @@
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso
                   :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror))
-      (when head (send self :head-cb))
+      (when (and head loop-enable) (send self :head-cb))
       (when visualize (send self :visualize visualize-arm-coords)))))
 
 (provide :robot-vive-interface)

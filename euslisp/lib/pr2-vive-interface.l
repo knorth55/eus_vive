@@ -10,7 +10,7 @@
 
 
 (defmethod pr2-vive-interface
-  (:init ()
+  (:init (&rest args)
     (send self :set-val 'robot *pr2*)
     (send self :set-val 'robot-interface *ri*)
     (send self :set-val 'camera-model *camera-model*)
@@ -60,10 +60,10 @@
     (send self :set-val 'head->shoulder-z-distance 50)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
-    (send-super :init))
+    (send-super* :init args))
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
+      (send self :reset :loop-enable nil)
       (send robot-interface :stop-grasp :arms :wait nil)
       (send self :angle-vector (send robot :reset-pose) 5000)
       (send robot-interface :wait-interpolation)
@@ -72,7 +72,7 @@
     (send* robot-interface :angle-vector args)))
 
 
-(defun pr2-vive-init ()
+(defun pr2-vive-init (&key (loop-enable t))
   (pr2-init)
   (objects (list *pr2*))
   (setq *camera-model*
@@ -80,7 +80,7 @@
   (send *camera-model* :translate #f(1500 0 800))
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
-  (setq *ti* (instance pr2-vive-interface :init)))
+  (setq *ti* (instance pr2-vive-interface :init :loop-enable loop-enable)))
 
 
 (defun signal-hook (sig code)

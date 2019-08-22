@@ -23,7 +23,7 @@
 
 
 (defmethod baxter-vive-interface
-  (:init ()
+  (:init (&rest args)
     (send self :set-val 'robot *baxter*)
     (send self :set-val 'robot-interface *ri*)
     (send self :set-val 'camera-model *camera-model*)
@@ -64,10 +64,10 @@
     (send self :set-val 'collision-status-topic-name
           '(format nil "/robot/limb/~A/collision_detection_state" (if (eq arm :larm) "left" "right")))
     (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
-    (send-super :init))
+    (send-super* :init args))
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
+      (send self :reset :loop-enable nil)
       (send robot-interface :stop-grasp :arms :wait nil)
       (send self :angle-vector (send robot :reset-teleop-pose) 5000)
       (send robot-interface :wait-interpolation)
@@ -86,7 +86,7 @@
              :debug-view nil args))))
 
 
-(defun baxter-vive-init ()
+(defun baxter-vive-init (&key (loop-enable t))
   (baxter-init)
   (objects (list *baxter*))
   (setq *camera-model*
@@ -102,7 +102,7 @@
   (setq *background-cube* (make-cube 10 6000 6000))
   (send *background-cube* :set-color #f(1 1 1))
   (send *background-cube* :translate #f(-1000 0 0))
-  (setq *ti* (instance baxter-vive-interface :init)))
+  (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable)))
 
 
 (defun signal-hook (sig code)
