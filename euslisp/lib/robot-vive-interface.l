@@ -127,16 +127,15 @@
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
     (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
-    (ros::advertise-service eus-vive-reset-service-name std_srvs::Trigger
+    (ros::advertise-service eus-vive-reset-service-name std_srvs::Empty
                             #'send self :reset-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset ()
     (send self :reset-arm :larm)
     (send self :reset-arm :rarm))
   (:reset-service (req)
-    (let ((res (instance std_srvs::TriggerResponse :init)))
+    (let ((res (instance std_srvs::EmptyResponse :init)))
       (send self :reset)
-      (send res :success t)
       res))
   (:reset-arm (arm)
     (send robot-interface :stop-grasp arm :wait nil)
