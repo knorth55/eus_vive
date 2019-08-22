@@ -1,0 +1,6 @@
+- name: 'Reset'
+  service: '/eus_vive/reset'
+  column: 0
+- name: 'Enable'
+  service: '/eus_vive/enable'
+  column: 1

@@ -116,7 +116,11 @@
     <arg name="debug" value="$(arg debug)" />
   </include>
 
-  <node name="$(anon rqt_service_caller)" pkg="rqt_service_caller" type="rqt_service_caller" />
+  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
+    <rosparam subst_value="true" >
+      layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml 
+    </rosparam>
+  </node>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive.rviz" />
