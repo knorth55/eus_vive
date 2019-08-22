@@ -1,0 +1,8 @@
+<launch> 
+  <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
+    <arg name="mirror" value="true" />
+    <arg name="main" value="true" />
+    <arg name="miraikan" value="true" />
+    <arg name="debug" value="true" />
+  </include>
+</launch>
