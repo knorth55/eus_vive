@@ -7,14 +7,9 @@
 
 (defmethod baxter-robot
   (:reset-teleop-pose ()
-    (let ((larm-coords (make-coords :pos (float-vector 875.0 380.0 420.0)))
-          (rarm-coords (make-coords :pos (float-vector 875.0 -380.0 420.0))))
-      (send self :untuck-pose)
-      (send self :inverse-kinematics
-            (list larm-coords rarm-coords)
-            :rotation-axis (list t t)
-            :move-target (list (send self :larm :end-coords)
-                               (send self :rarm :end-coords))))))
+    (send self :angle-vector
+          (float-vector 0.0 -5.55908 -77.7612 -10.0854 120.081 40.0122 -44.4067 -29.2017
+                        5.55908 -77.7612 10.0854 120.081 -40.0122 -44.4067 29.2017))))
 
 
 (defclass baxter-vive-interface
