@@ -28,6 +28,8 @@
           irtviewer-visualize-topic-name
           eus-vive-status-topic-name
           eus-vive-reset-service-name
+          eus-vive-enable-service-name
+          loop-enable
           draw-object-list
           trigger-wait-count
           menu-wait-count
@@ -105,12 +107,15 @@
 (defmethod robot-vive-interface
   (:init ()
     (send self :reset)
+    (send self :set-val 'loop-enable t)
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
     (send self :set-val 'eus-vive-reset-service-name "/eus_vive/reset")
+    (send self :set-val 'eus-vive-enable-service-name "/eus_vive/enable")
+    (send self :set-val 'eus-vive-disable-service-name "/eus_vive/disable")
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
                       sensor_msgs::Joy #'send self :vive-button-cb arm)
@@ -129,14 +134,14 @@
     (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
     (ros::advertise-service eus-vive-reset-service-name std_srvs::Empty
                             #'send self :reset-service)
+    (ros::advertise-service eus-vive-enable-service-name std_srvs::Empty
+                            #'send self :enable-service)
+    (ros::advertise-service eus-vive-disable-service-name std_srvs::Empty
+                            #'send self :disable-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset ()
     (send self :reset-arm :larm)
     (send self :reset-arm :rarm))
-  (:reset-service (req)
-    (let ((res (instance std_srvs::EmptyResponse :init)))
-      (send self :reset)
-      res))
   (:reset-arm (arm)
     (send robot-interface :stop-grasp arm :wait nil)
     (send robot-interface :cancel-angle-vector
@@ -159,6 +164,20 @@
     (send self :set-arm-val arm :collision-p nil)
     (send self :set-arm-val arm :current-end-coords nil)
     (send self :set-arm-val arm :track-error-p nil))
+  (:reset-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send self :reset)
+      res))
+  (:enable-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send self :reset)
+      (send self :set-val 'loop-enable t)
+      res))
+  (:disable-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send self :reset)
+      (send self :set-val 'loop-enable nil)
+      res))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
   (:set-arm-val (arm name val)
@@ -656,7 +675,7 @@
   (:main-loop (&rest args)
     (ros::rate rate)
     (while (ros::ok)
-      (send* self :main-loop-step args)
+      (when loop-enable (send* self :main-loop-step args))
       (ros::spin-once)
       (ros::sleep))))
 

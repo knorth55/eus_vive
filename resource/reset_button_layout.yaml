@@ -4,3 +4,6 @@
 - name: 'Enable'
   service: '/eus_vive/enable'
   column: 1
+- name: 'Disable'
+  service: '/eus_vive/disable'
+  column: 2
