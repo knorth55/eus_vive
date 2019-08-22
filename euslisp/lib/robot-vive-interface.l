@@ -107,7 +107,6 @@
 (defmethod robot-vive-interface
   (:init ()
     (send self :reset)
-    (send self :set-val 'loop-enable t)
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
@@ -140,6 +139,7 @@
                             #'send self :disable-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset ()
+    (send self :set-val 'loop-enable nil)
     (send self :reset-arm :larm)
     (send self :reset-arm :rarm))
   (:reset-arm (arm)
