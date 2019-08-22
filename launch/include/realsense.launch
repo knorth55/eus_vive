@@ -4,4 +4,7 @@
     <arg name="enable_pointcloud" value="true" />
     <arg name="align_depth" value="false"/>
   </include>
+  <node name="realsense_static_tf_publisher"
+           pkg="tf" type="static_transform_publisher"
+           args="0.22 0.02 0.2 0 0.32 0 base realsense_link 20" />
 </launch>
