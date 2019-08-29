@@ -1,0 +1,49 @@
+<launch>
+  <arg name="rosbag" />
+
+  <arg name="finger" default="standard_narrow" />
+  <arg name="finger_tip" default="paddle_tip" />
+
+  <param name="use_sim_time" value="true" />
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
+                  gazebo:=false left_electric_gripper:=true right_electric_gripper:=true
+                  finger:=$(arg finger) finger_tip:=$(arg finger_tip)"/>
+
+  <node name="rosbag_play" pkg="rosbag" type="play"
+        args="--clock --loop $(arg rosbag)" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <remap from="joint_states" to="/robot/joint_states"/>
+  </node>
+
+  <node name="realsense_static_tf_publisher"
+           pkg="tf" type="static_transform_publisher"
+           args="0.22 0.02 0.2 0 0.32 0 base realsense_link 20" />
+
+  <!-- this is for D435 J72479-100 828112073867 -->
+  <node name="realsense_optical_frame_static_tf_publisher"
+           pkg="tf" type="static_transform_publisher"
+           args="0.0 0.015 0.0 -0.503 0.497 -0.500 0.501 realsense_link realsense_color_optical_frame 20" />
+
+  <group ns="realsense">
+    <node name="rgb_info_relay" pkg="topic_tools" type="relay"
+          args="/lifelog/rgb/camera_info /realsense/rgb/camera_info" />
+    <node name="rgb_decompress" pkg="image_transport" type="republish"
+          args="compressed in:=/lifelog/rgb/image_rect_color
+                out:=/realsense/rgb/image_rect_color" />
+    <node name="depth_info_relay" pkg="topic_tools" type="relay"
+          args="/lifelog/depth/camera_info /realsense/depth/camera_info" />
+    <node name="depth_decompress" pkg="image_transport" type="republish"
+          args="compressedDepth in:=/lifelog/depth/image_rect_raw
+                out:=/realsense/depth/image_rect" />
+    <node name="depth_register" pkg="nodelet" type="nodelet"
+          args="standalone depth_image_proc/register" />
+    <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
+          args="standalone depth_image_proc/point_cloud_xyzrgb" />
+  </group>
+
+  <node name="$(anon rviz)" pkg="rviz" type="rviz"
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_rosbag_play.rviz" />
+
+</launch>
