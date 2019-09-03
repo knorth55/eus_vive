@@ -2,6 +2,15 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
 
   <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
 
@@ -16,9 +25,17 @@
     </rosparam>
   </group>
   <group if="$(arg main)">
-    <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
-          args="&quot;(main :head t)&quot;" output="screen" />
-    <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="main"
-          args="&quot;(main :head nil)&quot;" output="screen" />
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+            args="&quot;(main :head t :mirror t :loop-enable nil)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+            args="&quot;(main :head nil :mirror t :loop-enable nil)&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+            args="&quot;(main :head t :mirror nil :loop-enable nil)&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+            args="&quot;(main :head nil :mirror nil :loop-enable nil)&quot;" output="screen" />
+    </group>
   </group>
 </launch>

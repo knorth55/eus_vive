@@ -1,9 +1,4 @@
 <launch>
-  <arg name="b_lighthouse_id" />
-  <arg name="c_lighthouse_id" />
-  <arg name="l_controller_id" />
-  <arg name="r_controller_id" />
-
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="false" />
@@ -15,6 +10,13 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="miraikan" default="false" />
 
+  <!-- vive -->
+  <arg name="b_lighthouse_id" />
+  <arg name="c_lighthouse_id" />
+  <arg name="l_controller_id" />
+  <arg name="r_controller_id" />
+
+  <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
   <arg name="finger_tip" default="paddle_tip" />
   <arg name="xdisplay_max_width" default="1024" if="$(arg miraikan)" />
