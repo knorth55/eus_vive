@@ -741,14 +741,14 @@
 
 
 (defmethod robot-move-base-vive-interface
-  (:init ()
-    (send-super :init)
+  (:init (&rest args)
+    (send-super* :init args)
     ;; for move base
     (send self :set-val 'joy-org-topic-name "/joy_org")
     (send self :set-val 'joy-other-topic-name "/joy_other")
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
-  (:reset ()
-    (send-super :reset)
+  (:reset (&key (loop-enable t))
+    (send-super :reset :loop-enable loop-enable)
     (send self :set-val 'vx 0.0)
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
