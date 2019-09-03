@@ -1,5 +1,5 @@
 <launch>
-  <include file="$(find eus_vive)/launch/baxter/pr2_vive_gazebo.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr2_vive_gazebo.launch">
     <arg name="main" value="true" />
     <arg name="vive" value="true" />
     <arg name="head" value="true" />
