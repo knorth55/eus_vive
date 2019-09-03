@@ -10,11 +10,11 @@
     <arg name="c_lighthouse_id" value="11CFA4E1" />
     <arg name="l_controller_id" value="FD35BD42" />
     <arg name="r_controller_id" value="F7AFBF47" />
-    <arg name="workspace_max_x" value="false" />
-    <arg name="workspace_min_x" value="false" />
-    <arg name="workspace_max_y" value="false" />
-    <arg name="workspace_min_y" value="false" />
-    <arg name="workspace_max_z" value="false" />
-    <arg name="workspace_min_z" value="false" />
+    <arg name="workspace_max_x" value="1300.0" />
+    <arg name="workspace_min_x" value="300.0" />
+    <arg name="workspace_max_y" value="750.0" />
+    <arg name="workspace_min_y" value="-750.0" />
+    <arg name="workspace_max_z" value="1200.0" />
+    <arg name="workspace_min_z" value="0.0" />
   </include>
 </launch>
