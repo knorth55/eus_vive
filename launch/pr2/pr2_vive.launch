@@ -122,4 +122,10 @@
             args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
     </group>
   </group>
+
+  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
+    <rosparam subst_value="true" >
+      layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
+    </rosparam>
+  </node>
 </launch>
