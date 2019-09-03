@@ -1,4 +1,9 @@
 <launch>
+  <arg name="b_lighthouse_id" />
+  <arg name="c_lighthouse_id" />
+  <arg name="l_controller_id" />
+  <arg name="r_controller_id" />
+
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="false" />
@@ -46,6 +51,14 @@
 
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" />
 
+  <group ns="eus_vive">
+    <rosparam subst_value="true">
+      b_lighthouse_id: $(arg b_lighthouse_id)
+      c_lighthouse_id: $(arg c_lighthouse_id)
+      l_controller_id: $(arg l_controller_id)
+      r_controller_id: $(arg r_controller_id)
+    </rosparam>
+  </group>
   <group if="$(arg main)">
     <group if="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"

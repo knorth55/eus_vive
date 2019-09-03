@@ -21,23 +21,6 @@
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *pr2*))
-    ;; for vive
-    (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'bvive-frame-id "lighthouse_LHB_8E924CC3")
-    (send self :set-val 'cvive-frame-id "lighthouse_LHB_11CFA4E1")
-    (send self :set-val 'larm-vive-frame-id "controller_LHR_FD35BD42")
-    (send self :set-val 'rarm-vive-frame-id "controller_LHR_F7AFBF47")
-    (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    ;; for workspace
-    (send self :set-val 'target-coords-max-x nil)
-    (send self :set-val 'target-coords-max-y nil)
-    (send self :set-val 'target-coords-max-z nil)
-    (send self :set-val 'target-coords-min-x nil)
-    (send self :set-val 'target-coords-min-y nil)
-    (send self :set-val 'target-coords-min-z nil)
-    ;; for move base
-    (send self :set-val 'joy-org-topic-name "/joy_org")
-    (send self :set-val 'joy-other-topic-name "/joy_other")
     ;; for pr2
     (send self :set-val 'base-frame-id "base_footprint")
     (send self :set-val 'ik-stop-step 10)

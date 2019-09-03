@@ -29,13 +29,6 @@
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
-    ;; for vive
-    (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'bvive-frame-id "lighthouse_LHB_8E924CC3")
-    (send self :set-val 'cvive-frame-id "lighthouse_LHB_11CFA4E1")
-    (send self :set-val 'larm-vive-frame-id "controller_LHR_FD35BD42")
-    (send self :set-val 'rarm-vive-frame-id "controller_LHR_F7AFBF47")
-    (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     ;; for workspace
     (send self :set-val 'target-coords-max-x 1300.0)
     (send self :set-val 'target-coords-max-y 750.0)
