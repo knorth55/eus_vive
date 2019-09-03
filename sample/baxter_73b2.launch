@@ -1,0 +1,15 @@
+<launch> 
+  <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
+    <arg name="main" value="true" />
+    <arg name="vive" value="false" />
+    <arg name="mirror" value="true" />
+    <arg name="twitter" value="true" />
+    <arg name="debug" value="true" />
+    <arg name="miraikan" value="false" />
+    <arg name="b_lighthouse_id" value="8E924CC3" />
+    <arg name="c_lighthouse_id" value="11CFA4E1" />
+    <arg name="l_controller_id" value="FD35BD42" />
+    <arg name="r_controller_id" value="F7AFBF47" />
+  </include>
+
+</launch>
