@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
   <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch">
@@ -10,6 +11,7 @@
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
     <arg name="kinfu" value="$(arg kinfu)" />
   </include>
 </launch>

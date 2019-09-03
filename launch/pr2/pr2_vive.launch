@@ -5,6 +5,21 @@
   <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
 
+  <!-- vive -->
+  <arg name="b_lighthouse_id" />
+  <arg name="c_lighthouse_id" />
+  <arg name="l_controller_id" />
+  <arg name="r_controller_id" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- camera-->
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
@@ -78,6 +93,21 @@
     <arg name="image_right" value="$(arg image_right)" />
   </include>
 
+  <group ns="eus_vive">
+    <rosparam subst_value="true">
+      b_lighthouse_id: $(arg b_lighthouse_id)
+      c_lighthouse_id: $(arg c_lighthouse_id)
+      l_controller_id: $(arg l_controller_id)
+      r_controller_id: $(arg r_controller_id)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
   <group if="$(arg main)">
     <group if="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="pr2-vive.l" name="main"
@@ -92,4 +122,10 @@
             args="&quot;(main :head nil :mirror nil)&quot;" output="screen" />
     </group>
   </group>
+
+  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
+    <rosparam subst_value="true" >
+      layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
+    </rosparam>
+  </node>
 </launch>

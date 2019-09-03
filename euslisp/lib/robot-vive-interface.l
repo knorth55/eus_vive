@@ -109,6 +109,25 @@
 (defmethod robot-vive-interface
   (:init (&key (loop-enable t))
     (send self :reset :loop-enable loop-enable)
+    ;; for vive
+    (send self :set-val 'hmd-frame-id "hmd")
+    (send self :set-val 'bvive-frame-id
+          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
+    (send self :set-val 'cvive-frame-id
+          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/c_lighthouse_id")))
+    (send self :set-val 'larm-vive-frame-id
+          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
+    (send self :set-val 'rarm-vive-frame-id
+          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
+    (send self :set-val 'feedback-topic-name "/vive/set_feedback")
+    ;; for workspace
+    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x"))
+    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y"))
+    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_vive/workspace/max_z"))
+    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_vive/workspace/min_x"))
+    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
+    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
+    ;; for eus_vive
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
@@ -722,11 +741,14 @@
 
 
 (defmethod robot-move-base-vive-interface
-  (:init ()
-    (send-super :init)
+  (:init (&rest args)
+    (send-super* :init args)
+    ;; for move base
+    (send self :set-val 'joy-org-topic-name "/joy_org")
+    (send self :set-val 'joy-other-topic-name "/joy_other")
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
-  (:reset ()
-    (send-super :reset)
+  (:reset (&key (loop-enable t))
+    (send-super :reset :loop-enable loop-enable)
     (send self :set-val 'vx 0.0)
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)

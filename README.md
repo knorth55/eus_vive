@@ -52,31 +52,32 @@ catkin build
 
 ### PR2
 
-**Real Robot**
+**Real Robot in JSK 73B2**
 
 ```bash
 steam
 rossetip
 rossetmaster pr1040
-roslaunch eus_vive pr2_vive.launch
+roslaunch eus_vive pr2_73b2.launch
 ```
 
 **Gazebo**
 
 ```bash
 steam
-roslaunch eus_vive pr2_vive_gazebo.launch
+roslaunch eus_vive pr2_gazebo.launch
 ```
 
 ### Baxter
 
-**Real Robot**
+**Real Robot in JSK 73B2**
 
 ```bash
 steam
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_vive.launch
+roslaunch eus_vive vive.launch
+roslaunch eus_vive baxter_73b2.launch
 ```
 
 **Gazebo**
@@ -84,13 +85,16 @@ roslaunch eus_vive baxter_vive.launch
 ```bash
 steam
 roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive baxter_vive.launch
+roslaunch eus_vive vive.launch
+roslaunch eus_vive baxter_gazebo.launch
 ```
 
 **Miraikan Demo 2019/08/23-24**
 
 ```bash
 steam
+rossetip
+rossetmaster baxter
 roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_miraikan.launch
 ```
