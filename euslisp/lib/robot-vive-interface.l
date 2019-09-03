@@ -121,12 +121,12 @@
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     ;; for workspace
-    (send self :set-val 'target-coords-max-x nil)
-    (send self :set-val 'target-coords-max-y nil)
-    (send self :set-val 'target-coords-max-z nil)
-    (send self :set-val 'target-coords-min-x nil)
-    (send self :set-val 'target-coords-min-y nil)
-    (send self :set-val 'target-coords-min-z nil)
+    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x"))
+    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y"))
+    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_vive/workspace/max_z"))
+    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_vive/workspace/min_x"))
+    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
+    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
     ;; for eus_vive
     (send self :set-val 'bvive->shoulder-x nil)
     (send self :set-val 'bvive->shoulder-z nil)

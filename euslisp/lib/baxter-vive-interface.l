@@ -29,13 +29,6 @@
     (send self :set-val 'grip-wait-count 5)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
-    ;; for workspace
-    (send self :set-val 'target-coords-max-x 1300.0)
-    (send self :set-val 'target-coords-max-y 750.0)
-    (send self :set-val 'target-coords-max-z 1200.0)
-    (send self :set-val 'target-coords-min-x 300.0)
-    (send self :set-val 'target-coords-min-y -750.0)
-    (send self :set-val 'target-coords-min-z 0.0)
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'ik-stop-step 10)

@@ -4,6 +4,12 @@
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
 
+  <!-- vive -->
+  <arg name="b_lighthouse_id" />
+  <arg name="c_lighthouse_id" />
+  <arg name="l_controller_id" />
+  <arg name="r_controller_id" />
+
   <!-- workspace -->
   <arg name="workspace_max_x" default="false" />
   <arg name="workspace_min_x" default="false" />
@@ -22,6 +28,13 @@
       c_lighthouse_id: $(arg c_lighthouse_id)
       l_controller_id: $(arg l_controller_id)
       r_controller_id: $(arg r_controller_id)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
     </rosparam>
   </group>
   <group if="$(arg main)">
