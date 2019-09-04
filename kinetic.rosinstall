@@ -14,3 +14,7 @@
     local-name: knorth55/vive_ros
     uri: https://github.com/knorth55/vive_ros.git
     version: use-camera
+- git:
+    local-name: knorth55/rviz_camera_stream
+    uri: https://github.com/knorth55/rviz_camera_stream.git
+    version: master
