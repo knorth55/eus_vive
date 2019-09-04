@@ -19,9 +19,14 @@
   <arg name="workspace_max_z" default="false" />
   <arg name="workspace_min_z" default="false" />
 
+
   <!-- camera-->
+  <arg name="image_left" default="/virtual_camera/left/rviz_image" unless="$(arg kinfu)" />
+  <arg name="image_right" default="/virtual_camera/right/rviz_image" unless="$(arg kinfu)" />
+  <!--
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
+  -->
   <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
   <arg name="image_right" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
 
@@ -33,6 +38,8 @@
   <arg name="DECOMP_IMAGE_DEPTH" default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+
+  <param name="robot_description_semantic" textfile="$(find pr2_moveit_config)/config/pr2.srdf" />
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"
@@ -128,4 +135,7 @@
       layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
     </rosparam>
   </node>
+
+  <node name="$(anon rviz)" pkg="rviz" type="rviz"
+        args="-d $(find eus_vive)/rvizconfig/pr2/pr2_vive_visualization.rviz" respawn="true" />
 </launch>
