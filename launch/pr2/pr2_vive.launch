@@ -130,7 +130,7 @@
     </group>
   </group>
 
-  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
+  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons" output="screen">
     <rosparam subst_value="true" >
       layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
     </rosparam>
