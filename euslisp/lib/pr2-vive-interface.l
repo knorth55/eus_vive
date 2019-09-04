@@ -1,7 +1,7 @@
 ;; -*- mode: lisp;-*-
-
 (load "package://pr2eus/pr2-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
+(load "package://eus_qp/optmotiongen/euslisp/inverse-kinematics-wrapper.l")
 
 
 (defclass pr2-vive-interface
@@ -53,6 +53,16 @@
       res))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
+  (:inverse-kinematics (arm target-coords &rest args)
+    (if (eq arm :arms)
+      (send* robot :inverse-kinematics-optmotiongen target-coords :rotation-axis (list t t)
+             :move-target (list (send robot :larm :end-coords) (send robot :rarm :end-coords))
+             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :debug-view nil args)
+      (send* robot :inverse-kinematics-optmotiongen target-coords
+             :rotation-axis t :move-target (send robot arm :end-coords)
+             :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :debug-view nil args)))
   (:start-grasp (arm &key (wait t))
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
 
