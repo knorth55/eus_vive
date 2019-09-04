@@ -167,7 +167,7 @@
     (send self :reset-arm :larm)
     (send self :reset-arm :rarm))
   (:reset-arm (arm)
-    (send robot-interface :stop-grasp arm :wait nil)
+    (send self :stop-grasp arm :wait nil)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
     (send self :set-arm-val arm :grasp nil)
@@ -243,6 +243,10 @@
       (send* robot :inverse-kinematics target-coords :rotation-axis t
              :move-target (send robot arm :end-coords)
              :revert-if-fail nil :stop ik-stop-step :debug-view nil args)))
+  (:start-grasp (arm &key (wait t))
+     (send robot-interface :start-grasp arm :wait wait))
+  (:stop-grasp (arm &key (wait t))
+     (send robot-interface :stop-grasp arm :wait wait))
   (:filter-unsafe-target-coords (arm target-coords)
     (let* ((target-worldpos (send target-coords :worldpos))
            (end-coords-pos-diff
@@ -478,8 +482,8 @@
           (grasp-p (send self :get-arm-val arm :grasp)))
       (when vive-trigger-p
         (if grasp-p
-          (send robot-interface :stop-grasp arm :wait nil)
-          (send robot-interface :start-grasp arm :wait nil))
+          (send self :stop-grasp arm :wait nil)
+          (send self :start-grasp arm :wait nil))
         (send self :set-arm-val arm :grasp (not grasp-p)))))
   (:gripper-status-cb (arm msg)
     (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status)))

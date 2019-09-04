@@ -49,7 +49,7 @@
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send-super :reset-service req)
-      (send robot-interface :stop-grasp :arms :wait nil)
+      (send self :stop-grasp :arms :wait nil)
       (send self :angle-vector (send robot :reset-teleop-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))

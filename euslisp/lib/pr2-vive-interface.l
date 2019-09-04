@@ -47,12 +47,14 @@
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send self :reset :loop-enable nil)
-      (send robot-interface :stop-grasp :arms :wait nil)
+      (send self :stop-grasp :arms :wait nil)
       (send self :angle-vector (send robot :reset-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))
   (:angle-vector (&rest args)
-    (send* robot-interface :angle-vector args)))
+    (send* robot-interface :angle-vector args))
+  (:start-grasp (arm &key (wait t))
+    (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
 
 
 (defun pr2-vive-init (&key (loop-enable t))
