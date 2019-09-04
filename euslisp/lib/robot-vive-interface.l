@@ -666,11 +666,14 @@
         (send self :set-arm-val arm :enable (not enable-p))
         (send self :send-joy-feedback arm))))
   (:update-current-end-coords ()
-     (send robot :angle-vector (send robot-interface :state :potentio-vector))
-     (send self :set-val 'larm-current-end-coords
-           (send robot :larm :end-coords :copy-worldcoords))
-     (send self :set-val 'rarm-current-end-coords
-           (send robot :rarm :end-coords :copy-worldcoords)))
+     (let ((av (send robot :angle-vector)))
+       (send robot :angle-vector
+             (send robot-interface :state :potentio-vector))
+       (send self :set-val 'larm-current-end-coords
+             (send robot :larm :end-coords :copy-worldcoords))
+       (send self :set-val 'rarm-current-end-coords
+             (send robot :rarm :end-coords :copy-worldcoords))
+       (send robot :angle-vector av)))
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
@@ -713,11 +716,11 @@
   (:main-loop-step (&key (head t) (torso t) (safe-arm t) (mirror nil)
                          (enable-button :menu) (visualize t))
     (let (visualize-arm-coords)
-      (send self :update-current-end-coords)
       (send self :enable-cb :mirror mirror :button enable-button)
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso :safe-arm safe-arm :mirror mirror))
       (when (and head loop-enable) (send self :head-cb))
+      (send self :update-current-end-coords)
       (when visualize (send self :visualize visualize-arm-coords))))
   (:main-loop (&rest args)
     (ros::rate rate)
