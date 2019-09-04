@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RightCameraPub1/Visibility1
       Splitter Ratio: 0.3470790386199951
     Tree Height: 728
   - Class: rviz/Selection
@@ -520,7 +519,7 @@ Visualization Manager:
     - Attached Body Color: 150; 50; 150
       Class: moveit_rviz_plugin/RobotState
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
@@ -976,12 +975,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
       Name: RobotState
-      Robot Alpha: 0.800000011920929
+      Robot Alpha: 1
       Robot Description: robot_description
       Robot State Topic: /display_robot_state
       Show All Links: true
       Show Highlights: true
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 1
       Axes Length: 0.10000000149011612
@@ -1056,34 +1055,34 @@ Visualization Manager:
         RobotState: true
         Value: true
     - Class: jsk_rviz_plugin/CameraInfo
-      Enabled: true
+      Enabled: false
       Image Topic: /virtual_camera/left/depth_image_creator/output_image
       Name: LeftCameraInfo
       Topic: /virtual_camera/left/virtual_camera_info_publisher/output/camera_info
       Unreliable: false
-      Value: true
-      alpha: 0.5
+      Value: false
+      alpha: 1
       color: 85; 255; 255
       edge color: 125; 125; 125
       far clip: 1
       not show side polygons: true
-      show edges: true
+      show edges: false
       show polygons: true
       transport hints: raw
       use image: true
     - Class: jsk_rviz_plugin/CameraInfo
-      Enabled: true
+      Enabled: false
       Image Topic: /virtual_camera/right/depth_image_creator/output_image
       Name: RightCameraInfo
       Topic: /virtual_camera/right/virtual_camera_info_publisher/output/camera_info
       Unreliable: false
-      Value: true
-      alpha: 0.5
+      Value: false
+      alpha: 1
       color: 85; 255; 255
       edge color: 125; 125; 125
       far clip: 1
       not show side polygons: true
-      show edges: true
+      show edges: false
       show polygons: true
       transport hints: raw
       use image: true
@@ -1112,7 +1111,7 @@ Visualization Manager:
       Size (Pixels): 2
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /kinect_head/depth_registered/points
+      Topic: /kinect_head_decompressed/depth_registered/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -1145,25 +1144,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.8942925930023193
+      Distance: 2.8244826793670654
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.08144663274288177
-        Y: 0.4730725884437561
-        Z: 1.3638335466384888
+        X: -0.048753246665000916
+        Y: 0.051637209951877594
+        Z: 1.025153398513794
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0803980827331543
+      Pitch: 0.5475717782974243
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.960400342941284
+      Yaw: 2.944525718688965
     Saved: ~
 Window Geometry:
   Displays:
