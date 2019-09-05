@@ -21,14 +21,14 @@
 
 
   <!-- camera-->
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" unless="$(arg kinfu)" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" unless="$(arg kinfu)" />
+  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
+  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
   <!--
   <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
   <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
-  -->
   <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
   <arg name="image_right" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
+  -->
 
   <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
   <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
