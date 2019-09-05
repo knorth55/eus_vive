@@ -14,6 +14,7 @@
       auto_reset: true
       integrate_color: true 
       save_dir: $(optenv HOME)/.ros/eus_vive/kinfu
+      volume_size: 8.0
     </rosparam>
   </node>
 </launch>
