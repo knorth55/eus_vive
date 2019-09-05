@@ -1,7 +1,10 @@
 <launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="false" />
+
   <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
-    <arg name="main" value="true" />
-    <arg name="vive" value="false" />
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
     <arg name="mirror" value="true" />
     <arg name="twitter" value="true" />
     <arg name="debug" value="true" />

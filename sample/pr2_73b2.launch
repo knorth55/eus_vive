@@ -1,9 +1,11 @@
 <launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
   <arg name="kinfu" default="false" />
 
   <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch">
-    <arg name="main" value="true" />
-    <arg name="vive" value="true" />
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
     <arg name="head" value="true" />
     <arg name="mirror" value="false" />
     <arg name="kinfu" value="$(arg kinfu)" />
