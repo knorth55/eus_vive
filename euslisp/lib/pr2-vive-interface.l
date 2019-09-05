@@ -58,10 +58,16 @@
       (send* robot :inverse-kinematics-optmotiongen target-coords :rotation-axis (list t t)
              :move-target (list (send robot :larm :end-coords) (send robot :rarm :end-coords))
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :posture-joint-list (list (send robot :torso_lift_joint))
+             :posture-joint-angle-list (list (send robot :torso_lift_joint :joint-angle))
+             :min-loop ik-stop-step
              :debug-view nil args)
       (send* robot :inverse-kinematics-optmotiongen target-coords
              :rotation-axis t :move-target (send robot arm :end-coords)
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
+             :posture-joint-list (list (send robot :torso_lift_joint))
+             :posture-joint-angle-list (list (send robot :torso_lift_joint :joint-angle))
+             :min-loop ik-stop-step
              :debug-view nil args)))
   (:start-grasp (arm &key (wait t))
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
