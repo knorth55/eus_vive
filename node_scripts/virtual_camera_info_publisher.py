@@ -22,6 +22,14 @@ class VirtualCameraInfoPublisher(ConnectionBasedTransport):
     def _cb(self, info_msg):
         if self.frame_id is not None:
             info_msg.header.frame_id = self.frame_id
+        K = list(info_msg.K)
+        P = list(info_msg.P)
+        K[0] = 400.0
+        K[4] = 400.0
+        P[0] = 400.0
+        P[5] = 400.0
+        info_msg.K = K
+        info_msg.P = P
         self.pub.publish(info_msg)
 
 
