@@ -7,7 +7,7 @@ from jsk_topic_tools import ConnectionBasedTransport
 import rospy
 
 from eus_vive.msg import EusViveStatusArray
-from sensor_msgs.msg import Image 
+from sensor_msgs.msg import Image
 
 
 class EusViveStatusVisualizer(ConnectionBasedTransport):
