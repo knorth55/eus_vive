@@ -3,9 +3,9 @@
 (load "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
 
 
-(defun init (&key (loop-enable t))
+(defun init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t))
   (ros::roseus "baxter_vive_main" :anonymous nil)
-  (baxter-vive-init :loop-enable loop-enable)
+  (baxter-vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
   ;; overwrite s0, e0 joint limit
   ;; do not rotate s0, e0 joint and stay arm in front of the robot
   (send *baxter* :left_s0 :max-angle 30)
@@ -21,8 +21,9 @@
   (x::window-main-one))
 
 
-(defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t) (loop-enable t))
-  (init :loop-enable t)
+(defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t)
+                  (lgripper :parallel) (rgripper parallel) (loop-enable t))
+  (init :lgripper lgripper :rgripper rgripper :loop-enable t)
   (unless head
     (while (not (send *ti* :calibrate :rarm))
       (ros::spin-once)))

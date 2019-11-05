@@ -1,7 +1,7 @@
 ;; -*- mode: lisp;-*-
 (ros::load-ros-manifest "baxter_core_msgs")
 
-(load "package://baxtereus/baxter-interface.l")
+(require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 
@@ -10,7 +10,6 @@
     (send self :angle-vector
           (float-vector 0.0 -5.55908 -77.7612 -10.0854 120.081 40.0122 -44.4067 -29.2017
                         5.55908 -77.7612 10.0854 120.081 -40.0122 -44.4067 29.2017))))
-
 
 (defclass baxter-vive-interface
   :super robot-vive-interface
@@ -67,8 +66,8 @@
              :debug-view nil args))))
 
 
-(defun baxter-vive-init (&key (loop-enable t))
-  (baxter-init)
+(defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
+  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5

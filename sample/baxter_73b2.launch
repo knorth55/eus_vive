@@ -1,6 +1,8 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="false" />
+  <arg name="lgripper_softhand" default="false" />
+  <arg name="rgripper_softhand" default="false" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
     <arg name="main" value="$(arg main)" />
@@ -9,6 +11,8 @@
     <arg name="twitter" value="true" />
     <arg name="debug" value="true" />
     <arg name="miraikan" value="false" />
+    <arg name="lgripper_softhand" value="$(arg lgripper_softhand)" />
+    <arg name="rgripper_softhand" value="$(arg rgripper_softhand)" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
     <arg name="l_controller_id" value="FD35BD42" />
