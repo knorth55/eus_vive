@@ -67,12 +67,12 @@
 
   <group ns="rgripper" if="$(arg rgripper_softhand)">
     <include file="$(find softhand_ros)/launch/softhand.launch">
-      <arg name="device" value="/dev/ttyUSB0" />
+      <arg name="device" value="/dev/rhand-ft2232c" />
     </include>
   </group>
   <group ns="lgripper" if="$(arg lgripper_softhand)">
     <include file="$(find softhand_ros)/launch/softhand.launch">
-      <arg name="device" value="/dev/ttyUSB0" />
+      <arg name="device" value="/dev/lhand-ft2232c" />
     </include>
   </group>
 
