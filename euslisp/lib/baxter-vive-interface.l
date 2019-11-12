@@ -52,6 +52,19 @@
       (send self :angle-vector (send robot :reset-teleop-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))
+  (:head-cb ()
+    (let (coords rpy)
+      (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
+      (setq coords (send *tfl* :lookup-transform bvive-frame-id hmd-frame-id (ros::time 0)))
+      (when coords
+        (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world)
+        (setq rpy
+              (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
+                (car (send coords :rpy-angle))
+                (cadr (send coords :rpy-angle))))
+        (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
+        (send self :angle-vector (send robot :angle-vector) av-tm
+              :head-controller 0 :min-time min-time :scale av-scale))))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
