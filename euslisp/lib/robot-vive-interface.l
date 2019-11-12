@@ -355,7 +355,7 @@
                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
         raw-target-coords)))
   (:get-target-coords (arm &key (head t) (mirror nil))
-    (let* ((head-coords (send (send robot :head-end-coords) :copy-worldcoords))
+    (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
           target-pos target-rot target-coords)
       (if head
@@ -400,6 +400,8 @@
                            :rot target-rot))
         (send target-coords :rotate (/ pi 4.0) :y))
       target-coords))
+  (:get-head-end-coords ()
+    (send (send robot :head-end-coords) :copy-worldcoords))
   (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (ros::ros-error (format nil "~A arm is not supported ~%" arm))
@@ -478,10 +480,12 @@
               (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
                 (car (send coords :rpy-angle))
                 (cadr (send coords :rpy-angle))))
-        (send robot :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
-        (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
-        (send self :angle-vector (send robot :angle-vector) av-tm
-              :head-controller 0 :min-time min-time :scale av-scale))))
+        (send self :move-head rpy))))
+  (:move-head (rpy)
+    (send robot :head-neck-p :joint-angle (rad2deg (* -1 (elt rpy 2))))
+    (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
+    (send self :angle-vector (send robot :angle-vector) av-tm
+          :head-controller 0 :min-time min-time :scale av-scale))
   (:gripper-cb (arm &key (mirror nil))
     (let ((vive-trigger-p
             (send self :vive-trigger-p (if mirror (send self :get-opposite-arm arm) arm)))
