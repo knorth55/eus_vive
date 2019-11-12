@@ -1,13 +1,16 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="false" />
+  <arg name="vive" default="true" />
+  <arg name="head" default="true" />
+  <arg name="mirror" default="false" />
   <arg name="lgripper_softhand" default="false" />
-  <arg name="rgripper_softhand" default="false" />
+  <arg name="rgripper_softhand" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
-    <arg name="mirror" value="true" />
+    <arg name="head" default="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
     <arg name="twitter" value="true" />
     <arg name="debug" value="true" />
     <arg name="miraikan" value="false" />

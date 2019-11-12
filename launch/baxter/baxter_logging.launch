@@ -1,6 +1,7 @@
 <launch>
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
+  <arg name="camera_ns" default="realsense" />
   <arg name="home_dir" default="$(env HOME)" />
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
     <arg name="use_daemon" value="false"/>
@@ -10,6 +11,7 @@
   <include file="$(find eus_vive)/launch/include/db_client.launch">
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
   </include>
   <node name="baxter_rosbag" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /robot/joint_states
