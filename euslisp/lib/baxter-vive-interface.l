@@ -58,7 +58,8 @@
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
   (:get-head-end-coords ()
-    (send (send (send robot :head-end-coords) :copy-worldcoords) :rotate -1.57 :z))
+    (make-coords :pos (send (send robot :head-end-coords) :worldpos)
+                 :rpy (float-vector 0 pi/2 0)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
