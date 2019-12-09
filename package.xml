@@ -21,6 +21,7 @@
   <depend>pr2eus</depend>
   <depend>roseus</depend>
   <depend>sensor_msgs</depend>
+  <depend>softhand_ros</depend>
   <depend>std_msgs</depend>
   <depend>topic_tools</depend>
   <depend>vive_ros</depend>
