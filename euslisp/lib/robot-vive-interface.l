@@ -20,6 +20,7 @@
           cvive-frame-id
           camera-model
           base-frame-id
+          head-frame-id
           feedback-topic-name
           gripper-status-topic-name
           collision-status-topic-name
@@ -401,7 +402,9 @@
         (send target-coords :rotate (/ pi 4.0) :y))
       target-coords))
   (:get-head-end-coords ()
-    (send (send robot :head-end-coords) :copy-worldcoords))
+    (let ((timestamp (ros::time-now)))
+      (send tfl :wait-for-transform base-frame-id head-frame-id timestamp 0.1)
+      (send tfl :lookup-transform base-frame-id head-frame-id timestamp)))
   (:get-hmd->vive-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (ros::ros-error (format nil "~A arm is not supported ~%" arm))

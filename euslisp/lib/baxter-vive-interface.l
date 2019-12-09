@@ -30,6 +30,7 @@
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
+    (send self :set-val 'head-frame-id "realsense_head_link")
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm 300)
@@ -57,9 +58,6 @@
     (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
-  (:get-head-end-coords ()
-    (make-coords :pos (send (send robot :head-end-coords) :worldpos)
-                 :rpy (float-vector 0 pi/2 0)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
