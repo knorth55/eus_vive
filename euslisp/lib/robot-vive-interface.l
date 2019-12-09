@@ -472,17 +472,20 @@
       (send *tfl* :wait-for-transform bvive-frame-id vive-frame-id start-time wait-time)
       (setq coords (send *tfl* :lookup-transform bvive-frame-id vive-frame-id start-time))
       coords))
-  (:head-cb ()
-    (let (coords rpy)
+  (:get-bvive->hmd-coords ()
+    (let (coords)
       (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send *tfl* :lookup-transform bvive-frame-id hmd-frame-id (ros::time 0)))
       (when coords
-        (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world)
-        (setq rpy
+        (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
+  (:head-cb ()
+    (let ((coords (send self :get-bvive->hmd-coords)) rpy-angle)
+      (when coords
+        (setq rpy-angle
               (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
                 (car (send coords :rpy-angle))
                 (cadr (send coords :rpy-angle))))
-        (send self :move-head (elt rpy 1) (* -1 (elt rpy 2)) 0))))
+        (send self :move-head (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0))))
   (:move-head (yaw pitch roll)
     (send robot :head-neck-p :joint-angle (rad2deg pitch))
     (send robot :head-neck-y :joint-angle (rad2deg yaw))

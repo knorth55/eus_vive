@@ -58,6 +58,17 @@
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
+  (:get-hmd->vive-coords (arm)
+    (let* ((coords (send-super :get-hmd->vive-coords arm))
+           (bvive->hmd-coords (send self :get-bvive->hmd-coords))
+           (rpy-angle
+             (when bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
+      (when (and coords rpy-angle)
+        (print coords)
+        (setq coords
+              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0)) :transform coords))
+        (print coords)
+        coords)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
