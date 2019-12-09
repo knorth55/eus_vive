@@ -32,7 +32,7 @@
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 1.5)
+    (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 3.0)
     (send self :set-val 'min-time 0.3)
