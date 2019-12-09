@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /Status1
       Splitter Ratio: 0.3126984238624573
     Tree Height: 728
@@ -673,7 +674,7 @@ Visualization Manager:
       width: 500
     - Alpha: 0.5
       Class: rviz/Effort
-      Enabled: true
+      Enabled: false
       History Length: 1
       Joints:
         head_pan:
@@ -712,7 +713,7 @@ Visualization Manager:
       TF Prefix: ""
       Topic: /robot/joint_states
       Unreliable: false
-      Value: true
+      Value: false
       Width: 0.019999999552965164
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -744,7 +745,7 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Background Color: 0; 0; 0
+    - Background Color: 255; 255; 255
       Camera Info Topic: /virtual_camera/left/virtual_camera_info_publisher/output/camera_info
       Class: rviz_camera_stream/CameraPub
       Display namespace: ""
@@ -765,7 +766,7 @@ Visualization Manager:
         RobotModel: true
         Torque: true
         Value: true
-    - Background Color: 0; 0; 0
+    - Background Color: 255; 255; 255
       Camera Info Topic: /virtual_camera/right/virtual_camera_info_publisher/output/camera_info
       Class: rviz_camera_stream/CameraPub
       Display namespace: ""
@@ -788,7 +789,7 @@ Visualization Manager:
         Value: true
   Enabled: true
   Global Options:
-    Background Color: 211; 215; 207
+    Background Color: 255; 255; 255
     Default Light: true
     Fixed Frame: base
     Frame Rate: 30
@@ -829,10 +830,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7647961378097534
+      Pitch: 1.359796166419983
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.7285744547843933
+      Yaw: 3.083573579788208
     Saved: ~
 Window Geometry:
   Displays:
