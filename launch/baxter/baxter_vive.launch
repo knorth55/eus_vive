@@ -152,7 +152,7 @@
 
   <group if="$(arg head)">
     <node name="realsense_transform_publisher" pkg="tf" type="static_transform_publisher"
-          args=" 0 0.1 0.15 -1.57 -0.79 0 head_camera $(arg camera_ns)_link 100" />
+          args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
     <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
       <arg name="camera" value="$(arg camera_ns)" />
       <arg name="enable_pointcloud" value="true" />
