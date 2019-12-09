@@ -4,6 +4,7 @@
   <param name="robot/name" value="baxter"/>
 
   <arg name="twitter" default="true" />
+  <arg name="camera_ns" default="realsense" />
   <arg name="output" default="screen" />
   <arg name="log_rate" default="5.0" />
   <arg name="respawn" default="true" />
@@ -23,7 +24,7 @@
     <arg name="save_action" value="true" />
     <arg name="save_app" value="false" />
 
-    <arg name="camera_ns" value="realsense" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="rgb_ns" value="color" />
     <arg name="rgb_suffix" value="/compressed"/>
     <arg name="depth_ns" value="depth_registered/sw_registered" />

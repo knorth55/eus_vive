@@ -30,6 +30,7 @@
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
+    (send self :set-val 'head-frame-id "head")
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm 300)
@@ -37,7 +38,7 @@
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
     (send self :set-val 'arm-length 1000)
-    (send self :set-val 'head->shoulder-x-distance 0)
+    (send self :set-val 'head->shoulder-x-distance -100)
     (send self :set-val 'head->shoulder-z-distance 30)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
@@ -52,6 +53,28 @@
       (send self :angle-vector (send robot :reset-teleop-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))
+  (:move-head (yaw pitch roll)
+    ;; no pitch joint
+    (send robot :head-neck-y :joint-angle (rad2deg yaw))
+    (send self :angle-vector (send robot :angle-vector) av-tm
+          :head-controller 0 :min-time min-time :scale av-scale))
+  (:get-head-end-coords ()
+    (let (coords)
+      (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
+      (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
+      (when coords
+        (send coords :rotate pi/2 :y :world)
+        coords)))
+  (:get-hmd->vive-coords (arm)
+    (let* ((coords (send-super :get-hmd->vive-coords arm))
+           (bvive->hmd-coords (send self :get-bvive->hmd-coords))
+           (rpy-angle
+             (when bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
+      (when (and coords rpy-angle)
+        (setq coords
+              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0))
+                    :transform coords))
+        coords)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -73,8 +96,8 @@
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
                                 :name "camera"))
   (send *camera-model* :translate #f(1500 0 600))
-  (send *camera-model* :rotate -1.57 :y :world)
-  (send *camera-model* :rotate -1.57 :x :world)
+  (send *camera-model* :rotate -pi/2 :y :world)
+  (send *camera-model* :rotate -pi/2 :x :world)
   (send *camera-model* :rotate -0.30 :y :world)
   (send *irtviewer* :change-background (float-vector 1 1 1))
   (send *irtviewer* :draw-floor 100)
