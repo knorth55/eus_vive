@@ -53,9 +53,9 @@
       (send self :angle-vector (send robot :reset-teleop-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))
-  (:move-head (rpy)
+  (:move-head (yaw pitch roll)
     ;; no pitch joint
-    (send robot :head-neck-y :joint-angle (rad2deg (elt rpy 1)))
+    (send robot :head-neck-y :joint-angle (rad2deg yaw))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
   (:angle-vector (&rest args)
