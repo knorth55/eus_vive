@@ -30,7 +30,7 @@
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
-    (send self :set-val 'head-frame-id "realsense_head_link")
+    (send self :set-val 'head-frame-id "head")
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 300)
@@ -58,16 +58,22 @@
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
+  (:get-head-end-coords ()
+    (let (coords)
+      (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
+      (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
+      (when coords
+        (send coords :rotate pi/2 :y :world)
+        coords)))
   (:get-hmd->vive-coords (arm)
     (let* ((coords (send-super :get-hmd->vive-coords arm))
            (bvive->hmd-coords (send self :get-bvive->hmd-coords))
            (rpy-angle
              (when bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
       (when (and coords rpy-angle)
-        (print coords)
         (setq coords
-              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0)) :transform coords))
-        (print coords)
+              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0))
+                    :transform coords))
         coords)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
