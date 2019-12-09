@@ -23,7 +23,6 @@
     (send self :set-val 'draw-object-list (list *pr2*))
     ;; for pr2
     (send self :set-val 'base-frame-id "base_footprint")
-    (send self :set-val 'head-frame-id "head_tilt_link")
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 300)
@@ -52,6 +51,8 @@
       (send self :angle-vector (send robot :reset-pose) 5000)
       (send robot-interface :wait-interpolation)
       res))
+  (:get-head-end-coords ()
+    (send (send robot :head :end-coords) :copy-worldcoords))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
