@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find audio_capture)/launch/capture.launch" />
+  <include file="$(find audio_play)/launch/play.launch">
+    <arg name="do_timestamp" value="false" />
+  </include>
+</launch>

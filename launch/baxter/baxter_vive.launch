@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="twitter" default="true" />
@@ -201,6 +202,7 @@
     <arg name="INPUT_IMAGE" value="/$(arg camera_ns)/color/image_rect_color" />
   </include>
 
+  <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
   <node name="soundplay_node"
         pkg="sound_play" type="soundplay_node.py">
     <remap from="sound_play" to="robotsound" />

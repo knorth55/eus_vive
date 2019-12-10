@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="true" />
