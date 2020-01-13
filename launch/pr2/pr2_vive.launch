@@ -19,40 +19,23 @@
   <arg name="workspace_max_z" default="false" />
   <arg name="workspace_min_z" default="false" />
 
-
   <!-- camera-->
+  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
+  <arg name="RGB_CAMERA_INFO" default="/kinect_head/rgb/camera_info" />
+  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
+  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
   <arg name="image_left" default="/virtual_camera/left/rviz_image" />
   <arg name="image_right" default="/virtual_camera/right/rviz_image" />
-  <!--
-  <arg name="image_left" default="/virtual_camera/left/depth_image_creator/output_image" unless="$(arg kinfu)" />
-  <arg name="image_right" default="/virtual_camera/right/depth_image_creator/output_image" unless="$(arg kinfu)" />
-  <arg name="image_left" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
-  <arg name="image_right" default="/kinfu/output/rendered_image" if="$(arg kinfu)" />
-  -->
-
-  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
-  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
-  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
-  <arg name="DECOMP_CAMERA_INFO" default="/kinect_head_decompressed/depth_registered/camera_info" />
-  <arg name="DECOMP_RGB_CAMERA_INFO" default="/kinect_head_decompressed/rgb/camera_info" />
-  <arg name="DECOMP_IMAGE_DEPTH" default="/kinect_head_decompressed/depth_registered/image_rect" />
+  <arg name="DECOMP_CAMERA_INFO"
+       default="/kinect_head_decompressed/depth_registered/camera_info" />
+  <arg name="DECOMP_RGB_CAMERA_INFO"
+       default="/kinect_head_decompressed/rgb/camera_info" />
+  <arg name="DECOMP_IMAGE_DEPTH"
+       default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
 
   <param name="robot_description_semantic" textfile="$(find pr2_moveit_config)/config/pr2.srdf" />
-
-  <group ns="kinect_head_decompressed">
-    <node name="camera_info_relay" pkg="topic_tools" type="relay"
-          args="$(arg CAMERA_INFO) $(arg DECOMP_CAMERA_INFO)" />
-    <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
-          args="$(arg CAMERA_INFO) $(arg DECOMP_RGB_CAMERA_INFO)" />
-    <node name="depth_image_transport" pkg="image_transport" type="republish"
-          args="compressedDepth in:=$(arg IMAGE_DEPTH) raw out:=$(arg DECOMP_IMAGE_DEPTH)" />
-    <node name="rgb_image_transport" pkg="image_transport" type="republish"
-          args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg DECOMP_IMAGE_COLOR)" />
-    <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
-          args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" />
-  </group>
 
   <group ns="virtual_camera">
     <group ns="left">
