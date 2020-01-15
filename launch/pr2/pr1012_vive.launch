@@ -45,7 +45,9 @@
     <node name="rgb_image_transport" pkg="image_transport" type="republish"
           args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg DECOMP_IMAGE_COLOR)" />
     <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
-          args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" />
+          args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen">
+      <param name="queue_size" value="100" />
+    </node>
   </group>
 
   <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch" pass_all_args="true" />
