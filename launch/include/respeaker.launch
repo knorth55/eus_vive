@@ -1,6 +1,25 @@
 <launch>
-  <include file="$(find audio_capture)/launch/capture.launch" />
-  <include file="$(find audio_play)/launch/play.launch">
-    <arg name="do_timestamp" value="false" />
-  </include>
+  <arg name="capture" default="true" />
+
+  <arg name="device" default=""/>
+  <arg name="channels" default="1"/>
+  <arg name="sample_rate" default="16000"/>
+  <arg name="format" default="mp3"/>
+  <arg name="dst" default="alsasink"/>
+  <arg name="do_timestamp" default="false"/>
+
+  <node name="audio_capture" pkg="audio_capture" type="audio_capture"
+        output="screen" if="$(arg capture)" >
+    <param name="bitrate" value="128"/>
+    <param name="device" value="$(arg device)"/>
+    <param name="channels" value="$(arg channels)"/>
+    <param name="sample_rate" value="$(arg sample_rate)"/>
+    <param name="format" value="$(arg format)"/>
+  </node>
+  <node name="audio_play" pkg="audio_play" type="audio_play" output="screen">
+    <param name="dst" value="$(arg dst)"/>
+    <param name="do_timestamp" value="$(arg do_timestamp)"/>
+    <param name="format" value="$(arg format)" />
+  </node>
+
 </launch>
