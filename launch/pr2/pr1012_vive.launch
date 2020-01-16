@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
 

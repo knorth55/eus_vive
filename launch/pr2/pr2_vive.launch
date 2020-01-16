@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
 
@@ -117,6 +118,9 @@
     </group>
   </group>
 
+  <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)">
+    <arg name="launch_respeaker" value="false" />
+  </include>
   <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons" output="screen">
     <rosparam subst_value="true" >
       layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
