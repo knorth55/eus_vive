@@ -13,7 +13,7 @@
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
   </include>
-  <node name="baxter_rosbag" pkg="rosbag" type="record"
+  <node name="baxter_vive_rosbag_record" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /robot/joint_states
               /lifelog/rgb/image_rect_color/compressed
               /lifelog/rgb/camera_info
