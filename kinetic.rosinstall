@@ -17,7 +17,7 @@
 - git:
     local-name: knorth55/jsk_robot
     uri: https://github.com/knorth55/jsk_robot.git
-    version: baxter-vive-control
+    version: vive-control
 - git:
     local-name: knorth55/rviz_camera_stream
     uri: https://github.com/knorth55/rviz_camera_stream
