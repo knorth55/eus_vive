@@ -9,6 +9,7 @@
     <arg name="head" value="true" />
     <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />
+    <arg name="logging" value="true" />
     <arg name="kinfu" value="$(arg kinfu)" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />

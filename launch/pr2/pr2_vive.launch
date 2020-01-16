@@ -4,6 +4,7 @@
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
+  <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
 
   <!-- vive -->
