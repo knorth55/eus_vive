@@ -35,6 +35,24 @@
        default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+  <!-- prosilica -->
+  <!--
+  <arg name="PROSILICA_RGB_CAMERA_INFO"
+       default="/prosilica/camera_info" />
+  <arg name="PROSILICA_IMAGE_COLOR"
+       default="/prosilica/image_rect" />
+  <arg name="PROSILICA_DECOMP_RGB_CAMERA_INFO"
+       default="/prosilica_decompressed/rgb/camera_info" />
+  <arg name="PROSILICA_DECOMP_IMAGE_COLOR"
+       default="/prosilica_decompressed/rgb/image_rect_color" />
+
+  <group ns="prosilica_decompressed">
+    <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
+          args="$(arg PROSILICA_RGB_CAMERA_INFO) $(arg PROSILICA_DECOMP_RGB_CAMERA_INFO)" />
+    <node name="rgb_image_transport" pkg="image_transport" type="republish"
+          args="theora in:=$(arg PROSILICA_IMAGE_COLOR) raw out:=$(arg PROSILICA_DECOMP_IMAGE_COLOR)" />
+  </group>
+  -->
 
   <param name="robot_description_semantic" textfile="$(find pr2_moveit_config)/config/pr2.srdf" />
 
@@ -44,7 +62,7 @@
             args="-0.0315 0 0 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
       <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
             output="screen">
-        <remap from="~input/camera_info" to="$(arg CAMERA_INFO)" />
+        <remap from="~input/camera_info" to="$(arg DECOMP_CAMERA_INFO)" />
         <rosparam>
           frame_id: virtual_camera_left_rgb_optical_frame
           height: 1080
@@ -62,7 +80,7 @@
             args="0.0315 0 0 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
       <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
             output="screen">
-        <remap from="~input/camera_info" to="$(arg CAMERA_INFO)" />
+        <remap from="~input/camera_info" to="$(arg DECOMP_CAMERA_INFO)" />
         <rosparam>
           frame_id: virtual_camera_right_rgb_optical_frame
           height: 1080

@@ -35,6 +35,17 @@
        default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+  <!-- prosilica -->
+  <!--
+  <arg name="PROSILICA_RGB_CAMERA_INFO"
+       default="/prosilica/camera_info" />
+  <arg name="PROSILICA_IMAGE_COLOR"
+       default="/prosilica/image_rect" />
+  <arg name="PROSILICA_DECOMP_RGB_CAMERA_INFO"
+       default="/prosilica_decompressed/rgb/camera_info" />
+  <arg name="PROSILICA_DECOMP_IMAGE_COLOR"
+       default="/prosilica_decompressed/rgb/image_rect_color" />
+  -->
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"
