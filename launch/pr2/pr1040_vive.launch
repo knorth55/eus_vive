@@ -45,6 +45,7 @@
        default="/prosilica_decompressed/rgb/camera_info" />
   <arg name="PROSILICA_DECOMP_IMAGE_COLOR"
        default="/prosilica_decompressed/rgb/image_rect_color" />
+  -->
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"
@@ -58,7 +59,6 @@
     <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
           args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" />
   </group>
-  -->
 
   <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch" pass_all_args="true" />
 
