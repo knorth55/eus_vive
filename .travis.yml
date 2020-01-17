@@ -1,0 +1,31 @@
+language: c++
+cache:
+  apt: true
+  pip: true
+  directories:
+    - $HOME/.ccache
+    - $HOME/apt-cacher-ng
+sudo: required
+services:
+  - docker
+dist: trusty
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+env:
+  global:
+    - ROS_PARALLEL_JOBS="-j8"
+    - ROS_PARALLEL_TEST_JOBS="-j8"
+    - CATKIN_PARALLEL_TEST_JOBS="-p4"
+    - NOT_TEST_INSTALL=true
+    - USE_JENKINS=false
+    - USE_TRAVIS=true
+    - USE_DOCKER=true
+  matrix:
+    - ROS_DISTRO=kinetic USE_DEB=true
+    - ROS_DISTRO=melodic USE_DEB=true
+script: source .travis/travis.sh
+branches:
+  only:
+    - master
