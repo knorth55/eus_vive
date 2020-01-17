@@ -1,4 +1,5 @@
 # eus_vive
+[![Build Status](https://travis-ci.com/knorth55/eus_vive.svg?branch=master)](https://travis-ci.com/knorth55/eus_vive)
 
 ## Tested Environment
 
