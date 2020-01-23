@@ -1,6 +1,16 @@
 <launch>
-  <include file="$(find audio_capture)/launch/capture.launch" />
-  <include file="$(find audio_play)/launch/play.launch">
-    <arg name="do_timestamp" value="false" />
-  </include>
+  <arg name="launch_respeaker" default="true" />
+
+  <arg name="format" default="wave"/>
+  <arg name="dst" default="alsasink"/>
+  <arg name="do_timestamp" default="false"/>
+
+  <node if="$(arg launch_respeaker)"
+        name="respeaker_node" pkg="respeaker_ros" type="respeaker_node.py" respawn="true"/>
+  <node name="audio_play" pkg="audio_play" type="audio_play" output="screen">
+    <param name="dst" value="$(arg dst)"/>
+    <param name="do_timestamp" value="$(arg do_timestamp)"/>
+    <param name="format" value="$(arg format)" />
+  </node>
+
 </launch>
