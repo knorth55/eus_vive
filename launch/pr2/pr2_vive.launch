@@ -6,6 +6,7 @@
   <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
+  <arg name="home_dir" default="$(env HOME)" />
 
   <!-- vive -->
   <arg name="b_lighthouse_id" />
