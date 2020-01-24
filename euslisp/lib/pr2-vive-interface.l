@@ -27,7 +27,7 @@
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 300)
-    (send self :set-val 'av-scale 8.0)
+    (send self :set-val 'av-scale 5.0)
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'torso-av-tm 500)
     (send self :set-val 'torso-av-scale 1.5)
