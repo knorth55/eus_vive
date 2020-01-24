@@ -8,8 +8,9 @@
 (defmethod baxter-robot
   (:reset-teleop-pose ()
     (send self :angle-vector
-          (float-vector 0.0 -5.55908 -77.7612 -10.0854 120.081 40.0122 -44.4067 -29.2017
-                        5.55908 -77.7612 10.0854 120.081 -40.0122 -44.4067 29.2017))))
+          (float-vector 0.0
+                        0.812988 -39.9023 -35.5298 108.896 114.06 -67.522 -13.8428
+                        -0.812988 -39.9023 35.5298 108.896 -114.06 -67.522 13.8428))))
 
 (defclass baxter-vive-interface
   :super robot-vive-interface
