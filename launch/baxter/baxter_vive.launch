@@ -71,14 +71,10 @@
   </include>
 
   <group ns="rgripper" if="$(arg rgripper_softhand)">
-    <include file="$(find softhand_ros)/launch/softhand.launch">
-      <arg name="device" value="/dev/rhand-ft2232c" />
-    </include>
+    <include file="$(find softhand_ros)/launch/softhand_right.launch" />
   </group>
   <group ns="lgripper" if="$(arg lgripper_softhand)">
-    <include file="$(find softhand_ros)/launch/softhand.launch">
-      <arg name="device" value="/dev/lhand-ft2232c" />
-    </include>
+    <include file="$(find softhand_ros)/launch/softhand_left.launch" />
   </group>
 
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" >

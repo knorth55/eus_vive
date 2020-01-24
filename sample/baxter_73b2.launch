@@ -4,7 +4,7 @@
   <arg name="head" default="true" />
   <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
-  <arg name="lgripper_softhand" default="false" />
+  <arg name="lgripper_softhand" default="true" />
   <arg name="rgripper_softhand" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
