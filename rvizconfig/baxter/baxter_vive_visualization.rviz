@@ -669,6 +669,7 @@ Visualization Manager:
       height: 128
       keep aspect ratio: true
       left: 20
+      overwrite alpha value: false
       top: 500
       transport hint: raw
       width: 500
@@ -677,36 +678,7 @@ Visualization Manager:
       Enabled: false
       History Length: 1
       Joints:
-        head_pan:
-          Value: true
-        left_e0:
-          Value: true
-        left_e1:
-          Value: true
-        left_s0:
-          Value: true
-        left_s1:
-          Value: true
-        left_w0:
-          Value: true
-        left_w1:
-          Value: true
-        left_w2:
-          Value: true
-        right_e0:
-          Value: true
-        right_e1:
-          Value: true
-        right_s0:
-          Value: true
-        right_s1:
-          Value: true
-        right_w0:
-          Value: true
-        right_w1:
-          Value: true
-        right_w2:
-          Value: true
+        {}
       Name: Torque
       Robot Description: robot_description
       Scale: 0.6000000238418579
@@ -727,7 +699,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: RGB8
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -744,7 +716,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Background Color: 255; 255; 255
       Camera Info Topic: /virtual_camera/left/virtual_camera_info_publisher/output/camera_info
       Class: rviz_camera_stream/CameraPub
@@ -756,6 +728,7 @@ Visualization Manager:
       Queue Size: 2
       Value: true
       Visibility:
+        CameraInfo: true
         Grid: true
         LeftArmCoords: true
         PointCloud2: true
@@ -777,6 +750,7 @@ Visualization Manager:
       Queue Size: 2
       Value: true
       Visibility:
+        CameraInfo: true
         Grid: true
         LeftArmCoords: true
         LeftCameraPub: true
@@ -787,6 +761,22 @@ Visualization Manager:
         RobotModel: true
         Torque: true
         Value: true
+    - Class: jsk_rviz_plugin/CameraInfo
+      Enabled: true
+      Image Topic: /realsense_head/color/image_rect_color
+      Name: CameraInfo
+      Topic: /realsense_head/color/camera_info
+      Unreliable: false
+      Value: true
+      alpha: 1
+      color: 85; 255; 255
+      edge color: 125; 125; 125
+      far clip: 10
+      not show side polygons: true
+      show edges: false
+      show polygons: true
+      transport hints: raw
+      use image: true
   Enabled: true
   Global Options:
     Background Color: 255; 255; 255
