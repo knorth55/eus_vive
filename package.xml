@@ -24,6 +24,7 @@
   <depend>softhand_ros</depend>
   <depend>std_msgs</depend>
   <depend>topic_tools</depend>
+  <depend>video_stream_opencv</depend>
   <depend>vive_ros</depend>
 
   <export>
