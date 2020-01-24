@@ -40,6 +40,7 @@
 
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="image_left" default="/virtual_camera/left/rviz_image" />
   <arg name="image_right" default="/virtual_camera/right/rviz_image" />
 
@@ -148,12 +149,23 @@
   </node>
 
   <group if="$(arg head)">
+    <!-- realsense camera -->
     <node name="realsense_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
     <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
       <arg name="camera" value="$(arg camera_ns)" />
       <arg name="enable_pointcloud" value="true" />
       <arg name="align_depth" value="true"/>
+    </include>
+    <!-- kodak camera -->
+    <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
+    <node name="kodak_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
+    <node name="kodak_rviz__frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
+    <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
+      <arg name="camera_name" value="$(arg spherical_camera_ns)" />
     </include>
     <group ns="virtual_camera">
       <group ns="left">
