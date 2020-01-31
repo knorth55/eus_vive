@@ -37,6 +37,10 @@
   <arg name="lgripper_type" value=":parallel" unless="$(arg lgripper_softhand)" />
   <arg name="rgripper_type" value=":softhand" if="$(arg rgripper_softhand)" />
   <arg name="rgripper_type" value=":parallel" unless="$(arg rgripper_softhand)" />
+  <arg name="lgripper_visualize" value="true" unless="$(arg lgripper_softhand)" />
+  <arg name="lgripper_visualize" value="false" if="$(arg lgripper_softhand)" />
+  <arg name="rgripper_visualize" value="true" unless="$(arg rgripper_softhand)" />
+  <arg name="rgripper_visualize" value="false" if="$(arg rgripper_softhand)" />
 
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
@@ -46,14 +50,17 @@
 
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
-                  gazebo:=false left_electric_gripper:=true right_electric_gripper:=true
-                  finger:=$(arg finger) finger_tip:=$(arg finger_tip)"/>
+                  gazebo:=false finger:=$(arg finger) finger_tip:=$(arg finger_tip)
+                  left_electric_gripper:=$(arg lgripper_visualize)
+                  right_electric_gripper:=$(arg rgripper_visualize)" />
 
   <param name="robot_description_semantic"
          command="$(find xacro)/xacro.py --inorder
                   $(find baxter_moveit_config)/config/baxter.srdf.xacro
-                  left_electric_gripper:=true right_electric_gripper:=true
-                  left_tip_name:=left_gripper right_tip_name:=right_gripper"/>
+                  left_electric_gripper:=$(arg lgripper_visualize)
+                  left_tip_name:=left_gripper 
+                  right_electric_gripper:=$(arg rgripper_visualize)
+                  right_tip_name:=right_gripper" />
 
 
   <include file="$(find jsk_baxter_startup)/baxter.launch">
