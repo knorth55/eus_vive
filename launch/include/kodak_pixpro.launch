@@ -2,7 +2,7 @@
   <arg name="camera_name" default="kodak_head" />
   <include file="$(find video_stream_opencv)/launch/camera.launch" >
     <arg name="camera_name" value="$(arg camera_name)" />
-    <arg name="video_stream_provider" value="0" />
+    <arg name="video_stream_provider" value="/dev/kodak-head" />
     <arg name="fps" value="15" />
     <arg name="frame_id" value="$(arg camera_name)_optical_frame" />
     <arg name="camera_info_url" value="" />
