@@ -84,7 +84,6 @@ roslaunch eus_vive pr2_gazebo.launch
 steam
 rossetip
 rossetmaster baxter
-roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_73b2.launch
 ```
 
