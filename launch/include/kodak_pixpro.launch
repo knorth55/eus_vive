@@ -11,5 +11,6 @@
     <arg name="width" value="1440"/>
     <arg name="height" value="1440" />
     <arg name="visualize" value="false" />
+    <arg name="buffer_queue_size" value="1" />
   </include>
 </launch>
