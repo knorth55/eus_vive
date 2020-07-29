@@ -19,10 +19,9 @@
 
 (defmethod robot-vive-interface
   (:init (&key (loop-enable t))
-    (send-super :init :loop-enable loop-enable)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'base-frame-id
+    (send self :set-val 'vrbase-frame-id
           (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
     (send self :set-val 'larm-controller-frame-id
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
@@ -30,8 +29,9 @@
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     (dolist (arm (list :larm :rarm))
-      (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :vive-frame-id))
-                      sensor_msgs::Joy #'send self :vive-button-cb arm)))
+      (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :controller-frame-id))
+                      sensor_msgs::Joy #'send self :controller-button-cb arm))
+    (send-super :init :loop-enable loop-enable))
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))

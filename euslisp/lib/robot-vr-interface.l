@@ -16,7 +16,7 @@
           robot-interface
           tfl
           hmd-frame-id
-          base-frame-id
+          vrbase-frame-id
           camera-model
           base-frame-id
           head-frame-id
@@ -94,8 +94,8 @@
           arm-length
           head->shoulder-x-distance
           head->shoulder-z-distance
-          base->shoulder-x
-          base->shoulder-z
+          vrbase->shoulder-x
+          vrbase->shoulder-z
           end-coords-pos-diff-thresh
           target-coords-max-x
           target-coords-max-y
@@ -117,8 +117,8 @@
     (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
     (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
     ;; for eus_vive
-    (send self :set-val 'base->shoulder-x nil)
-    (send self :set-val 'base->shoulder-z nil)
+    (send self :set-val 'vrbase->shoulder-x nil)
+    (send self :set-val 'vrbase->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
@@ -354,22 +354,22 @@
             (setq controller-coords (send head-coords :transform hmd->controller-coords))
             (setq target-pos (send controller-coords :worldpos))
             (setq target-rot (send controller-coords :worldrot))))
-        (let ((base->controller-coords
-                (send self :get-base->controller-coords
+        (let ((vrbase->controller-coords
+                (send self :get-vrbase->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
-              base->controller-pos)
-          (when base->controller-coords
-            (send base->controller-coords
+               vrbase->controller-pos)
+          (when vrbase->controller-coords
+            (send vrbase->controller-coords
                   :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-            (setq base->controller-pos (send base->controller-coords :worldpos))
+            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
+            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+            (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
             (setq target-pos
-                  (float-vector (- (elt base->controller-pos 0) base->shoulder-x)
-                                (elt base->controller-pos 1)
-                                (- (+ robot-height (elt base->controller-pos 2))
-                                   (+ base->shoulder-z head->shoulder-z-distance))))
-            (setq target-rot (send base->controller-coords :worldrot)))))
+                  (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
+                                (elt vrbase->controller-pos 1)
+                                (- (+ robot-height (elt vrbase->controller-pos 2))
+                                   (+ vrbase->shoulder-z head->shoulder-z-distance))))
+            (setq target-rot (send vrbase->controller-coords :worldrot)))))
       (when (and target-pos target-rot)
         (when mirror
           (let* ((mirror-coords (make-coords :rot target-rot))
@@ -427,9 +427,9 @@
                 (/ (send self :get-val 'arm-length)
                    (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
           (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
-          (send self :set-val 'base->shoulder-x
+          (send self :set-val 'vrbase->shoulder-x
                 (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
-          (send self :set-val 'base->shoulder-z (elt (send second-coords :worldpos) 1))
+          (send self :set-val 'vrbase->shoulder-z (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
           (send robot-interface :speak "Calibration succeeded.")
           (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))
@@ -444,7 +444,7 @@
           (ros::duration-sleep 1)
           (send self :send-joy-feedback arm)
           nil))))
-  (:get-base->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
+  (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-p)
@@ -454,17 +454,17 @@
           (setq controller-trigger-p (send self :controller-trigger-p arm))
           (ros::spin-once)
           (ros::sleep)))
-      (send *tfl* :wait-for-transform base-frame-id controller-frame-id start-time wait-time)
-      (setq coords (send *tfl* :lookup-transform base-frame-id controller-frame-id start-time))
+      (send *tfl* :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
+      (setq coords (send *tfl* :lookup-transform vrbase-frame-id controller-frame-id start-time))
       coords))
-  (:get-base->hmd-coords ()
+  (:get-vrbase->hmd-coords ()
     (let (coords)
-      (send *tfl* :wait-for-transform base-frame-id hmd-frame-id (ros::time 0) 0.1)
-      (setq coords (send *tfl* :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
+      (send *tfl* :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
+      (setq coords (send *tfl* :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   (:head-cb ()
-    (let ((coords (send self :get-base->hmd-coords)) rpy-angle)
+    (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
       (when coords
         (setq rpy-angle
               (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
