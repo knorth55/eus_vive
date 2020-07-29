@@ -182,6 +182,7 @@
   (:stop-grasp (arm &key (wait t))
      (send robot-interface :stop-grasp arm :wait wait))
   (:filter-unsafe-target-coords (arm target-coords)
+    (unless target-coords (return-from :filter-unsafe-target-coords nil))
     (let* ((target-worldpos (send target-coords :worldpos))
            (end-coords-pos-diff
              (norm (v- target-worldpos

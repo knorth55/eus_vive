@@ -40,7 +40,7 @@
     (car (send hmd-coords :rpy-angle)))
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO (knorth55): update get-target-coords for oculus
-    (return-from get-target-coords nil))
+    (return-from :get-target-coords nil))
   (:calib-controller ()
     ;; TODO (knorth55): update get-target-coords for oculus
     (return-from :calib-controller t)))
