@@ -5,7 +5,6 @@
 (ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "std_srvs")
-(ros::load-ros-manifest "topic_tools")
 
 (load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 
@@ -15,12 +14,9 @@
   :slots (robot
           robot-interface
           tfl
-          hmd-frame-id
-          vrbase-frame-id
           camera-model
           base-frame-id
           head-frame-id
-          feedback-topic-name
           gripper-status-topic-name
           collision-status-topic-name
           collision-status-topic-type
@@ -33,48 +29,18 @@
           eus-vive-calib-service-name
           loop-enable
           draw-object-list
-          trigger-wait-count
-          menu-wait-count
-          trackpad-wait-count
-          grip-wait-count
+          larm-enable
           larm-grasp
           larm-grasping-p
-          larm-trigger
-          larm-prev-trigger
-          larm-trigger-count
-          larm-menu
-          larm-prev-menu
-          larm-menu-count
-          larm-trackpad
-          larm-prev-trackpad
-          larm-trackpad-count
-          larm-grip
-          larm-prev-grip
-          larm-grip-count
-          larm-enable
-          larm-controller-frame-id
           larm-grasp-timeout-p
           larm-grasp-start-time
           larm-collision-p
           larm-coords-visualize-topic-name
           larm-current-end-coords
           larm-track-error-p
+          rarm-enable
           rarm-grasp
           rarm-grasping-p
-          rarm-trigger
-          rarm-prev-trigger
-          rarm-trigger-count
-          rarm-menu
-          rarm-prev-menu
-          rarm-menu-count
-          rarm-trackpad
-          rarm-prev-trackpad
-          rarm-trackpad-count
-          rarm-grip
-          rarm-prev-grip
-          rarm-grip-count
-          rarm-enable
-          rarm-controller-frame-id
           rarm-grasp-timeout-p
           rarm-grasp-start-time
           rarm-collision-p
@@ -92,10 +58,6 @@
           grasp-timeout-time
           rate
           arm-length
-          head->shoulder-x-distance
-          head->shoulder-z-distance
-          vrbase->shoulder-x
-          vrbase->shoulder-z
           end-coords-pos-diff-thresh
           target-coords-max-x
           target-coords-max-y
@@ -117,8 +79,6 @@
     (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
     (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
     ;; for eus_vive
-    (send self :set-val 'vrbase->shoulder-x nil)
-    (send self :set-val 'vrbase->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
@@ -135,7 +95,6 @@
       (send self :set-arm-val arm :coords-visualize-topic-name
             (format nil "/eus_vive/~A/target_pose_stamped" (if (eq arm :larm) "left" "right"))))
     (send self :set-val 'tfl (instance ros::transform-listener :init))
-    (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
@@ -159,18 +118,6 @@
           :controller-type (send self :get-arm-controller arm))
     (send self :set-arm-val arm :grasp nil)
     (send self :set-arm-val arm :grasping-p nil)
-    (send self :set-arm-val arm :trigger nil)
-    (send self :set-arm-val arm :prev-trigger nil)
-    (send self :set-arm-val arm :trigger-count 0)
-    (send self :set-arm-val arm :menu nil)
-    (send self :set-arm-val arm :prev-menu nil)
-    (send self :set-arm-val arm :menu-count 0)
-    (send self :set-arm-val arm :trackpad nil)
-    (send self :set-arm-val arm :prev-trackpad nil)
-    (send self :set-arm-val arm :trackpad-count 0)
-    (send self :set-arm-val arm :grip nil)
-    (send self :set-arm-val arm :prev-grip nil)
-    (send self :set-arm-val arm :grip-count 0)
     (send self :set-arm-val arm :enable nil)
     (send self :set-arm-val arm :collision-p nil)
     (send self :set-arm-val arm :current-end-coords nil)
@@ -341,128 +288,8 @@
             (send self :angle-vector (send robot :angle-vector)
                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
         raw-target-coords)))
-  (:get-target-coords (arm &key (head t) (mirror nil))
-    (let* ((head-coords (send self :get-head-end-coords))
-           (robot-height (elt (send head-coords :worldpos) 2))
-          target-pos target-rot target-coords)
-      (if head
-        (let ((hmd->controller-coords
-                (send self :get-hmd->controller-coords
-                      (if mirror (send self :get-opposite-arm arm) arm)))
-               controller-coords)
-          (when hmd->controller-coords
-            (setq controller-coords (send head-coords :transform hmd->controller-coords))
-            (setq target-pos (send controller-coords :worldpos))
-            (setq target-rot (send controller-coords :worldrot))))
-        (let ((vrbase->controller-coords
-                (send self :get-vrbase->controller-coords
-                      (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
-               vrbase->controller-pos)
-          (when vrbase->controller-coords
-            (send vrbase->controller-coords
-                  :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-            (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
-            (setq target-pos
-                  (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
-                                (elt vrbase->controller-pos 1)
-                                (- (+ robot-height (elt vrbase->controller-pos 2))
-                                   (+ vrbase->shoulder-z head->shoulder-z-distance))))
-            (setq target-rot (send vrbase->controller-coords :worldrot)))))
-      (when (and target-pos target-rot)
-        (when mirror
-          (let* ((mirror-coords (make-coords :rot target-rot))
-                 (rpy-angle (car (send mirror-coords :rpy-angle))))
-            (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
-            (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
-            (setq mirror-coords (make-coords :rpy rpy-angle))
-            (setq target-rot (send mirror-coords :worldrot))
-            (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
-        (setq target-coords
-              (make-coords :pos (float-vector
-                                  (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
-                                  (* scale (elt target-pos 1))
-                                  (- robot-height (* scale (- robot-height (elt target-pos 2)))))
-                           :rot target-rot))
-        (send target-coords :rotate (/ pi 4.0) :y))
-      target-coords))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
-  (:get-hmd->controller-coords (arm)
-    (when (not (or (eq arm :larm) (eq arm :rarm)))
-      (ros::ros-error (format nil "~A arm is not supported ~%" arm))
-      (return-from :get-hmd->controller-coords nil))
-    (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
-          coords)
-      (send tfl :wait-for-transform hmd-frame-id controller-frame-id (ros::time 0) 0.1)
-      (setq coords (send tfl :lookup-transform hmd-frame-id controller-frame-id (ros::time 0)))
-      (when coords
-        (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world)
-        (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world)
-        (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-        (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
-        coords)))
-  (:calib-controller (arm)
-    (let (first-coords second-coords)
-      (ros::rate rate)
-      (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
-      (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
-      (send robot-interface :speak "Calibration starts." :wait t)
-      (send robot-interface :speak
-            (format nil "Please stretch your ~A arm and press trigger."
-                    (if (eq arm :larm) "left" "right")))
-      (setq first-coords (send self :get-base->controller-coords arm :wait-trigger t))
-      (ros::sleep)
-      (send robot-interface :speak
-            (format nil "Please fold your ~A arm and press trigger."
-                    (if (eq arm :larm) "left" "right")))
-      (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
-      (setq second-coords (send self :get-base->controller-coords arm :wait-trigger t))
-      (if (and (and first-coords second-coords)
-               (> (elt (send first-coords :worldpos) 2)
-                  (elt (send second-coords :worldpos) 2)))
-        (progn
-          (send self :set-val 'scale
-                (/ (send self :get-val 'arm-length)
-                   (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
-          (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
-          (send self :set-val 'vrbase->shoulder-x
-                (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
-          (send self :set-val 'vrbase->shoulder-z (elt (send second-coords :worldpos) 1))
-          (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
-          (send robot-interface :speak "Calibration succeeded.")
-          (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))
-          (ros::ros-info "2nd coords: ~A" (send second-coords :worldpos))
-          (send self :send-joy-feedback arm)
-          t)
-        (progn
-          (ros::ros-error "Calibration is failed.~%")
-          (send robot-interface :speak "Calibration failed." :wait t)
-          (ros::ros-error "1st coords: ~A" (send first-coords :worldpos))
-          (ros::ros-error "2nd coords: ~A" (send second-coords :worldpos))
-          (ros::duration-sleep 1)
-          (send self :send-joy-feedback arm)
-          nil))))
-  (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
-    (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
-          (start-time (ros::time 0))
-          coords controller-trigger-p)
-      (when wait-trigger
-        (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
-        (while (and (ros::ok) (not controller-trigger-p))
-          (setq controller-trigger-p (send self :controller-trigger-p arm))
-          (ros::spin-once)
-          (ros::sleep)))
-      (send *tfl* :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
-      (setq coords (send *tfl* :lookup-transform vrbase-frame-id controller-frame-id start-time))
-      coords))
-  (:get-vrbase->hmd-coords ()
-    (let (coords)
-      (send *tfl* :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
-      (setq coords (send *tfl* :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
-      (when coords
-        (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   (:head-cb ()
     (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
       (when coords
@@ -510,72 +337,6 @@
         (send self :send-joy-feedback arm)
         (ros::ros-error "arm ~A collision detected, stopped" arm))
       (send self :set-arm-val arm :collision-p collision-p)))
-  (:controller-button-cb (arm msg)
-    (when loop-enable
-      (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
-      (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
-      (send self :set-arm-val arm :prev-trackpad (send self :get-arm-val arm :trackpad))
-      (send self :set-arm-val arm :prev-grip (send self :get-arm-val arm :grip))
-      (send self :set-arm-val arm :trigger (> (elt (send msg :buttons) 1) 0))
-      (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
-      (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
-      (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
-  (:controller-button-p (arm button)
-    (cond
-      ((eq button :trigger) (send self :controller-trigger-p arm))
-      ((eq button :menu) (send self :controller-menu-p arm))
-      ((eq button :trackpad) (send self :controller-trackpad-p arm))
-      ((eq button :grip) (send self :controller-grip-p arm))
-      (t nil)))
-  (:controller-trigger-p (arm)
-    (let ((trigger (send self :get-arm-val arm :trigger))
-          (prev-trigger (send self :get-arm-val arm :prev-trigger))
-          (trigger-count (send self :get-arm-val arm :trigger-count)))
-      (if (> trigger-count 0)
-        (progn
-          (send self :set-arm-val arm :trigger-count (- trigger-count 1))
-          nil)
-        (let ((controller-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
-          (when controller-trigger-p (send self :set-arm-val arm :trigger-count trigger-wait-count))
-          controller-trigger-p))))
-  (:controller-menu-p (arm)
-    (let ((menu (send self :get-arm-val arm :menu))
-          (prev-menu (send self :get-arm-val arm :prev-menu))
-          (menu-count (send self :get-arm-val arm :menu-count)))
-      (if (> menu-count 0)
-        (progn
-          (send self :set-arm-val arm :menu-count (- menu-count 1))
-          nil)
-        (let ((controller-menu-p (and (not (eq menu prev-menu)) menu)))
-          (when controller-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
-          controller-menu-p))))
-  (:controller-trackpad-p (arm)
-    (let ((trackpad (send self :get-arm-val arm :trackpad))
-          (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
-          (trackpad-count (send self :get-arm-val arm :trackpad-count)))
-      (if (> trackpad-count 0)
-        (progn
-          (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
-          nil)
-        (let ((controller-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
-          (when controller-trackpad-p (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
-          controller-trackpad-p))))
-  (:controller-grip-p (arm)
-    (let ((grip (send self :get-arm-val arm :grip))
-          (prev-grip (send self :get-arm-val arm :prev-grip))
-          (grip-count (send self :get-arm-val arm :grip-count)))
-      (if (> grip-count 0)
-        (progn
-          (send self :set-arm-val arm :grip-count (- grip-count 1))
-          nil)
-        (let ((controller-grip-p (and (not (eq grip prev-grip)) grip)))
-          (when controller-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
-          controller-grip-p))))
-  (:send-joy-feedback (&optional (arm :larm))
-    (let (msg (id (if (eq arm :larm) 2 1)))
-      (setq msg (instance sensor_msgs::JoyFeedback :init
-                          :type 1 :id id :intensity 3000))
-      (ros::publish feedback-topic-name msg)))
   (:coords->pose-stamped (coords)
     (let ((msg (instance geometry_msgs::PoseStamped :init))
           (rot (send coords :worldrot))
@@ -728,23 +489,6 @@
       (send* self :main-loop-step args)
       (ros::spin-once)
       (ros::sleep))))
-
-
-(defclass robot-move-base-vr-interface
-  :super robot-vr-interface
-  :slots (base-enable
-          joy-org-topic-name
-          joy-other-topic-name
-          vx
-          vy
-          vw
-          vx-thresh
-          vy-thresh
-          vw-thresh
-          vx-scale
-          vy-scale
-          vw-scale
-          ))
 
 
 (provide :robot-vr-interface)

@@ -1,24 +1,58 @@
 ;; -*- mode: lisp;-*-
 
-(ros::load-ros-manifest "actionlib_msgs")
-(ros::load-ros-manifest "eus_vive")
-(ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
-(ros::load-ros-manifest "std_srvs")
 (ros::load-ros-manifest "topic_tools")
 
-(load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 (load "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
 (defclass robot-vive-interface
   :super robot-vr-interface
-  :slots ()
-  )
+  :slots (hmd-frame-id
+          vrbase-frame-id
+          larm-controller-frame-id
+          rarm-controller-frame-id
+          feedback-topic-name
+          trigger-wait-count
+          menu-wait-count
+          trackpad-wait-count
+          grip-wait-count
+          larm-trigger
+          larm-prev-trigger
+          larm-trigger-count
+          larm-menu
+          larm-prev-menu
+          larm-menu-count
+          larm-trackpad
+          larm-prev-trackpad
+          larm-trackpad-count
+          larm-grip
+          larm-prev-grip
+          larm-grip-count
+          rarm-trigger
+          rarm-prev-trigger
+          rarm-trigger-count
+          rarm-menu
+          rarm-prev-menu
+          rarm-menu-count
+          rarm-trackpad
+          rarm-prev-trackpad
+          rarm-trackpad-count
+          rarm-grip
+          rarm-prev-grip
+          rarm-grip-count
+          head->shoulder-x-distance
+          head->shoulder-z-distance
+          vrbase->shoulder-x
+          vrbase->shoulder-z
+          ))
 
 
 (defmethod robot-vive-interface
   (:init (&key (loop-enable t))
+    ;; for calibration
+    (send self :set-val 'vrbase->shoulder-x nil)
+    (send self :set-val 'vrbase->shoulder-z nil)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
     (send self :set-val 'vrbase-frame-id
@@ -31,7 +65,22 @@
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :controller-frame-id))
                       sensor_msgs::Joy #'send self :controller-button-cb arm))
+    (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (send-super :init :loop-enable loop-enable))
+  (:reset-arm (arm)
+    (send-super self :reset-arm arm)
+    (send self :set-arm-val arm :trigger nil)
+    (send self :set-arm-val arm :prev-trigger nil)
+    (send self :set-arm-val arm :trigger-count 0)
+    (send self :set-arm-val arm :menu nil)
+    (send self :set-arm-val arm :prev-menu nil)
+    (send self :set-arm-val arm :menu-count 0)
+    (send self :set-arm-val arm :trackpad nil)
+    (send self :set-arm-val arm :prev-trackpad nil)
+    (send self :set-arm-val arm :trackpad-count 0)
+    (send self :set-arm-val arm :grip nil)
+    (send self :set-arm-val arm :prev-grip nil)
+    (send self :set-arm-val arm :grip-count 0))
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
@@ -111,6 +160,47 @@
       (setq coords (send tfl :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
+  (:calib-controller (arm)
+    (let (first-coords second-coords)
+      (ros::rate rate)
+      (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
+      (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
+      (send robot-interface :speak "Calibration starts." :wait t)
+      (send robot-interface :speak
+            (format nil "Please stretch your ~A arm and press trigger."
+                    (if (eq arm :larm) "left" "right")))
+      (setq first-coords (send self :get-base->controller-coords arm :wait-trigger t))
+      (ros::sleep)
+      (send robot-interface :speak
+            (format nil "Please fold your ~A arm and press trigger."
+                    (if (eq arm :larm) "left" "right")))
+      (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
+      (setq second-coords (send self :get-base->controller-coords arm :wait-trigger t))
+      (if (and (and first-coords second-coords)
+               (> (elt (send first-coords :worldpos) 2)
+                  (elt (send second-coords :worldpos) 2)))
+        (progn
+          (send self :set-val 'scale
+                (/ (send self :get-val 'arm-length)
+                   (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
+          (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
+          (send self :set-val 'vrbase->shoulder-x
+                (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
+          (send self :set-val 'vrbase->shoulder-z (elt (send second-coords :worldpos) 1))
+          (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
+          (send robot-interface :speak "Calibration succeeded.")
+          (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))
+          (ros::ros-info "2nd coords: ~A" (send second-coords :worldpos))
+          (send self :send-joy-feedback arm)
+          t)
+        (progn
+          (ros::ros-error "Calibration is failed.~%")
+          (send robot-interface :speak "Calibration failed." :wait t)
+          (ros::ros-error "1st coords: ~A" (send first-coords :worldpos))
+          (ros::ros-error "2nd coords: ~A" (send second-coords :worldpos))
+          (ros::duration-sleep 1)
+          (send self :send-joy-feedback arm)
+          nil))))
   (:controller-button-cb (arm msg)
     (when loop-enable
       (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
