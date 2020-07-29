@@ -2,15 +2,15 @@
 (ros::load-ros-manifest "baxter_core_msgs")
 
 (require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
+(require :robot-oculus-interface "package://eus_vive/euslisp/lib/robot-oculus-interface.l")
 
 
-(defclass baxter-vive-interface
-  :super robot-vive-interface
+(defclass baxter-oculus-interface
+  :super robot-oculus-interface
   :slots ())
 
 
-(defmethod baxter-vive-interface
+(defmethod baxter-oculus-interface
   (:init (&rest args)
     (send self :set-val 'robot *baxter*)
     (send self :set-val 'robot-interface *ri*)
@@ -18,11 +18,6 @@
     (send self :set-val 'rate 10)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
-    ;; for vive
-    (send self :set-val 'trigger-wait-count 5)
-    (send self :set-val 'menu-wait-count 5)
-    (send self :set-val 'trackpad-wait-count 5)
-    (send self :set-val 'grip-wait-count 5)
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
@@ -33,8 +28,6 @@
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
     (send self :set-val 'arm-length 1000)
-    (send self :set-val 'head->shoulder-x-distance -100)
-    (send self :set-val 'head->shoulder-z-distance 30)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
     (send self :set-val 'collision-status-topic-name
@@ -60,16 +53,6 @@
       (when coords
         (send coords :rotate pi/2 :y :world)
         coords)))
-  (:get-hmd->vive-coords (arm)
-    (let* ((coords (send-super :get-hmd->vive-coords arm))
-           (bvive->hmd-coords (send self :get-bvive->hmd-coords))
-           (rpy-angle
-             (when bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
-      (when (and coords rpy-angle)
-        (setq coords
-              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0))
-                    :transform coords))
-        coords)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -84,8 +67,8 @@
              :debug-view nil args))))
 
 
-(defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper)
+(defun baxter-oculus-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
+  (eus_oculus::baxter-init :lgripper lgripper :rgripper rgripper)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
@@ -100,7 +83,7 @@
   (setq *background-cube* (make-cube 10 6000 6000))
   (send *background-cube* :set-color #f(1 1 1))
   (send *background-cube* :translate #f(-1000 0 0))
-  (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable)))
 
 
 (defun signal-hook (sig code)

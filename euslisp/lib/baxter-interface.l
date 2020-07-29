@@ -6,12 +6,22 @@
 (unless (find-package "EUS_VIVE")
   (make-package "EUS_VIVE"))
 
+
+(defmethod baxter-robot
+  (:reset-teleop-pose ()
+    (send self :angle-vector
+          (float-vector 0.0
+                        0.812988 -39.9023 -35.5298 108.896 114.06 -67.522 -13.8428
+                        -0.812988 -39.9023 35.5298 108.896 -114.06 -67.522 13.8428))))
+
+
 (defclass eus_vive::baxter-interface
   :super baxter-interface
   :slots (lgripper-type
           lgripper-interface
           rgripper-type
           rgripper-interface))
+
 
 (defmethod eus_vive::baxter-interface
   (:init (&key (lgripper :parallel) (rgripper :parallel) &rest args &allow-other-keys)
@@ -44,6 +54,7 @@
         ((equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand)
          (send (if (equal arm :larm) lgripper-interface rgripper-interface) :stop-grasp))
         (t nil)))))
+
 
 (defun eus_vive::baxter-init
   (&key (safe t) (type :default-controller) (moveit t)
