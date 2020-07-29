@@ -492,6 +492,7 @@
   ;; main loop
   (:main-loop (&rest args)
     (ros::rate rate)
+    (send self :update-current-end-coords)
     (while (ros::ok)
       (send* self :main-loop-step args)
       (ros::spin-once)
