@@ -34,6 +34,8 @@
     (send self :set-val 'torso-min-time 0.5)
     (send self :set-val 'grasp-timeout-time nil)
     (send self :set-val 'arm-length 600)
+    (send self :set-val 'head->shoulder-x-distance 100)
+    (send self :set-val 'head->shoulder-z-distance 50)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
     (send-super* :init args))

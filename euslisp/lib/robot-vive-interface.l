@@ -41,8 +41,6 @@
           rarm-grip
           rarm-prev-grip
           rarm-grip-count
-          head->shoulder-x-distance
-          head->shoulder-z-distance
           vrbase->shoulder-x
           vrbase->shoulder-z
           ))

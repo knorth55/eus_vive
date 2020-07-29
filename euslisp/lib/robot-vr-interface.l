@@ -65,6 +65,8 @@
           target-coords-min-x
           target-coords-min-y
           target-coords-min-z
+          head->shoulder-x-distance
+          head->shoulder-z-distance
           ))
 
 
