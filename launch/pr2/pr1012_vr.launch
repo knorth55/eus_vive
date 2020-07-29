@@ -10,10 +10,10 @@
   <arg name="home_dir" default="$(env HOME)" />
 
   <!-- vive -->
-  <arg name="b_lighthouse_id" />
-  <arg name="c_lighthouse_id" />
-  <arg name="l_controller_id" />
-  <arg name="r_controller_id" />
+  <arg name="b_lighthouse_id" default="" />
+  <arg name="c_lighthouse_id" default="" />
+  <arg name="l_controller_id" default="" />
+  <arg name="r_controller_id" default="" />
 
   <!-- workspace -->
   <arg name="workspace_max_x" default="false" />

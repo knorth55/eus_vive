@@ -14,10 +14,10 @@
   <arg name="device" value=":vive" unless="$(arg oculus)" />
 
   <!-- vive -->
-  <arg name="b_lighthouse_id" />
-  <arg name="c_lighthouse_id" />
-  <arg name="l_controller_id" />
-  <arg name="r_controller_id" />
+  <arg name="b_lighthouse_id" default="" />
+  <arg name="c_lighthouse_id" default="" />
+  <arg name="l_controller_id" default="" />
+  <arg name="r_controller_id" default="" />
 
   <!-- workspace -->
   <arg name="workspace_max_x" default="false" />
@@ -113,12 +113,23 @@
     <arg name="image_right" value="$(arg image_right)" />
   </include>
 
-  <group ns="eus_vive">
+  <group ns="eus_vive" if="$(arg vive)">
     <rosparam subst_value="true">
       b_lighthouse_id: $(arg b_lighthouse_id)
       c_lighthouse_id: $(arg c_lighthouse_id)
       l_controller_id: $(arg l_controller_id)
       r_controller_id: $(arg r_controller_id)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
+  <group ns="eus_vive" unless="$(arg vive)">
+    <rosparam subst_value="true">
       workspace:
         max_x: $(arg workspace_max_x)
         min_x: $(arg workspace_min_x)
