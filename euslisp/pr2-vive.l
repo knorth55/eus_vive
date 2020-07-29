@@ -25,4 +25,4 @@
   (unless loop-enable (send *ti* :disable))
   (send *ti* :main-loop :head head :torso torso :base base
         :safe-arm safe-arm :safe-base safe-base :mirror mirror
-        :enable-button :menu :visualize visualize))
+        :enable-button :menu :gripper-button :trigger :visualize visualize))

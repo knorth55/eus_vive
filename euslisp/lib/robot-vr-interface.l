@@ -303,11 +303,12 @@
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
-  (:gripper-cb (arm &key (mirror nil))
-    (let ((controller-trigger-p
-            (send self :controller-trigger-p (if mirror (send self :get-opposite-arm arm) arm)))
+  (:gripper-cb (arm &key (mirror nil) (button :trigger))
+    (let ((controller-button-p
+            (send self :controller-button-p
+                  (if mirror (send self :get-opposite-arm arm) arm) button))
           (grasp-p (send self :get-arm-val arm :grasp)))
-      (when controller-trigger-p
+      (when controller-button-p
         (if grasp-p
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
@@ -438,48 +439,50 @@
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
-  (:arm-motion-cb (&key (head t) (torso t) (safe t) (mirror nil))
+  (:arm-motion-cb (&key (head t) (torso t) (safe t) (mirror nil) (gripper-button :trigger))
     (let ((visualize-arm-coords (list nil nil)))
       (if (and torso (not (or (send self :grasping-p :larm) (send self :grasping-p :rarm))))
         (cond
           ((and larm-enable rarm-enable)
-           (send self :gripper-cb :larm :mirror mirror)
-           (send self :gripper-cb :rarm :mirror mirror)
+           (send self :gripper-cb :larm :mirror mirror :button gripper-button)
+           (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
            (setq visualize-arm-coords
                  (send self :arm-cb :arms :head head :torso torso :safe safe :mirror mirror)))
           ((and larm-enable (not rarm-enable))
-           (send self :gripper-cb :larm :mirror mirror)
+           (send self :gripper-cb :larm :mirror mirror :button gripper-button)
            (setf (elt visualize-arm-coords 0)
                  (send self :arm-cb :larm :head head :torso torso :safe safe :mirror mirror)))
           ((and (not larm-enable) rarm-enable)
-           (send self :gripper-cb :rarm :mirror mirror)
+           (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
            (setf (elt visualize-arm-coords 1)
                  (send self :arm-cb :rarm :head head :torso torso :safe safe :mirror mirror)))
           (t nil))
         (progn
           (when (and larm-enable (not (send self :grasping-p :larm)))
-            (send self :gripper-cb :larm :mirror mirror)
+            (send self :gripper-cb :larm :mirror mirror :button gripper-button)
             (setf (elt visualize-arm-coords 0)
                   (send self :arm-cb :larm :head head :torso nil :safe safe :mirror mirror)))
           (when (and rarm-enable (not (send self :grasping-p :rarm)))
-            (send self :gripper-cb :rarm :mirror mirror)
+            (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
             (setf (elt visualize-arm-coords 1)
                   (send self :arm-cb :rarm :head head :torso nil :safe safe :mirror mirror)))))
       visualize-arm-coords))
-  (:motion-cb (&key (head t) (torso t) (safe-arm t) (mirror nil))
+  (:motion-cb (&key (head t) (torso t) (safe-arm t) (mirror nil) (gripper-button :trigger))
     (let (visualize-arm-coords)
       (cond
         ((or larm-enable rarm-enable)
          (setq visualize-arm-coords
-               (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror)))
+               (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
+                     :button gripper-button)))
         (t nil))
       visualize-arm-coords))
   (:main-loop-step (&key (head t) (torso t) (safe-arm t) (mirror nil)
-                         (enable-button :menu) (visualize t))
+                         (enable-button :menu) (gripper-button :trigger) (visualize t))
     (let (visualize-arm-coords)
       (send self :enable-cb :mirror mirror :button enable-button)
       (setq visualize-arm-coords
-            (send self :motion-cb :head head :torso torso :safe-arm safe-arm :mirror mirror))
+            (send self :motion-cb :head head :torso torso :safe-arm safe-arm :mirror mirror
+                  :gripper-button gripper-button))
       (when (and head loop-enable) (send self :head-cb))
       (send self :update-current-end-coords)
       (when visualize (send self :visualize visualize-arm-coords))))

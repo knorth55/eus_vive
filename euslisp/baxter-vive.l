@@ -30,4 +30,5 @@
   (send *ri* :nod)
   (unless loop-enable (send *ti* :disable))
   (send *ti* :main-loop :head head :torso nil
-        :safe-arm safe-arm :mirror mirror :enable-button :menu :visualize visualize))
+        :safe-arm safe-arm :mirror mirror
+        :enable-button :menu :gripper-button :trigger :visualize visualize))
