@@ -16,8 +16,7 @@
           robot-interface
           tfl
           hmd-frame-id
-          bvive-frame-id
-          cvive-frame-id
+          base-frame-id
           camera-model
           base-frame-id
           head-frame-id
@@ -53,7 +52,7 @@
           larm-prev-grip
           larm-grip-count
           larm-enable
-          larm-vive-frame-id
+          larm-controller-frame-id
           larm-grasp-timeout-p
           larm-grasp-start-time
           larm-collision-p
@@ -75,7 +74,7 @@
           rarm-prev-grip
           rarm-grip-count
           rarm-enable
-          rarm-vive-frame-id
+          rarm-controller-frame-id
           rarm-grasp-timeout-p
           rarm-grasp-start-time
           rarm-collision-p
@@ -95,8 +94,8 @@
           arm-length
           head->shoulder-x-distance
           head->shoulder-z-distance
-          bvive->shoulder-x
-          bvive->shoulder-z
+          base->shoulder-x
+          base->shoulder-z
           end-coords-pos-diff-thresh
           target-coords-max-x
           target-coords-max-y
@@ -112,13 +111,11 @@
     (send self :reset :loop-enable loop-enable)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'bvive-frame-id
+    (send self :set-val 'base-frame-id
           (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
-    (send self :set-val 'cvive-frame-id
-          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/c_lighthouse_id")))
-    (send self :set-val 'larm-vive-frame-id
+    (send self :set-val 'larm-controller-frame-id
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
-    (send self :set-val 'rarm-vive-frame-id
+    (send self :set-val 'rarm-controller-frame-id
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     ;; for workspace
@@ -129,8 +126,8 @@
     (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
     (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
     ;; for eus_vive
-    (send self :set-val 'bvive->shoulder-x nil)
-    (send self :set-val 'bvive->shoulder-z nil)
+    (send self :set-val 'base->shoulder-x nil)
+    (send self :set-val 'base->shoulder-z nil)
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
@@ -195,7 +192,7 @@
     (send self :reset :loop-enable nil))
   (:calibrate (arm)
     (let (calib-p)
-      (setq calib-p (send *ti* :calib-vive arm))
+      (setq calib-p (send *ti* :calib-controller arm))
       (unless calib-p (send *ri* :speak "Please try calibration again." :wait t))
       calib-p))
   (:reset-service (req)
@@ -360,30 +357,30 @@
            (robot-height (elt (send head-coords :worldpos) 2))
           target-pos target-rot target-coords)
       (if head
-        (let ((hmd->vive-coords
-                (send self :get-hmd->vive-coords
+        (let ((hmd->controller-coords
+                (send self :get-hmd->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm)))
-               vive-coords)
-          (when hmd->vive-coords
-            (setq vive-coords (send head-coords :transform hmd->vive-coords))
-            (setq target-pos (send vive-coords :worldpos))
-            (setq target-rot (send vive-coords :worldrot))))
-        (let ((bvive->vive-coords
-                (send self :get-bvive->vive-coords
+               controller-coords)
+          (when hmd->controller-coords
+            (setq controller-coords (send head-coords :transform hmd->controller-coords))
+            (setq target-pos (send controller-coords :worldpos))
+            (setq target-rot (send controller-coords :worldrot))))
+        (let ((base->controller-coords
+                (send self :get-base->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
-              bvive->vive-pos)
-          (when bvive->vive-coords
-            (send bvive->vive-coords
+              base->controller-pos)
+          (when base->controller-coords
+            (send base->controller-coords
                   :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-            (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-            (send bvive->vive-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-            (setq bvive->vive-pos (send bvive->vive-coords :worldpos))
+            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
+            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+            (setq base->controller-pos (send base->controller-coords :worldpos))
             (setq target-pos
-                  (float-vector (- (elt bvive->vive-pos 0) bvive->shoulder-x)
-                                (elt bvive->vive-pos 1)
-                                (- (+ robot-height (elt bvive->vive-pos 2))
-                                   (+ bvive->shoulder-z head->shoulder-z-distance))))
-            (setq target-rot (send bvive->vive-coords :worldrot)))))
+                  (float-vector (- (elt base->controller-pos 0) base->shoulder-x)
+                                (elt base->controller-pos 1)
+                                (- (+ robot-height (elt base->controller-pos 2))
+                                   (+ base->shoulder-z head->shoulder-z-distance))))
+            (setq target-rot (send base->controller-coords :worldrot)))))
       (when (and target-pos target-rot)
         (when mirror
           (let* ((mirror-coords (make-coords :rot target-rot))
@@ -403,21 +400,21 @@
       target-coords))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
-  (:get-hmd->vive-coords (arm)
+  (:get-hmd->controller-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (ros::ros-error (format nil "~A arm is not supported ~%" arm))
-      (return-from :get-hmd->vive-coords nil))
-    (let ((vive-frame-id (send self :get-arm-val arm :vive-frame-id))
+      (return-from :get-hmd->controller-coords nil))
+    (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           coords)
-      (send tfl :wait-for-transform hmd-frame-id vive-frame-id (ros::time 0) 0.1)
-      (setq coords (send tfl :lookup-transform hmd-frame-id vive-frame-id (ros::time 0)))
+      (send tfl :wait-for-transform hmd-frame-id controller-frame-id (ros::time 0) 0.1)
+      (setq coords (send tfl :lookup-transform hmd-frame-id controller-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world)
         (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world)
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
-  (:calib-vive (arm)
+  (:calib-controller (arm)
     (let (first-coords second-coords)
       (ros::rate rate)
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
@@ -426,13 +423,13 @@
       (send robot-interface :speak
             (format nil "Please stretch your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right")))
-      (setq first-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
+      (setq first-coords (send self :get-base->controller-coords arm :wait-trigger t))
       (ros::sleep)
       (send robot-interface :speak
             (format nil "Please fold your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right")))
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
-      (setq second-coords (send self :get-bvive->vive-coords arm :wait-trigger t))
+      (setq second-coords (send self :get-base->controller-coords arm :wait-trigger t))
       (if (and (and first-coords second-coords)
                (> (elt (send first-coords :worldpos) 2)
                   (elt (send second-coords :worldpos) 2)))
@@ -441,9 +438,9 @@
                 (/ (send self :get-val 'arm-length)
                    (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
           (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
-          (send self :set-val 'bvive->shoulder-x
+          (send self :set-val 'base->shoulder-x
                 (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
-          (send self :set-val 'bvive->shoulder-z (elt (send second-coords :worldpos) 1))
+          (send self :set-val 'base->shoulder-z (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
           (send robot-interface :speak "Calibration succeeded.")
           (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))
@@ -458,27 +455,27 @@
           (ros::duration-sleep 1)
           (send self :send-joy-feedback arm)
           nil))))
-  (:get-bvive->vive-coords (arm &key (wait-trigger nil) (wait-time 0.1))
-    (let ((vive-frame-id (send self :get-arm-val arm :vive-frame-id))
+  (:get-base->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
+    (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
-          coords vive-trigger-p)
+          coords controller-trigger-p)
       (when wait-trigger
         (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
-        (while (and (ros::ok) (not vive-trigger-p))
-          (setq vive-trigger-p (send self :vive-trigger-p arm))
+        (while (and (ros::ok) (not controller-trigger-p))
+          (setq controller-trigger-p (send self :controller-trigger-p arm))
           (ros::spin-once)
           (ros::sleep)))
-      (send *tfl* :wait-for-transform bvive-frame-id vive-frame-id start-time wait-time)
-      (setq coords (send *tfl* :lookup-transform bvive-frame-id vive-frame-id start-time))
+      (send *tfl* :wait-for-transform base-frame-id controller-frame-id start-time wait-time)
+      (setq coords (send *tfl* :lookup-transform base-frame-id controller-frame-id start-time))
       coords))
-  (:get-bvive->hmd-coords ()
+  (:get-base->hmd-coords ()
     (let (coords)
-      (send *tfl* :wait-for-transform bvive-frame-id hmd-frame-id (ros::time 0) 0.1)
-      (setq coords (send *tfl* :lookup-transform bvive-frame-id hmd-frame-id (ros::time 0)))
+      (send *tfl* :wait-for-transform base-frame-id hmd-frame-id (ros::time 0) 0.1)
+      (setq coords (send *tfl* :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   (:head-cb ()
-    (let ((coords (send self :get-bvive->hmd-coords)) rpy-angle)
+    (let ((coords (send self :get-base->hmd-coords)) rpy-angle)
       (when coords
         (setq rpy-angle
               (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
@@ -491,10 +488,10 @@
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
   (:gripper-cb (arm &key (mirror nil))
-    (let ((vive-trigger-p
-            (send self :vive-trigger-p (if mirror (send self :get-opposite-arm arm) arm)))
+    (let ((controller-trigger-p
+            (send self :controller-trigger-p (if mirror (send self :get-opposite-arm arm) arm)))
           (grasp-p (send self :get-arm-val arm :grasp)))
-      (when vive-trigger-p
+      (when controller-trigger-p
         (if grasp-p
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
@@ -524,7 +521,7 @@
         (send self :send-joy-feedback arm)
         (ros::ros-error "arm ~A collision detected, stopped" arm))
       (send self :set-arm-val arm :collision-p collision-p)))
-  (:vive-button-cb (arm msg)
+  (:controller-button-cb (arm msg)
     (when loop-enable
       (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
       (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
@@ -534,14 +531,14 @@
       (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
       (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
       (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
-  (:vive-button-p (arm button)
+  (:controller-button-p (arm button)
     (cond
-      ((eq button :trigger) (send self :vive-trigger-p arm))
-      ((eq button :menu) (send self :vive-menu-p arm))
-      ((eq button :trackpad) (send self :vive-trackpad-p arm))
-      ((eq button :grip) (send self :vive-grip-p arm))
+      ((eq button :trigger) (send self :controller-trigger-p arm))
+      ((eq button :menu) (send self :controller-menu-p arm))
+      ((eq button :trackpad) (send self :controller-trackpad-p arm))
+      ((eq button :grip) (send self :controller-grip-p arm))
       (t nil)))
-  (:vive-trigger-p (arm)
+  (:controller-trigger-p (arm)
     (let ((trigger (send self :get-arm-val arm :trigger))
           (prev-trigger (send self :get-arm-val arm :prev-trigger))
           (trigger-count (send self :get-arm-val arm :trigger-count)))
@@ -549,10 +546,10 @@
         (progn
           (send self :set-arm-val arm :trigger-count (- trigger-count 1))
           nil)
-        (let ((vive-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
-          (when vive-trigger-p (send self :set-arm-val arm :trigger-count trigger-wait-count))
-          vive-trigger-p))))
-  (:vive-menu-p (arm)
+        (let ((controller-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
+          (when controller-trigger-p (send self :set-arm-val arm :trigger-count trigger-wait-count))
+          controller-trigger-p))))
+  (:controller-menu-p (arm)
     (let ((menu (send self :get-arm-val arm :menu))
           (prev-menu (send self :get-arm-val arm :prev-menu))
           (menu-count (send self :get-arm-val arm :menu-count)))
@@ -560,10 +557,10 @@
         (progn
           (send self :set-arm-val arm :menu-count (- menu-count 1))
           nil)
-        (let ((vive-menu-p (and (not (eq menu prev-menu)) menu)))
-          (when vive-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
-          vive-menu-p))))
-  (:vive-trackpad-p (arm)
+        (let ((controller-menu-p (and (not (eq menu prev-menu)) menu)))
+          (when controller-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
+          controller-menu-p))))
+  (:controller-trackpad-p (arm)
     (let ((trackpad (send self :get-arm-val arm :trackpad))
           (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
           (trackpad-count (send self :get-arm-val arm :trackpad-count)))
@@ -571,10 +568,10 @@
         (progn
           (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
           nil)
-        (let ((vive-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
-          (when vive-trackpad-p (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
-          vive-trackpad-p))))
-  (:vive-grip-p (arm)
+        (let ((controller-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
+          (when controller-trackpad-p (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
+          controller-trackpad-p))))
+  (:controller-grip-p (arm)
     (let ((grip (send self :get-arm-val arm :grip))
           (prev-grip (send self :get-arm-val arm :prev-grip))
           (grip-count (send self :get-arm-val arm :grip-count)))
@@ -582,9 +579,9 @@
         (progn
           (send self :set-arm-val arm :grip-count (- grip-count 1))
           nil)
-        (let ((vive-grip-p (and (not (eq grip prev-grip)) grip)))
-          (when vive-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
-          vive-grip-p))))
+        (let ((controller-grip-p (and (not (eq grip prev-grip)) grip)))
+          (when controller-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
+          controller-grip-p))))
   (:send-joy-feedback (&optional (arm :larm))
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
@@ -655,7 +652,7 @@
     (send self :enable-arm :rarm :mirror mirror :button button))
   (:enable-arm (arm &key (mirror nil) (button :menu))
     (let ((enable-button-p
-            (send self :vive-button-p
+            (send self :controller-button-p
                   (if mirror (send self :get-opposite-arm arm) arm) button))
           (enable-p (send self :get-arm-val arm :enable)))
       (when enable-button-p
@@ -804,8 +801,8 @@
       (send msg :axes axes)
       (send msg :buttons buttons)
       (ros::publish joy-other-topic-name msg)))
-  (:vive-button-cb (arm msg)
-    (send-super :vive-button-cb arm msg)
+  (:controller-button-cb (arm msg)
+    (send-super :controller-button-cb arm msg)
     (cond
       ((eq arm :larm)
        (send self :set-val 'vw
@@ -825,7 +822,7 @@
       (setq mux-req (instance topic_tools::MuxSelectRequest :init))
       (send mux-req :topic joy-topic-name)
       (ros::service-call joy-mux-service-name mux-req)))
-  (:switch-joy-to-vive ()
+  (:switch-joy-to-controller ()
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
@@ -835,7 +832,7 @@
   (:enable-base ()
     (cond
       ((and (not larm-enable) (not rarm-enable))
-       (unless base-enable (send self :switch-joy-to-vive))
+       (unless base-enable (send self :switch-joy-to-controller))
        (send self :set-val 'base-enable t))
       ((or larm-enable rarm-enable)
        (when base-enable (send self :switch-joy-to-ps3joy))
