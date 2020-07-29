@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="oculus" default="false" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
@@ -12,11 +13,15 @@
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
 
+  <!-- device -->
+  <arg name="device" value=":oculus" if="$(arg oculus)" />
+  <arg name="device" value=":vive" unless="$(arg oculus)" />
+
   <!-- vive -->
-  <arg name="b_lighthouse_id" />
-  <arg name="c_lighthouse_id" />
-  <arg name="l_controller_id" />
-  <arg name="r_controller_id" />
+  <arg name="b_lighthouse_id" default="" />
+  <arg name="c_lighthouse_id" default="" />
+  <arg name="l_controller_id" default="" />
+  <arg name="r_controller_id" default="" />
 
   <!-- workspace -->
   <arg name="workspace_max_x" default="false" />
@@ -90,7 +95,7 @@
     <arg name="image_right" value="$(arg image_right)" />
   </include>
 
-  <group ns="eus_vive">
+  <group ns="eus_vive" if="$(arg vive)">
     <rosparam subst_value="true">
       b_lighthouse_id: $(arg b_lighthouse_id)
       c_lighthouse_id: $(arg c_lighthouse_id)
@@ -105,18 +110,29 @@
         min_z: $(arg workspace_min_z)
     </rosparam>
   </group>
+  <group ns="eus_vive" unless="$(arg vive)">
+    <rosparam subst_value="true">
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
   <group if="$(arg main)">
     <group if="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
-            args="&quot;(main :head t :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
-            args="&quot;(main :head nil :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
+            args="&quot;(main :head t :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
+            args="&quot;(main :head nil :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
-            args="&quot;(main :head t :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
-            args="&quot;(main :head nil :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
+            args="&quot;(main :head t :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
+            args="&quot;(main :head nil :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
     </group>
   </group>
 
@@ -124,7 +140,7 @@
         pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
     <rosparam>
       nodes:
-        - /baxter_vive_main
+        - /baxter_vr_main
       exclude_regexes:
         - .*follow_joint_trajectory.*
         - .*:joint-angle.*
@@ -241,7 +257,7 @@
   </node>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg head)"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive_visualization.rviz" />
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_visualization.rviz" />
   <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg head)"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vive.rviz" />
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr.rviz" />
 </launch>

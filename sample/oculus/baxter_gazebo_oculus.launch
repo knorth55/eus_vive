@@ -1,16 +1,12 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
-  <arg name="kinfu" default="false" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr1040_vive.launch">
+  <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
-    <arg name="head" value="true" />
-    <arg name="respeaker" value="true" />
-    <arg name="mirror" value="false" />
-    <arg name="logging" value="true" />
-    <arg name="kinfu" value="$(arg kinfu)" />
+    <arg name="vive" value="false" />
+    <arg name="oculus" value="true" />
+    <arg name="mirror" value="true" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
     <arg name="l_controller_id" value="FD35BD42" />

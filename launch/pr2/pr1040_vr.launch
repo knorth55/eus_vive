@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="oculus" default="false" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
@@ -9,10 +10,10 @@
   <arg name="home_dir" default="$(env HOME)" />
 
   <!-- vive -->
-  <arg name="b_lighthouse_id" />
-  <arg name="c_lighthouse_id" />
-  <arg name="l_controller_id" />
-  <arg name="r_controller_id" />
+  <arg name="b_lighthouse_id" default="" />
+  <arg name="c_lighthouse_id" default="" />
+  <arg name="l_controller_id" default="" />
+  <arg name="r_controller_id" default="" />
 
   <!-- workspace -->
   <arg name="workspace_max_x" default="false" />
@@ -62,15 +63,15 @@
           args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" />
   </group>
 
-  <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch" pass_all_args="true" />
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch" pass_all_args="true" />
 
-  <node name="pr2_vive_rosbag_record" pkg="rosbag" type="record"
+  <node name="pr2_vr_rosbag_record" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /joint_states
               /kinect_head/rgb/image_rect_color/compressed
               /kinect_head/rgb/camera_info
               /kinect_head/depth_registered/image_rect_color/compressedDepth
               /kinect_head/depth_registered/camera_info
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vive"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vr"
         output="screen" if="$(arg logging)" />
 
 </launch>

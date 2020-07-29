@@ -1,0 +1,11 @@
+<launch>
+  <arg name="main" default="true" />
+
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_gazebo.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="false" />
+    <arg name="oculus" value="true" />
+    <arg name="head" value="true" />
+    <arg name="mirror" value="false" />
+  </include>
+</launch>
