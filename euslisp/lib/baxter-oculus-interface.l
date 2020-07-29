@@ -18,6 +18,10 @@
     (send self :set-val 'rate 10)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
+    ;; for oculus
+    (send self :set-val 'hmd-pose-topic-name "/oculus/hmd/pose_stamped")
+    (send self :set-val 'left-controller-pose-topic-name "/oculus/left_controller/pose_stamped")
+    (send self :set-val 'right-controller-pose-topic-name "/oculus/right_controller/pose_stamped")
     ;; for baxter
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
