@@ -6,12 +6,12 @@
 (load "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
-(defclass robot-vive-interface
+(defclass robot-oculus-interface
   :super robot-vr-interface
   :slots ())
 
 
-(defmethod robot-vive-interface
+(defmethod robot-oculus-interface
   (:init (&key (loop-enable t))
     ;; for oculus
     ;; TODO (knorth55): subscribe oculus pose

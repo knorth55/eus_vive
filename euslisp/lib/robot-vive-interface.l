@@ -68,7 +68,7 @@
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (send-super :init :loop-enable loop-enable))
   (:reset-arm (arm)
-    (send-super self :reset-arm arm)
+    (send-super :reset-arm arm)
     (send self :set-arm-val arm :trigger nil)
     (send self :set-arm-val arm :prev-trigger nil)
     (send self :set-arm-val arm :trigger-count 0)
@@ -95,7 +95,7 @@
             (setq target-pos (send controller-coords :worldpos))
             (setq target-rot (send controller-coords :worldrot))))
         (let ((base->controller-coords
-                (send self :get-base->controller-coords
+                (send self :get-vrbase->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
               base->controller-pos)
           (when base->controller-coords
@@ -141,7 +141,7 @@
         (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
         (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
         coords)))
-  (:get-base->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
+  (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-p)
@@ -154,7 +154,7 @@
       (send tfl :wait-for-transform base-frame-id controller-frame-id start-time wait-time)
       (setq coords (send tfl :lookup-transform base-frame-id controller-frame-id start-time))
       coords))
-  (:get-base->hmd-coords ()
+  (:get-vrbase->hmd-coords ()
     (let (coords)
       (send tfl :wait-for-transform base-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
@@ -169,13 +169,13 @@
       (send robot-interface :speak
             (format nil "Please stretch your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right")))
-      (setq first-coords (send self :get-base->controller-coords arm :wait-trigger t))
+      (setq first-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
       (ros::sleep)
       (send robot-interface :speak
             (format nil "Please fold your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right")))
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
-      (setq second-coords (send self :get-base->controller-coords arm :wait-trigger t))
+      (setq second-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
       (if (and (and first-coords second-coords)
                (> (elt (send first-coords :worldpos) 2)
                   (elt (send second-coords :worldpos) 2)))
@@ -366,24 +366,27 @@
        (when base-enable (send self :switch-joy-to-ps3joy))
        (send self :set-val 'base-enable nil))
       (t nil)))
-  (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil))
+  (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
+                    (gripper-button :trigger))
     (let (visualize-arm-coords)
       (cond
         ((or larm-enable rarm-enable)
          (setq visualize-arm-coords
-               (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror)))
+               (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
+                     :gripper-button gripper-button)))
         ((and loop-enable base-enable)
          (when base (send self :base-cb :safe safe-base :mirror mirror)))
         (t nil))
       visualize-arm-coords))
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                         (enable-button :menu) (visualize t))
+                         (enable-button :menu) (gripper-button :trigger) (visualize t))
     (let (visualize-arm-coords)
       (send self :update-current-end-coords)
       (send self :enable-cb :mirror mirror :base base :button enable-button)
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso
-                  :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror))
+                  :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror
+                  :gripper-button gripper-button))
       (when (and head loop-enable) (send self :head-cb))
       (when visualize (send self :visualize visualize-arm-coords)))))
 

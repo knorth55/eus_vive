@@ -475,7 +475,7 @@
         ((or larm-enable rarm-enable)
          (setq visualize-arm-coords
                (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
-                     :button gripper-button)))
+                     :gripper-button gripper-button)))
         (t nil))
       visualize-arm-coords))
   ;; main loop step
@@ -502,7 +502,9 @@
   (:controller-button-p (arm button)
     (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
-    (return-from :send-joy-feedback t)))
+    (return-from :send-joy-feedback t))
+  (:get-vrbase->hmd-coords ()
+    (return-from :get-vrbase->hmd-coords nil)))
 
 
 (provide :robot-vr-interface)
