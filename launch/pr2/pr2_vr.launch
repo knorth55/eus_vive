@@ -1,12 +1,17 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="oculus" default="false" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
   <arg name="home_dir" default="$(env HOME)" />
+
+  <!-- device -->
+  <arg name="device" value=":oculus" if="$(arg oculus)" />
+  <arg name="device" value=":vive" unless="$(arg oculus)" />
 
   <!-- vive -->
   <arg name="b_lighthouse_id" />
@@ -126,15 +131,15 @@
   <group if="$(arg main)">
     <group if="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head t :mirror t :loop-enable nil)&quot;" output="screen" />
+            args="&quot;(main :head t :mirror t :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head nil :mirror t :loop-enable nil)&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror t :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head t :mirror nil :loop-enable nil)&quot;" output="screen" />
+            args="&quot;(main :head t :mirror nil :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head nil :mirror nil :loop-enable nil)&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror nil :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
     </group>
   </group>
 
