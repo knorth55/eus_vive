@@ -291,13 +291,9 @@
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
   (:head-cb ()
-    (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
-      (when coords
-        (setq rpy-angle
-              (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
-                (car (send coords :rpy-angle))
-                (cadr (send coords :rpy-angle))))
-        (send self :move-head (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0))))
+    (let ((ypr-angle (send self :get-head-ypr-angle)))
+      (when ypr-angle
+        (send self :move-head (elt ypr-angle 0) (elt ypr-angle 1) (elt ypr-angle 2)))))
   (:move-head (yaw pitch roll)
     (send robot :head-neck-p :joint-angle (rad2deg pitch))
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
@@ -503,8 +499,8 @@
     (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
     (return-from :send-joy-feedback t))
-  (:get-vrbase->hmd-coords ()
-    (return-from :get-vrbase->hmd-coords nil)))
+  (:get-head-ypr-angle ()
+    (return-from :get-head-ypr-angle nil)))
 
 
 (provide :robot-vr-interface)

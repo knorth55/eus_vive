@@ -127,6 +127,14 @@
                            :rot target-rot))
         (send target-coords :rotate (/ pi 4.0) :y))
       target-coords))
+  (:get-head-ypr-angle ()
+    (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
+      (when coords
+        (setq rpy-angle
+              (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
+                (car (send coords :rpy-angle))
+                (cadr (send coords :rpy-angle))))
+        (list (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0))))
   (:get-hmd->controller-coords (arm)
     (when (not (or (eq arm :larm) (eq arm :rarm)))
       (ros::ros-error (format nil "~A arm is not supported ~%" arm))
