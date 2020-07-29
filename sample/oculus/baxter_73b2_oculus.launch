@@ -1,6 +1,5 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="true" />
   <arg name="head" default="true" />
   <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
@@ -9,7 +8,8 @@
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
+    <arg name="vive" value="false" />
+    <arg name="oculus" value="true" />
     <arg name="head" default="$(arg head)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="twitter" value="true" />

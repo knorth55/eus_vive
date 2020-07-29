@@ -2,6 +2,7 @@
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="true" />
     <arg name="vive" value="false" />
+    <arg name="oculus" value="false" />
     <arg name="mirror" value="true" />
     <arg name="respeaker" value="false" />
     <arg name="twitter" value="false" />

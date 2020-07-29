@@ -1,11 +1,11 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="true" />
   <arg name="kinfu" default="false" />
 
   <include file="$(find eus_vive)/launch/pr2/pr1012_vr.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
+    <arg name="vive" value="false" />
+    <arg name="oculus" value="true" />
     <arg name="head" value="true" />
     <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />

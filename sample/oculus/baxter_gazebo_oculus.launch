@@ -1,10 +1,11 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="false" />
+  <arg name="vive" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
+    <arg name="vive" value="false" />
+    <arg name="oculus" value="true" />
     <arg name="mirror" value="true" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
