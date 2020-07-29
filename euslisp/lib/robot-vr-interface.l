@@ -185,44 +185,45 @@
      (send robot-interface :stop-grasp arm :wait wait))
   (:filter-unsafe-target-coords (arm target-coords)
     (unless target-coords (return-from :filter-unsafe-target-coords nil))
-    (let* ((target-worldpos (send target-coords :worldpos))
-           (end-coords-pos-diff
-             (norm (v- target-worldpos
-                       (send (send self :get-arm-val arm :current-end-coords) :worldpos))))
-           (target-coords-x (elt target-worldpos 0))
-           (target-coords-y (elt target-worldpos 1))
-           (target-coords-z (elt target-worldpos 2)))
-      (cond
-        ((> end-coords-pos-diff end-coords-pos-diff-thresh)
-          (send self :send-joy-feedback arm)
-          (ros::ros-error "arm ~A target-coords is too far from current position: ~A > ~A"
-                          arm end-coords-pos-diff end-coords-pos-diff-thresh)
-          (send self :set-arm-val arm :track-error-p t)
-          nil)
-        ((or (and target-coords-max-x (> target-coords-x target-coords-max-x))
-             (and target-coords-min-x (> target-coords-min-x target-coords-x)))
-          (send self :send-joy-feedback arm)
-          (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
-                          arm target-coords-max-x target-coords-x target-coords-min-x)
-          (send self :set-arm-val arm :track-error-p t)
-          nil)
-        ((or (and target-coords-max-y (> target-coords-y target-coords-max-y))
-             (and target-coords-min-y (> target-coords-min-y target-coords-y)))
-          (send self :send-joy-feedback arm)
-          (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
-                          arm target-coords-max-y target-coords-y target-coords-min-y)
-          (send self :set-arm-val arm :track-error-p t)
-          nil)
-        ((or (and target-coords-max-z (> target-coords-z target-coords-max-z))
-             (and target-coords-min-z (> target-coords-min-z target-coords-z)))
-          (send self :send-joy-feedback arm)
-          (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
-                          arm target-coords-max-z target-coords-z target-coords-min-z)
-          (send self :set-arm-val arm :track-error-p t)
-          nil)
-        (t
-          (send self :set-arm-val arm :track-error-p nil)
-          target-coords))))
+    (let ((target-worldpos (send target-coords :worldpos))
+          (current-end-coords (send self :get-arm-val arm :current-end-coords)))
+      (unless current-end-coords (return-from :filter-unsafe-target-coords nil))
+      (let ((end-coords-pos-diff
+              (norm (v- target-worldpos (send current-end-coords :worldpos))))
+            (target-coords-x (elt target-worldpos 0))
+            (target-coords-y (elt target-worldpos 1))
+            (target-coords-z (elt target-worldpos 2)))
+        (cond
+          ((> end-coords-pos-diff end-coords-pos-diff-thresh)
+            (send self :send-joy-feedback arm)
+            (ros::ros-error "arm ~A target-coords is too far from current position: ~A > ~A"
+                            arm end-coords-pos-diff end-coords-pos-diff-thresh)
+            (send self :set-arm-val arm :track-error-p t)
+            nil)
+          ((or (and target-coords-max-x (> target-coords-x target-coords-max-x))
+               (and target-coords-min-x (> target-coords-min-x target-coords-x)))
+            (send self :send-joy-feedback arm)
+            (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
+                            arm target-coords-max-x target-coords-x target-coords-min-x)
+            (send self :set-arm-val arm :track-error-p t)
+            nil)
+          ((or (and target-coords-max-y (> target-coords-y target-coords-max-y))
+               (and target-coords-min-y (> target-coords-min-y target-coords-y)))
+            (send self :send-joy-feedback arm)
+            (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
+                            arm target-coords-max-y target-coords-y target-coords-min-y)
+            (send self :set-arm-val arm :track-error-p t)
+            nil)
+          ((or (and target-coords-max-z (> target-coords-z target-coords-max-z))
+               (and target-coords-min-z (> target-coords-min-z target-coords-z)))
+            (send self :send-joy-feedback arm)
+            (ros::ros-error "arm ~A target-coords is out of workspace: ~A > ~A > ~A"
+                            arm target-coords-max-z target-coords-z target-coords-min-z)
+            (send self :set-arm-val arm :track-error-p t)
+            nil)
+          (t
+            (send self :set-arm-val arm :track-error-p nil)
+            target-coords)))))
   (:arm-cb (arm &key (head t) (torso t) (safe t) (mirror nil))
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
