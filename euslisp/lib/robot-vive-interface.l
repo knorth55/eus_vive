@@ -94,22 +94,22 @@
             (setq controller-coords (send head-coords :transform hmd->controller-coords))
             (setq target-pos (send controller-coords :worldpos))
             (setq target-rot (send controller-coords :worldrot))))
-        (let ((base->controller-coords
+        (let ((vrbase->controller-coords
                 (send self :get-vrbase->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
-              base->controller-pos)
-          (when base->controller-coords
-            (send base->controller-coords
+              vrbase->controller-pos)
+          (when vrbase->controller-coords
+            (send vrbase->controller-coords
                   :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-            (send base->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-            (setq base->controller-pos (send base->controller-coords :worldpos))
+            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
+            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+            (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
             (setq target-pos
-                  (float-vector (- (elt base->controller-pos 0) base->shoulder-x)
-                                (elt base->controller-pos 1)
-                                (- (+ robot-height (elt base->controller-pos 2))
-                                   (+ base->shoulder-z head->shoulder-z-distance))))
-            (setq target-rot (send base->controller-coords :worldrot)))))
+                  (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
+                                (elt vrbase->controller-pos 1)
+                                (- (+ robot-height (elt vrbase->controller-pos 2))
+                                   (+ vrbase->shoulder-z head->shoulder-z-distance))))
+            (setq target-rot (send vrbase->controller-coords :worldrot)))))
       (when (and target-pos target-rot)
         (when mirror
           (let* ((mirror-coords (make-coords :rot target-rot))
@@ -151,13 +151,13 @@
           (setq controller-trigger-p (send self :controller-trigger-p arm))
           (ros::spin-once)
           (ros::sleep)))
-      (send tfl :wait-for-transform base-frame-id controller-frame-id start-time wait-time)
-      (setq coords (send tfl :lookup-transform base-frame-id controller-frame-id start-time))
+      (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
+      (setq coords (send tfl :lookup-transform vrbase-frame-id controller-frame-id start-time))
       coords))
   (:get-vrbase->hmd-coords ()
     (let (coords)
-      (send tfl :wait-for-transform base-frame-id hmd-frame-id (ros::time 0) 0.1)
-      (setq coords (send tfl :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
+      (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
+      (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   (:calib-controller (&optional (arm :rarm))
