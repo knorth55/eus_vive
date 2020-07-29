@@ -498,7 +498,7 @@
   (:controller-button-p (arm button)
     (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
-    (return-from :send-joy-feedback t))
+    (return-from :send-joy-feedback nil))
   (:get-head-ypr-angle ()
     (return-from :get-head-ypr-angle nil)))
 
