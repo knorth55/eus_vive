@@ -39,15 +39,15 @@
   </group>
   <group if="$(arg main)">
     <group if="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head t :mirror t :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head nil :mirror t :loop-enable nil)&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head t :mirror nil :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head nil :mirror nil :loop-enable nil)&quot;" output="screen" />
     </group>
   </group>

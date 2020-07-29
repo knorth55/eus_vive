@@ -107,15 +107,15 @@
   </group>
   <group if="$(arg main)">
     <group if="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head t :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head nil :mirror t :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head t :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vive.l" name="baxter_vive_main"
+      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
             args="&quot;(main :head nil :mirror nil :lgripper $(arg lgripper_type) :rgripper $(arg rgripper_type) :loop-enable nil)&quot;" output="screen" />
     </group>
   </group>
@@ -124,7 +124,7 @@
         pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
     <rosparam>
       nodes:
-        - /baxter_vive_main
+        - /baxter_vr_main
       exclude_regexes:
         - .*follow_joint_trajectory.*
         - .*:joint-angle.*
