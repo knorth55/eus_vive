@@ -2,7 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr2_vive_gazebo.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="head" value="true" />

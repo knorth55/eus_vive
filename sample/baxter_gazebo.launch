@@ -2,7 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="false" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vive_gazebo.launch">
+  <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="mirror" value="true" />

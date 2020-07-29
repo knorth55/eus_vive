@@ -7,7 +7,7 @@
   <arg name="lgripper_softhand" default="true" />
   <arg name="rgripper_softhand" default="true" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vive.launch">
+  <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="head" default="$(arg head)" />

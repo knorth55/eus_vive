@@ -3,7 +3,7 @@
   <arg name="vive" default="true" />
   <arg name="kinfu" default="false" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr1040_vive.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="head" value="true" />

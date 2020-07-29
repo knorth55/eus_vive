@@ -64,14 +64,14 @@
     </node>
   </group>
 
-  <include file="$(find eus_vive)/launch/pr2/pr2_vive.launch" pass_all_args="true" />
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch" pass_all_args="true" />
 
-  <node name="pr2_vive_rosbag_record" pkg="rosbag" type="record"
+  <node name="pr2_vr_rosbag_record" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /joint_states
               /head_mount_kinect/qhd/image_color_rect/compressed
               /head_mount_kinect/qhd/camera_info
               /head_mount_kinect/qhd/image_depth_rect/compressed
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vive"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vr"
         output="screen" if="$(arg logging)" />
 
 </launch>
