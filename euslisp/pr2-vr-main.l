@@ -38,6 +38,9 @@
     (while (not (send *ti* :calibrate))
       (ros::spin-once)))
   (unless loop-enable (send *ti* :disable))
-  (send *ti* :main-loop :head head :torso torso :base base
-        :safe-arm safe-arm :safe-base safe-base :mirror mirror
-        :enable-button :menu :gripper-button :trigger :visualize visualize))
+  (if (eq device-type :oculus)
+    (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
+          :enable-button :menu :gripper-button :trigger :visualize visualize)
+    (send *ti* :main-loop :head head :torso torso :base base
+          :safe-arm safe-arm :safe-base safe-base :mirror mirror
+          :enable-button :menu :gripper-button :trigger :visualize visualize)))
