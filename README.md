@@ -48,7 +48,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ```bash
 mkdir ~/ros/vive_ws/src -p
 cd ~/ros/vive_ws/src
-wget https://raw.githubusercontent.com/knorth55/eus_vive/master/kinetic.rosinstall?token=ACG6QX52S5VO7PR2KBUVDBC5JUNWY -O .rosinstall
+wget https://raw.githubusercontent.com/knorth55/eus_vive/master/kinetic.rosinstall -O .rosinstall
 wstool up
 rosdep install --ignore-src --from-path . -y -r -i
 cd ~/ros/vive_ws
