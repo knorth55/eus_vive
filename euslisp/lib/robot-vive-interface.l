@@ -160,7 +160,7 @@
       (setq coords (send tfl :lookup-transform base-frame-id hmd-frame-id (ros::time 0)))
       (when coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
-  (:calib-controller (arm)
+  (:calib-controller (&optional (arm :rarm))
     (let (first-coords second-coords)
       (ros::rate rate)
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
@@ -262,7 +262,7 @@
         (let ((controller-grip-p (and (not (eq grip prev-grip)) grip)))
           (when controller-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
           controller-grip-p))))
-  (:send-joy-feedback (&optional (arm :larm))
+  (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
                           :type 1 :id id :intensity 3000))

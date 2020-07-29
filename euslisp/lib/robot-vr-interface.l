@@ -126,9 +126,9 @@
     (send self :reset :loop-enable t))
   (:disable ()
     (send self :reset :loop-enable nil))
-  (:calibrate (arm)
+  (:calibrate ()
     (let (calib-p)
-      (setq calib-p (send *ti* :calib-controller arm))
+      (setq calib-p (send *ti* :calib-controller))
       (unless calib-p (send *ri* :speak "Please try calibration again." :wait t))
       calib-p))
   (:reset-service (req)
@@ -150,7 +150,7 @@
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Calibrate button pressed." :wait t)
       (send self :reset :loop-enable t)
-      (send self :calibrate :rarm)
+      (send self :calibrate)
       (send self :reset :loop-enable nil)
       res))
   (:get-arm-val (arm name)
@@ -439,6 +439,7 @@
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
+  ;; arm motion cb
   (:arm-motion-cb (&key (head t) (torso t) (safe t) (mirror nil) (gripper-button :trigger))
     (let ((visualize-arm-coords (list nil nil)))
       (if (and torso (not (or (send self :grasping-p :larm) (send self :grasping-p :rarm))))
@@ -467,6 +468,7 @@
             (setf (elt visualize-arm-coords 1)
                   (send self :arm-cb :rarm :head head :torso nil :safe safe :mirror mirror)))))
       visualize-arm-coords))
+  ;; motion cb
   (:motion-cb (&key (head t) (torso t) (safe-arm t) (mirror nil) (gripper-button :trigger))
     (let (visualize-arm-coords)
       (cond
@@ -476,6 +478,7 @@
                      :button gripper-button)))
         (t nil))
       visualize-arm-coords))
+  ;; main loop step
   (:main-loop-step (&key (head t) (torso t) (safe-arm t) (mirror nil)
                          (enable-button :menu) (gripper-button :trigger) (visualize t))
     (let (visualize-arm-coords)
@@ -486,12 +489,20 @@
       (when (and head loop-enable) (send self :head-cb))
       (send self :update-current-end-coords)
       (when visualize (send self :visualize visualize-arm-coords))))
+  ;; main loop
   (:main-loop (&rest args)
     (ros::rate rate)
     (while (ros::ok)
       (send* self :main-loop-step args)
       (ros::spin-once)
-      (ros::sleep))))
+      (ros::sleep)))
+  ;; place holders
+  (:calib-controller ()
+    (return-from :calib-controller t))
+  (:controller-button-p (arm button)
+    (return-from :controller-button-p nil))
+  (:send-joy-feedback (arm)
+    (return-from :send-joy-feedback t)))
 
 
 (provide :robot-vr-interface)
