@@ -16,14 +16,14 @@
 
 ### Dependency installation
 
-**Install dependencies**
+#### Install dependencies
 
 ```bash
 sudo apt-get install --reinstall xserver-xorg-video-intel libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
 sudo dpkg-reconfigure xserver-xorg
 ```
 
-**Install nvidia-driver**
+#### Install nvidia-driver
 
 ```bash
 # for melodic, run command below
@@ -32,11 +32,11 @@ sudo apt install nvidia-driver-390
 sudo apt install nvidia-396
 ```
 
-**Install `OpenVR`, `steam` and `steamVR`**
+#### Install `OpenVR`, `steam` and `steamVR`
 
 Follow [here](https://github.com/knorth55/vive_ros)
 
-**Install kodak 4k pro camera udev**
+#### Install kodak 4k pro camera udev
 
 ```bash
 sudo cp udev/99-kodak.rules /etc/udev/rules.d/
@@ -58,55 +58,63 @@ catkin build
 
 ## How to start 
 
-### PR2
+### PR2 + Vive
 
-**Real Robot in JSK 73B2**
+#### PR1040 in JSK 73B2
 
 ```bash
 steam
 rossetip
 rossetmaster pr1040
-roslaunch eus_vive pr2_73b2.launch
+roslaunch eus_vive pr2_73b2_vive.launch
 ```
 
-**Gazebo**
+#### PR1012 in JSK 610 
 
 ```bash
 steam
-roslaunch eus_vive pr2_gazebo.launch
+rossetip
+rossetmaster pr1012
+roslaunch eus_vive pr2_610_vive.launch
 ```
 
-### Baxter
+#### Gazebo
 
-**Real Robot in JSK 73B2**
+```bash
+steam
+roslaunch eus_vive pr2_gazebo_vive.launch
+```
+
+### Baxter + Vive
+
+#### Real Robot in JSK 73B2
 
 ```bash
 steam
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_73b2.launch
+roslaunch eus_vive baxter_73b2_vive.launch
 ```
 
-**Gazebo**
+#### Gazebo
 
 ```bash
 steam
 roslaunch baxter_gazebo baxter_world.launch
 roslaunch eus_vive vive.launch
-roslaunch eus_vive baxter_gazebo.launch
+roslaunch eus_vive baxter_gazebo_vive.launch
 ```
 
-**Miraikan Demo 2019/08/23-24**
+#### Miraikan Demo 2019/08/23-24
 
 ```bash
 steam
 rossetip
 rossetmaster baxter
-roslaunch eus_vive vive.launch
-roslaunch eus_vive baxter_miraikan.launch
+roslaunch eus_vive baxter_miraikan_vive.launch
 ```
 
-## How to use
+## How to use Vive controller
 
 ![Vive controller](https://www.vive.com/media/filer_public/e3/da/e3daf208-4d4e-4adf-b911-22f9458ab883/guid-2d5454b7-1225-449c-b5e5-50a5ea4184d6-web.png)
 
@@ -119,7 +127,7 @@ roslaunch eus_vive baxter_miraikan.launch
 | 3 / Stream Menu | Steam Menu |
 | 8 / Grip | Not used |
 
-**Arm mode**
+#### Arm mode
 
 You can enable arm mode of right and left arm separately.
 
@@ -128,7 +136,7 @@ You can enable arm mode of right and left arm separately.
 | 7 / Trigger | Gripper toggle: open/close (Default: open) | 
 | Controller pose | robot end effector's pose |
 
-**Base mode**
+#### Base mode
 
 Base mode is enabled when both arms are disabled in Arm mode.
 
@@ -146,7 +154,7 @@ Base mode is enabled when both arms are disabled in Arm mode.
 | 3 / Stream Menu | Steam Menu |
 | 8 / Grip | Not used |
 
-**Arm mode**
+#### Arm mode
 
 You can enable arm mode of right and left arm separately.
 
@@ -168,5 +176,3 @@ You can enable arm mode of right and left arm separately.
 - Trial 3: https://drive.google.com/open?id=10XZ_5bBKgEk_QqtONCfnXYRLKTE6rpgE
 - Trial 4: https://drive.google.com/open?id=1IyVME3OggckIfDYCDwIjQmdNneWYdXWd
 - Trial 5: https://drive.google.com/open?id=1jwq_UdDzgDf-UfBpAS0G0KeykvZ-gLhW
-
-
