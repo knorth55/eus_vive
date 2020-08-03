@@ -33,6 +33,7 @@
     (send self :set-val 'torso-av-scale 1.5)
     (send self :set-val 'torso-min-time 0.5)
     (send self :set-val 'torso-z-thresh 50)
+    (send self :set-val 'torso-ik-weight 0.01)
     (send self :set-val 'grasp-timeout-time nil)
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)

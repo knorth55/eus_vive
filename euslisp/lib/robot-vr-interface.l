@@ -56,6 +56,7 @@
           torso-av-scale
           torso-min-time
           torso-z-thresh
+          torso-ik-weight
           grasp-timeout-time
           rate
           arm-length
@@ -258,7 +259,8 @@
         (if ik-target-coords
           (progn
             (setq torso (send self :filter-use-torso ik-target-coords))
-            (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
+            (send self :inverse-kinematics :arms ik-target-coords
+                  :use-torso (when torso torso-ik-weight)))
           (setq ik-target-coords (list nil nil)))
         (when loop-enable
           (cond
@@ -309,7 +311,8 @@
         (if ik-target-coords
           (progn
             (setq torso (send self :filter-use-torso ik-target-coords))
-            (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
+            (send self :inverse-kinematics :arms ik-target-coords
+                  :use-torso (when torso torso-ik-weight)))
           (setq ik-target-coords (list nil nil)))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
