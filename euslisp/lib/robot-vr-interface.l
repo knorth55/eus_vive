@@ -249,9 +249,11 @@
                  ((and larm-raw-target-coords rarm-raw-target-coords)
                   (list larm-raw-target-coords rarm-raw-target-coords))
                  ((and larm-raw-target-coords (not rarm-raw-target-coords))
-                  (list larm-raw-target-coords (send robot :rarm :end-coords :copy-worldcoords)))
+                  (list larm-raw-target-coords
+                        (send self :get-arm-val :rarm :current-end-coords)))
                  ((and (not larm-raw-target-coords) rarm-raw-target-coords)
-                  (list (send robot :larm :end-coords :copy-worldcoords) rarm-raw-target-coords))
+                  (list (send self :get-arm-val :larm :current-end-coords)
+                        rarm-raw-target-coords))
                  (t nil))))
         (if ik-target-coords
           (progn
@@ -292,8 +294,8 @@
       (let* ((raw-target-coords
                (send self :get-target-coords arm :head head :mirror mirror))
              (opposite-arm-coords
-               (send robot (send self :get-opposite-arm arm)
-                     :end-coords :copy-worldcoords))
+               (send self :get-arm-val (send self :get-opposite-arm arm)
+                     :current-end-coords))
              (target-coords
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords))
