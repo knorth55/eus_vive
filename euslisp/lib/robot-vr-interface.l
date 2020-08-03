@@ -55,6 +55,7 @@
           torso-av-tm
           torso-av-scale
           torso-min-time
+          torso-z-thresh
           grasp-timeout-time
           rate
           arm-length
@@ -224,6 +225,13 @@
           (t
             (send self :set-arm-val arm :track-error-p nil)
             target-coords)))))
+  (:filter-use-torso (arm-coords)
+    (let ((larm-current-z (elt (send larm-current-end-coords :worldpos) 2))
+          (larm-target-z (elt (send (car arm-coords) :worldpos) 2))
+          (rarm-current-z (elt (send rarm-current-end-coords :worldpos) 2))
+          (rarm-target-z (elt (send (cadr arm-coords) :worldpos) 2)))
+      (or (> (abs (- larm-current-z larm-target-z)) torso-z-thresh)
+          (> (abs (- rarm-current-z rarm-target-z)) torso-z-thresh))))
   (:arm-cb (arm &key (head t) (torso t) (safe t) (mirror nil))
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
@@ -246,7 +254,9 @@
                   (list (send robot :larm :end-coords :copy-worldcoords) rarm-raw-target-coords))
                  (t nil))))
         (if ik-target-coords
-          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso)
+          (progn
+            (setq torso (send self :filter-use-torso ik-target-coords))
+            (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
           (setq ik-target-coords (list nil nil)))
         (when loop-enable
           (cond
@@ -295,7 +305,9 @@
                   (list opposite-arm-coords raw-target-coords))
                  (t nil))))
         (if ik-target-coords
-          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso)
+          (progn
+            (setq torso (send self :filter-use-torso ik-target-coords))
+            (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
           (setq ik-target-coords (list nil nil)))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
