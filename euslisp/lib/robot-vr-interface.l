@@ -245,8 +245,9 @@
                  ((and (not larm-raw-target-coords) rarm-raw-target-coords)
                   (list (send robot :larm :end-coords :copy-worldcoords) rarm-raw-target-coords))
                  (t nil))))
-        (when ik-target-coords
-          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
+        (if ik-target-coords
+          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso)
+          (setq ik-target-coords (list nil nil)))
         (when loop-enable
           (cond
             ((and larm-target-coords rarm-target-coords)
@@ -287,11 +288,15 @@
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords))
              (ik-target-coords
-               (if (eq arm :larm)
-                 (list raw-target-coords opposite-arm-coords)
-                 (list opposite-arm-coords raw-target-coords))))
-        (when ik-target-coords
-          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
+               (cond
+                 ((raw-target-coords (eq arm :larm))
+                  (list raw-target-coords opposite-arm-coords))
+                 ((raw-target-coords (eq arm :rarm))
+                  (list opposite-arm-coords raw-target-coords))
+                 (t nil))))
+        (if ik-target-coords
+          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso)
+          (setq ik-target-coords (list nil nil)))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
