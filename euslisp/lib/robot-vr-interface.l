@@ -279,11 +279,18 @@
         raw-target-coords)
       (let* ((raw-target-coords
                (send self :get-target-coords arm :head head :mirror mirror))
+             (opposite-arm-coords
+               (send robot (send self :get-opposite-arm arm)
+                     :end-coords :copy-worldcoords))
              (target-coords
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords)))
         (when raw-target-coords
-          (send self :inverse-kinematics arm raw-target-coords :use-torso torso))
+          (send self :inverse-kinematics :arms
+                (if (eq arm :larm)
+                  (list raw-target-coords opposite-arm-coords)
+                  (list opposite-arm-coords raw-target-coords))
+                :use-torso torso))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
