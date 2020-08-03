@@ -236,7 +236,7 @@
              (rarm-target-coords
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
                  rarm-raw-target-coords))
-             (raw-target-coords
+             (ik-target-coords
                (cond
                  ((and larm-raw-target-coords rarm-raw-target-coords)
                   (list larm-raw-target-coords rarm-raw-target-coords))
@@ -245,8 +245,8 @@
                  ((and (not larm-raw-target-coords) rarm-raw-target-coords)
                   (list (send robot :larm :end-coords :copy-worldcoords) rarm-raw-target-coords))
                  (t nil))))
-        (when raw-target-coords
-          (send self :inverse-kinematics :arms raw-target-coords :use-torso torso))
+        (when ik-target-coords
+          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
         (when loop-enable
           (cond
             ((and larm-target-coords rarm-target-coords)
@@ -277,7 +277,7 @@
                      torso-av-tm :torso-controller 0
                      :min-time torso-min-time :scale torso-av-scale)))
             (t nil)))
-        raw-target-coords)
+        ik-target-coords)
       (let* ((raw-target-coords
                (send self :get-target-coords arm :head head :mirror mirror))
              (opposite-arm-coords
@@ -285,13 +285,13 @@
                      :end-coords :copy-worldcoords))
              (target-coords
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
-                 raw-target-coords)))
-        (when raw-target-coords
-          (send self :inverse-kinematics :arms
-                (if (eq arm :larm)
-                  (list raw-target-coords opposite-arm-coords)
-                  (list opposite-arm-coords raw-target-coords))
-                :use-torso torso))
+                 raw-target-coords))
+             (ik-target-coords
+               (if (eq arm :larm)
+                 (list raw-target-coords opposite-arm-coords)
+                 (list opposite-arm-coords raw-target-coords))))
+        (when ik-target-coords
+          (send self :inverse-kinematics :arms ik-target-coords :use-torso torso))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
@@ -299,7 +299,7 @@
           (when torso
             (send self :angle-vector (send robot :angle-vector)
                   torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
-        raw-target-coords)))
+        ik-target-coords)))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
   (:head-cb ()
@@ -459,21 +459,21 @@
                  (send self :arm-cb :arms :head head :torso torso :safe safe :mirror mirror)))
           ((and larm-enable (not rarm-enable))
            (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-           (setf (elt visualize-arm-coords 0)
+           (setf visualize-arm-coords
                  (send self :arm-cb :larm :head head :torso torso :safe safe :mirror mirror)))
           ((and (not larm-enable) rarm-enable)
            (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-           (setf (elt visualize-arm-coords 1)
+           (setf visualize-arm-coords
                  (send self :arm-cb :rarm :head head :torso torso :safe safe :mirror mirror)))
           (t nil))
         (progn
           (when (and larm-enable (not (send self :grasping-p :larm)))
             (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-            (setf (elt visualize-arm-coords 0)
+            (setf visualize-arm-coords
                   (send self :arm-cb :larm :head head :torso nil :safe safe :mirror mirror)))
           (when (and rarm-enable (not (send self :grasping-p :rarm)))
             (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-            (setf (elt visualize-arm-coords 1)
+            (setf visualize-arm-coords
                   (send self :arm-cb :rarm :head head :torso nil :safe safe :mirror mirror)))))
       visualize-arm-coords))
   ;; motion cb
