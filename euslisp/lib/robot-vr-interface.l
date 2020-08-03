@@ -236,16 +236,17 @@
              (rarm-target-coords
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
                  rarm-raw-target-coords))
-             (raw-target-coords (list larm-raw-target-coords rarm-raw-target-coords))
-             (target-coords (list larm-target-coords rarm-target-coords)))
-        (cond
-          ((and larm-raw-target-coords rarm-raw-target-coords)
-           (send self :inverse-kinematics :arms raw-target-coords :use-torso torso))
-          ((and larm-raw-target-coords (not rarm-raw-target-coords))
-           (send self :inverse-kinematics :larm larm-raw-target-coords :use-torso torso))
-          ((and (not larm-raw-target-coords) rarm-raw-target-coords)
-           (send self :inverse-kinematics :rarm rarm-raw-target-coords :use-torso torso))
-          (t nil))
+             (raw-target-coords
+               (cond
+                 ((and larm-raw-target-coords rarm-raw-target-coords)
+                  (list larm-raw-target-coords rarm-raw-target-coords))
+                 ((and larm-raw-target-coords (not rarm-raw-target-coords))
+                  (list larm-raw-target-coords (send robot :rarm :end-coords :copy-worldcoords)))
+                 ((and (not larm-raw-target-coords) rarm-raw-target-coords)
+                  (list (send robot :larm :end-coords :copy-worldcoords) rarm-raw-target-coords))
+                 (t nil))))
+        (when raw-target-coords
+          (send self :inverse-kinematics :arms raw-target-coords :use-torso torso))
         (when loop-enable
           (cond
             ((and larm-target-coords rarm-target-coords)
