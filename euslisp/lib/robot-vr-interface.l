@@ -307,9 +307,9 @@
                  raw-target-coords))
              (ik-target-coords
                (cond
-                 ((raw-target-coords (eq arm :larm))
+                 ((and raw-target-coords (eq arm :larm))
                   (list raw-target-coords opposite-arm-coords))
-                 ((raw-target-coords (eq arm :rarm))
+                 ((and raw-target-coords (eq arm :rarm))
                   (list opposite-arm-coords raw-target-coords))
                  (t nil))))
         (if ik-target-coords
