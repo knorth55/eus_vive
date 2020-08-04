@@ -233,7 +233,8 @@
           (send self :set-arm-val arm :trigger-count (- trigger-count 1))
           nil)
         (let ((controller-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
-          (when controller-trigger-p (send self :set-arm-val arm :trigger-count trigger-wait-count))
+          (when controller-trigger-p
+            (send self :set-arm-val arm :trigger-count trigger-wait-count))
           controller-trigger-p))))
   (:controller-menu-p (arm)
     (let ((menu (send self :get-arm-val arm :menu))
@@ -255,7 +256,8 @@
           (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
           nil)
         (let ((controller-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
-          (when controller-trackpad-p (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
+          (when controller-trackpad-p
+            (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
           controller-trackpad-p))))
   (:controller-grip-p (arm)
     (let ((grip (send self :get-arm-val arm :grip))
@@ -266,7 +268,8 @@
           (send self :set-arm-val arm :grip-count (- grip-count 1))
           nil)
         (let ((controller-grip-p (and (not (eq grip prev-grip)) grip)))
-          (when controller-grip-p (send self :set-arm-val arm :grip-count grip-wait-count))
+          (when controller-grip-p
+            (send self :set-arm-val arm :grip-count grip-wait-count))
           controller-grip-p))))
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))

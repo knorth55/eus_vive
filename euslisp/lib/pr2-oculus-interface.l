@@ -1,7 +1,6 @@
 ;; -*- mode: lisp;-*-
 (load "package://pr2eus/pr2-interface.l")
 (require :robot-oculus-interface "package://eus_vive/euslisp/lib/robot-oculus-interface.l")
-(load "package://eus_qp/optmotiongen/euslisp/inverse-kinematics-wrapper.l")
 
 
 (defclass pr2-oculus-interface
@@ -32,6 +31,8 @@
     (send self :set-val 'torso-av-tm 500)
     (send self :set-val 'torso-av-scale 1.5)
     (send self :set-val 'torso-min-time 0.5)
+    (send self :set-val 'torso-z-thresh 100)
+    (send self :set-val 'torso-ik-weight 0.0001)
     (send self :set-val 'grasp-timeout-time nil)
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
@@ -50,19 +51,13 @@
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
     (if (eq arm :arms)
-      (send* robot :inverse-kinematics-optmotiongen target-coords :rotation-axis (list t t)
+      (send* robot :inverse-kinematics target-coords :rotation-axis (list t t)
              :move-target (list (send robot :larm :end-coords) (send robot :rarm :end-coords))
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
-             :posture-joint-list (list (send robot :torso_lift_joint))
-             :posture-joint-angle-list (list (send robot :torso_lift_joint :joint-angle))
-             :min-loop ik-stop-step
              :debug-view nil args)
-      (send* robot :inverse-kinematics-optmotiongen target-coords
+      (send* robot :inverse-kinematics target-coords
              :rotation-axis t :move-target (send robot arm :end-coords)
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
-             :posture-joint-list (list (send robot :torso_lift_joint))
-             :posture-joint-angle-list (list (send robot :torso_lift_joint :joint-angle))
-             :min-loop ik-stop-step
              :debug-view nil args)))
   (:start-grasp (arm &key (wait t))
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
