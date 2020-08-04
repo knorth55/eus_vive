@@ -120,6 +120,8 @@
     (send self :stop-grasp arm :wait nil)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
+    (when (find-method robot-interface :torso-controller)
+      (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
     (send self :set-arm-val arm :grasp nil)
     (send self :set-arm-val arm :grasping-p nil)
     (send self :set-arm-val arm :enable nil)
@@ -440,6 +442,8 @@
           (progn
             (send robot-interface :cancel-angle-vector
                   :controller-type (send self :get-arm-controller arm))
+            (when (find-method robot-interface :torso-controller)
+              (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
             (send self :set-arm-val arm :track-error-p nil)
             (send self :set-arm-val arm :collision-p nil)
             (send robot-interface :speak
