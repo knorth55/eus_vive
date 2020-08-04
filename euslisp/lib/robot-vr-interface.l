@@ -258,9 +258,13 @@
                  (t nil))))
         (if ik-target-coords
           (progn
-            (setq torso (send self :filter-use-torso ik-target-coords))
+            (setq torso (and torso (send self :filter-use-torso ik-target-coords)))
             (send self :inverse-kinematics :arms ik-target-coords
-                  :use-torso (when torso torso-ik-weight)))
+                  :use-torso
+                  (when (and torso
+                             larm-raw-target-coords
+                             rarm-raw-target-coords)
+                    torso-ik-weight)))
           (setq ik-target-coords (list nil nil)))
         (when loop-enable
           (cond
@@ -310,17 +314,12 @@
                  (t nil))))
         (if ik-target-coords
           (progn
-            (setq torso (send self :filter-use-torso ik-target-coords))
-            (send self :inverse-kinematics :arms ik-target-coords
-                  :use-torso (when torso torso-ik-weight)))
+            (send self :inverse-kinematics :arms ik-target-coords :use-torso nil))
           (setq ik-target-coords (list nil nil)))
         (when (and loop-enable target-coords)
           (send self :angle-vector (send robot :angle-vector)
                 av-tm (send self :get-arm-controller arm)
-                0 :min-time min-time :scale av-scale)
-          (when torso
-            (send self :angle-vector (send robot :angle-vector)
-                  torso-av-tm :torso-controller 0 :min-time torso-min-time :scale torso-av-scale)))
+                0 :min-time min-time :scale av-scale))
         ik-target-coords)))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
