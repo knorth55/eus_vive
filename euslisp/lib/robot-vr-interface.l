@@ -526,6 +526,7 @@
   (:main-loop (&rest args)
     (ros::rate rate)
     (send self :update-current-end-coords)
+    (send *ri* :speak "I'm ready to start demo." :wait nil)
     (while (ros::ok)
       (send* self :main-loop-step args)
       (ros::spin-once)
