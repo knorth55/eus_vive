@@ -14,10 +14,10 @@
     <arg name="head" default="$(arg head)" />
     <arg name="respeaker" default="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />
-    <arg name="twitter" value="true" />
+    <arg name="twitter" value="false" />
     <arg name="debug" value="true" />
     <arg name="custom_xdisplay" value="true" />
-    <arg name="launch_baxter" value="true" />
+    <arg name="launch_baxter" value="false" />
     <arg name="lgripper_softhand" value="$(arg lgripper_softhand)" />
     <arg name="rgripper_softhand" value="$(arg rgripper_softhand)" />
     <arg name="b_lighthouse_id" value="8E924CC3" />

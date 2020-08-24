@@ -130,7 +130,7 @@ roslaunch eus_vive baxter_gazebo_vive.launch
 steam
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_vive.launch
+roslaunch eus_vive baxter_miraikan_mirror_vive.launch
 ```
 
 ## How to use Vive controller

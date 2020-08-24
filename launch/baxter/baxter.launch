@@ -1,0 +1,158 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="oculus" default="false" />
+  <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
+  <arg name="mirror" default="false" />
+  <arg name="logging" default="true" />
+  <arg name="twitter" default="true" />
+  <arg name="debug" default="false" />
+  <arg name="mask_rcnn" default="false" />
+  <arg name="custom_xdisplay" default="true" />
+  <arg name="launch_baxter" default="true" />
+  <arg name="lgripper_softhand" default="false" />
+  <arg name="rgripper_softhand" default="false" />
+
+  <!-- device -->
+  <arg name="device" value=":oculus" if="$(arg oculus)" />
+  <arg name="device" value=":vive" unless="$(arg oculus)" />
+
+  <!-- vive -->
+  <arg name="b_lighthouse_id" default="" />
+  <arg name="c_lighthouse_id" default="" />
+  <arg name="l_controller_id" default="" />
+  <arg name="r_controller_id" default="" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- gripper and display-->
+  <arg name="finger" default="standard_narrow" />
+  <arg name="finger_tip" default="paddle_tip" />
+  <arg name="xdisplay_max_width" default="1024" unless="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_width" default="1920" if="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_height" default="600" unless="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_height" default="1200" if="$(arg custom_xdisplay)" />
+  <arg name="lgripper_type" value=":softhand" if="$(arg lgripper_softhand)" />
+  <arg name="lgripper_type" value=":parallel" unless="$(arg lgripper_softhand)" />
+  <arg name="rgripper_type" value=":softhand" if="$(arg rgripper_softhand)" />
+  <arg name="rgripper_type" value=":parallel" unless="$(arg rgripper_softhand)" />
+  <arg name="lgripper_visualize" value="true" unless="$(arg lgripper_softhand)" />
+  <arg name="lgripper_visualize" value="false" if="$(arg lgripper_softhand)" />
+  <arg name="rgripper_visualize" value="true" unless="$(arg rgripper_softhand)" />
+  <arg name="rgripper_visualize" value="false" if="$(arg rgripper_softhand)" />
+
+  <!-- camera -->
+  <arg name="camera_ns" default="realsense_head" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
+  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
+                  gazebo:=false finger:=$(arg finger) finger_tip:=$(arg finger_tip)
+                  left_electric_gripper:=$(arg lgripper_visualize)
+                  right_electric_gripper:=$(arg rgripper_visualize)" />
+
+  <param name="robot_description_semantic"
+         command="$(find xacro)/xacro.py --inorder
+                  $(find baxter_moveit_config)/config/baxter.srdf.xacro
+                  left_electric_gripper:=$(arg lgripper_visualize)
+                  left_tip_name:=left_gripper 
+                  right_electric_gripper:=$(arg rgripper_visualize)
+                  right_tip_name:=right_gripper" />
+
+
+  <include file="$(find jsk_baxter_startup)/baxter.launch">
+    <arg name="load_robot_description" value="false" />
+    <arg name="launch_robot_state_publisher" value="true" />
+    <arg name="sanity_check_joint_trajectory" value="false" />
+    <arg name="launch_moveit" value="false" />
+    <arg name="launch_time_signal" value="false" />
+    <arg name="launch_db" value="false"/>
+    <arg name="launch_twitter" value="false"/>
+    <arg name="launch_gripper_action" value="true" />
+    <arg name="left_electric_gripper" value="true" />
+    <arg name="right_electric_gripper" value="true" />
+    <arg name="arm_interpolation" value="bezier_with_velocity" />
+    <arg name="arm_control_mode" value="velocity" />
+  </include>
+
+  <group ns="rgripper" if="$(arg rgripper_softhand)">
+    <include file="$(find softhand_ros)/launch/softhand_right.launch" />
+  </group>
+  <group ns="lgripper" if="$(arg lgripper_softhand)">
+    <include file="$(find softhand_ros)/launch/softhand_left.launch" />
+  </group>
+
+  <group if="$(arg head)">
+    <!-- realsense camera -->
+    <node name="realsense_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
+    <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+      <arg name="camera" value="$(arg camera_ns)" />
+      <arg name="enable_pointcloud" value="true" />
+      <arg name="align_depth" value="true"/>
+    </include>
+    <!-- kodak camera -->
+    <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
+    <node name="kodak_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
+    <node name="kodak_rviz__frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
+    <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
+      <arg name="camera_name" value="$(arg spherical_camera_ns)" />
+    </include>
+    <group ns="virtual_camera">
+      <group ns="left">
+        <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+              args="-0.0315 0 0 0 0 0 /realsense_head_color_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+        <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+              output="screen">
+          <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+          <rosparam>
+            frame_id: virtual_camera_left_rgb_optical_frame
+            height: 1080
+            width: 1200
+          </rosparam>
+        </node>
+        <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+              args="standalone jsk_pcl/DepthImageCreator" output="screen">
+          <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+          <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+        </node>
+      </group>
+      <group ns="right">
+        <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+              args="0.0315 0 0 0 0 0 /realsense_head_color_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+        <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+              output="screen">
+          <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+          <rosparam>
+            frame_id: virtual_camera_right_rgb_optical_frame
+            height: 1080
+            width: 1200
+          </rosparam>
+        </node>
+        <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+              args="standalone jsk_pcl/DepthImageCreator" output="screen">
+          <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+          <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+        </node>
+      </group>
+    </group>
+  </group>
+  <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
+    <arg name="INPUT_IMAGE" value="/$(arg camera_ns)/color/image_rect_color" />
+  </include>
+
+  <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
+
+</launch>
