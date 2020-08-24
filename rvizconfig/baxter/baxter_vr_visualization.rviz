@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1/Links1
+        - /Camera1
         - /Visualization1/RobotIKResult1
         - /TF1/Frames1
       Splitter Ratio: 0.4283154010772705
