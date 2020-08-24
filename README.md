@@ -1,7 +1,11 @@
 # eus_vive
 [![Build Status](https://travis-ci.com/knorth55/eus_vive.svg?branch=master)](https://travis-ci.com/knorth55/eus_vive)
 
+Robot remote control program with Vive/Oculus
+
 ## Tested Environment
+
+### Build environment
 
 - Ubuntu 16.04 + ROS Kinetic
   - NVidia driver: `396.37`
@@ -12,18 +16,33 @@
   - OpenVR: `1.3.22`
   - Steam VR: `1.6.10`
 
+### VR Devices
+
+- Vive
+  - Arm motion tracking
+  - Controller button interface
+  - HMD visual interface 
+  - Vibration interface
+  - Sound interface
+- Oculus
+  - [x] Arm motion tracking
+  - [ ] Controller button interface
+  - [ ] HMD visual interface 
+  - [ ] Vibration interface
+  - [ ] Sound interface
+
 ## Installation
 
 ### Dependency installation
 
-#### Install dependencies
+#### Install dependencies (for Vive)
 
 ```bash
 sudo apt-get install --reinstall xserver-xorg-video-intel libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
 sudo dpkg-reconfigure xserver-xorg
 ```
 
-#### Install nvidia-driver
+#### Install nvidia-driver (for Vive)
 
 ```bash
 # for melodic, run command below
@@ -32,11 +51,11 @@ sudo apt install nvidia-driver-390
 sudo apt install nvidia-396
 ```
 
-#### Install `OpenVR`, `steam` and `steamVR`
+#### Install `OpenVR`, `steam` and `steamVR` (for Vive)
 
 Follow [here](https://github.com/knorth55/vive_ros)
 
-#### Install kodak 4k pro camera udev
+#### Install kodak 4k pro camera udev (for Baxter)
 
 ```bash
 sudo cp udev/99-kodak.rules /etc/udev/rules.d/
@@ -176,3 +195,9 @@ You can enable arm mode of right and left arm separately.
 - Trial 3: https://drive.google.com/open?id=10XZ_5bBKgEk_QqtONCfnXYRLKTE6rpgE
 - Trial 4: https://drive.google.com/open?id=1IyVME3OggckIfDYCDwIjQmdNneWYdXWd
 - Trial 5: https://drive.google.com/open?id=1jwq_UdDzgDf-UfBpAS0G0KeykvZ-gLhW
+
+## Tips
+
+### Baxter network configuration
+
+Open [Field Service Menu](https://sdk.rethinkrobotics.com/wiki/Field_Service_Menu_(FSM)) and change network configuration
