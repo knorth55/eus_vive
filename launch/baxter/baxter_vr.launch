@@ -9,7 +9,7 @@
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
   <arg name="mask_rcnn" default="false" />
-  <arg name="miraikan" default="false" />
+  <arg name="custom_xdisplay" default="true" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
 
@@ -34,10 +34,10 @@
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
   <arg name="finger_tip" default="paddle_tip" />
-  <arg name="xdisplay_max_width" default="1024" if="$(arg miraikan)" />
-  <arg name="xdisplay_max_width" default="1920" unless="$(arg miraikan)" />
-  <arg name="xdisplay_max_height" default="600" if="$(arg miraikan)" />
-  <arg name="xdisplay_max_height" default="1200" unless="$(arg miraikan)" />
+  <arg name="xdisplay_max_width" default="1024" unless="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_width" default="1920" if="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_height" default="600" unless="$(arg custom_xdisplay)" />
+  <arg name="xdisplay_max_height" default="1200" if="$(arg custom_xdisplay)" />
   <arg name="lgripper_type" value=":softhand" if="$(arg lgripper_softhand)" />
   <arg name="lgripper_type" value=":parallel" unless="$(arg lgripper_softhand)" />
   <arg name="rgripper_type" value=":softhand" if="$(arg rgripper_softhand)" />
