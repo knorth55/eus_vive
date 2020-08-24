@@ -7,7 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1/Links1
-        - /Camera1
         - /Visualization1/RobotIKResult1
         - /TF1/Frames1
       Splitter Ratio: 0.4283154010772705
@@ -355,7 +354,7 @@ Visualization Manager:
           Enabled: true
           FOV front: 235
           FOV rear: 235
-          Front camera image: /kodak_head/image_raw
+          Front camera image: /kodak_head_remote/image_raw
           Name: KodakSphere
           Radius: 10
           Rear camera image: ""
@@ -366,7 +365,7 @@ Visualization Manager:
           Value: true
         - Class: rviz/Image
           Enabled: true
-          Image Topic: /realsense_head/color/image_rect_color
+          Image Topic: /realsense_head_remote/color/image_rect_color
           Max Value: 1
           Median window: 5
           Min Value: 0
@@ -378,7 +377,7 @@ Visualization Manager:
           Value: true
         - Class: rviz/Image
           Enabled: true
-          Image Topic: /kodak_head/image_raw
+          Image Topic: /kodak_head_remote/image_raw
           Max Value: 1
           Median window: 5
           Min Value: 0
