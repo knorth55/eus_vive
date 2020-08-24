@@ -154,14 +154,5 @@
   </include>
 
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
-  <node name="soundplay_node"
-        pkg="sound_play" type="soundplay_node.py">
-    <remap from="sound_play" to="robotsound" />
-  </node>
-  <node name="soundplay_jp_node"
-        pkg="sound_play" type="soundplay_node.py">
-    <remap from="robotsound" to="robotsound_jp" />
-    <remap from="sound_play" to="robotsound_jp" />
-  </node>
 
 </launch>
