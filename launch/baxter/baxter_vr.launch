@@ -153,6 +153,10 @@
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg head)"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_visualization.rviz" />
-  <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg head)"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr.rviz" />
+  <group unless="$(arg head)">
+    <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg mirror)"
+          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_mirror.rviz" />
+    <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg mirror)"
+          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_display_visualization.rviz" />
+  </group>
 </launch>
