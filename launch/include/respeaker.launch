@@ -1,7 +1,3 @@
 <launch>
-  <arg name="launch_respeaker" default="true" />
-
-  <node if="$(arg launch_respeaker)"
-        name="respeaker_node" pkg="respeaker_ros" type="respeaker_node.py" respawn="true"/>
-
+  <node name="respeaker_node" pkg="respeaker_ros" type="respeaker_node.py" respawn="true"/>
 </launch>
