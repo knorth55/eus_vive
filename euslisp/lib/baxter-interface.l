@@ -67,6 +67,7 @@
       (setq *ri* (instance eus_vive::baxter-interface :init :type type
                            :moveit-environment mvit-env
                            :moveit-robot mvit-rb
+                           :controller-timeout 10
                            :lgripper lgripper
                            :rgripper rgripper)))
     (when (not (boundp '*baxter*))
