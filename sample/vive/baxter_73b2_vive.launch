@@ -12,6 +12,7 @@
     <arg name="vive" value="$(arg vive)" />
     <arg name="oculus" value="false" />
     <arg name="head" default="$(arg head)" />
+    <arg name="respeaker" default="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="twitter" value="true" />
     <arg name="debug" value="true" />
