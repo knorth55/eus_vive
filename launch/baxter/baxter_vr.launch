@@ -11,6 +11,7 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
+  <arg name="republish" default="false" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
 
@@ -148,6 +149,18 @@
     <remap from="robotsound" to="robotsound_jp" />
     <remap from="sound_play" to="robotsound_jp" />
   </node>
+
+  <group if="$(arg republish)">
+    <node name="realsense_rgb_decompress" pkg="image_transport" type="republish"
+          args="compressed in:=/$(arg camera_ns)/color/image_rect_color
+                           out:=/$(arg camera_ns)_remote/color/image_rect_color" />
+    <node name="realsense_depth_decompress" pkg="image_transport" type="republish"
+          args="compressedDepth in:=/$(arg camera_ns)/depth/image_rect_raw
+                                out:=/$(arg camera_ns)_remote/depth/image_rect_raw" />
+    <node name="kodak_decompress" pkg="image_transport" type="republish"
+          args="compressed in:=/$(arg spherical_camera_ns)/image_raw
+                           out:=/$(arg spherical_camera_ns)_remote/image_raw" />
+  </group>
 
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />

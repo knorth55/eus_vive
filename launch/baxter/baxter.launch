@@ -11,6 +11,7 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
+  <arg name="republish" default="false" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
 
