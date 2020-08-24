@@ -2,18 +2,24 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="head" default="true" />
+  <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
+  <arg name="lgripper_softhand" default="true" />
+  <arg name="rgripper_softhand" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="oculus" value="false" />
     <arg name="head" default="$(arg head)" />
+    <arg name="respeaker" default="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="twitter" value="false" />
     <arg name="debug" value="true" />
     <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="false" />
+    <arg name="lgripper_softhand" value="$(arg lgripper_softhand)" />
+    <arg name="rgripper_softhand" value="$(arg rgripper_softhand)" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
     <arg name="l_controller_id" value="FD35BD42" />
