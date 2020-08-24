@@ -138,6 +138,7 @@
     </rosparam>
   </node>
 
+  <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />

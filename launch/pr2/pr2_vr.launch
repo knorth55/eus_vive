@@ -168,9 +168,8 @@
     </rosparam>
   </node>
 
-  <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)">
-    <arg name="launch_respeaker" value="false" />
-  </include>
+  <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
+
   <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons" output="screen">
     <rosparam subst_value="true" >
       layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
