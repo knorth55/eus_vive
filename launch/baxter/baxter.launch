@@ -11,6 +11,8 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
+  <arg name="realsense_camera" default="false" />
+  <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
@@ -92,25 +94,29 @@
     <include file="$(find softhand_ros)/launch/softhand_left.launch" />
   </group>
 
-  <group if="$(arg head)">
-    <!-- realsense camera -->
+  <!-- realsense camera -->
+  <group if="$(arg realsense_camera)">
     <node name="realsense_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
-    <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
       <arg name="camera" value="$(arg camera_ns)" />
-      <arg name="enable_pointcloud" value="true" />
-      <arg name="align_depth" value="true"/>
+      <arg name="filters" value="pointcloud"/>
     </include>
-    <!-- kodak camera -->
+  </group>
+  <!-- kodak camera -->
+  <group if="$(arg spherical_camera)">
     <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
     <node name="kodak_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
-    <node name="kodak_rviz__frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+    <node name="kodak_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
     <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
       <arg name="camera_name" value="$(arg spherical_camera_ns)" />
     </include>
+  </group>
+  <!-- virtual camera -->
+  <group if="$(arg head)">
     <group ns="virtual_camera">
       <group ns="left">
         <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
@@ -150,6 +156,7 @@
       </group>
     </group>
   </group>
+
   <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
     <arg name="INPUT_IMAGE" value="/$(arg camera_ns)/color/image_rect_color" />
   </include>

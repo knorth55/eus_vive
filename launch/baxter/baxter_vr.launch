@@ -11,6 +11,8 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
+  <arg name="realsense_camera" default="false" />
+  <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
   <arg name="lgripper_softhand" default="false" />
   <arg name="rgripper_softhand" default="false" />
@@ -152,8 +154,8 @@
 
   <group if="$(arg republish)">
     <node name="realsense_rgb_decompress" pkg="image_transport" type="republish"
-          args="compressed in:=/$(arg camera_ns)/color/image_rect_color
-                           out:=/$(arg camera_ns)_remote/color/image_rect_color" />
+          args="compressed in:=/$(arg camera_ns)/color/image_raw
+                           out:=/$(arg camera_ns)_remote/color/image_raw" />
     <node name="realsense_depth_decompress" pkg="image_transport" type="republish"
           args="compressedDepth in:=/$(arg camera_ns)/depth/image_rect_raw
                                 out:=/$(arg camera_ns)_remote/depth/image_rect_raw" />
