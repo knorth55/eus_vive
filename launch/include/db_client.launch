@@ -27,10 +27,10 @@
     <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="rgb_ns" value="color" />
     <arg name="rgb_suffix" value="/compressed"/>
-    <arg name="depth_ns" value="depth_registered/sw_registered" />
+    <arg name="depth_ns" value="depth" />
     <arg name="depth_suffix" value="/compressedDepth"/>
     <arg name="camera_info_topic" value="camera_info" />
-    <arg name="rgb_topic" value="image_rect_color" />
+    <arg name="rgb_topic" value="image_raw" />
     <arg name="depth_topic" value="image_rect_raw" />
     <arg name="joint_states_topic" value="robot/joint_states" />
 

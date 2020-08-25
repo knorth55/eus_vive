@@ -3,6 +3,7 @@
   <arg name="debug" default="false" />
   <arg name="camera_ns" default="realsense" />
   <arg name="home_dir" default="$(env HOME)" />
+
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
     <arg name="use_daemon" value="false"/>
     <arg name="port" value="27017" />
@@ -13,10 +14,51 @@
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
   </include>
+
+  <group ns="lifelog">
+    <node name="spherical_camera_throttle"
+          pkg="nodelet" type="nodelet"
+          args="standalone jsk_topic_tools/SynchronizedThrottle" >
+      <remap from="/kodak_head/camera_info/throttled"
+             to="spherical_rgb/camera_info"/>
+      <remap from="/kodak_head/image_raw/compressed/throttled"
+             to="spherical_rgb/image_raw/compressed"/>
+      <rosparam subst_value="true">
+        approximate_sync: true
+        update_rate: 1.0
+        topics:
+        - /kodak_head/camera_info
+        - /kodak_head/image_raw/compressed
+      </rosparam>
+    </node>
+    <node name="spherical_rgb_image_logger"
+          pkg="nodelet" type="nodelet"
+          args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+      <remap from="~input" to="spherical_rgb/image_raw/compressed" />
+      <rosparam subst_value="true">
+        enable_monitor: false
+        monitor_topic: /kodak_head/image_raw/compressed
+        vital_check: true
+      </rosparam>
+    </node>
+    <node name="spherical_rgb_camera_info_logger"
+          pkg="nodelet" type="nodelet"
+          args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+      <remap from="~input" to="spherical_rgb/camera_info" />
+      <rosparam subst_value="true">
+        enable_monitor: false
+        monitor_topic: /kodak_head/image_raw/compressed
+        vital_check: true
+      </rosparam>
+    </node>
+  </group>
+
   <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /robot/joint_states
               /lifelog/rgb/image_rect_color/compressed
               /lifelog/rgb/camera_info
+              /lifelog/spherical_rgb/image_raw/compressed
+              /lifelog/spherical_rgb/camera_info
               /lifelog/depth/image_rect_raw/compressedDepth
               /lifelog/depth/camera_info
               --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
