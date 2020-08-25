@@ -4,11 +4,14 @@
     <arg name="vive" value="false" />
     <arg name="oculus" value="false" />
     <arg name="mirror" value="true" />
+    <arg name="head" value="false" />
     <arg name="respeaker" value="false" />
     <arg name="twitter" value="false" />
     <arg name="debug" value="true" />
     <arg name="custom_xdisplay" value="false" />
     <arg name="launch_baxter" value="true" />
+    <arg name="realsense_camera" value="false" />
+    <arg name="spherical_camera" value="false" />
     <arg name="republish" value="false" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
