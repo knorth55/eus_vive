@@ -156,4 +156,10 @@
 
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
 
+  <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
+    <arg name="twitter" value="$(arg twitter)" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+  </include>
+
 </launch>
