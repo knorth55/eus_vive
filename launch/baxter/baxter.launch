@@ -64,7 +64,7 @@
                   right_electric_gripper:=$(arg rgripper_visualize)" />
 
   <param name="robot_description_semantic"
-         command="$(find xacro)/xacro.py --inorder
+         command="$(find xacro)/xacro --inorder
                   $(find baxter_moveit_config)/config/baxter.srdf.xacro
                   left_electric_gripper:=$(arg lgripper_visualize)
                   left_tip_name:=left_gripper 
