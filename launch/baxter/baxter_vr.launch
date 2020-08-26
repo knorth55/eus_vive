@@ -14,8 +14,8 @@
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
-  <arg name="lgripper_softhand" default="false" />
-  <arg name="rgripper_softhand" default="false" />
+  <arg name="lgripper_softhand" default="true" />
+  <arg name="rgripper_softhand" default="true" />
 
   <!-- device -->
   <arg name="device" value=":oculus" if="$(arg oculus)" />
