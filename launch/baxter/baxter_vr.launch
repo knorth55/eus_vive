@@ -162,12 +162,14 @@
     </rosparam>
   </node>
 
-  <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg head)"
+  <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg head)"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_visualization.rviz" />
   <group unless="$(arg head)">
-    <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg mirror)"
+    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg mirror)"
           args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_mirror.rviz" />
-    <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg mirror)"
+    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" unless="$(arg mirror)"
           args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_display_visualization.rviz" />
+    <node name="$(anon vis_rviz)" pkg="rviz" type="rviz" unless="$(arg mirror)"
+          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_visualization.rviz" />
   </group>
 </launch>
