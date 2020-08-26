@@ -38,7 +38,7 @@
                   (lgripper :parallel) (rgripper parallel) (loop-enable t) (device-type :vive))
   (init :lgripper lgripper :rgripper rgripper :loop-enable t :device-type device-type)
   (unless head
-    (while (not (send *ti* :calibrate :rarm))
+    (while (not (send *ti* :calibrate))
       (ros::spin-once)))
   (send *ri* :nod)
   (unless loop-enable (send *ti* :disable))
