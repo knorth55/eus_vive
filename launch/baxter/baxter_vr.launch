@@ -156,11 +156,8 @@
                            out:=/$(arg spherical_camera_ns)_remote/image_raw" />
   </group>
 
-  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
-    <rosparam subst_value="true" >
-      layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml 
-    </rosparam>
-  </node>
+  <node name="service_button" pkg="rqt_gui" type="rqt_gui"
+        args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
 
   <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg head)"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_visualization.rviz" />
