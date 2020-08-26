@@ -11,6 +11,7 @@
   <arg name="mask_rcnn" default="false" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
+  <arg name="launch_xdisplay" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
@@ -162,6 +163,15 @@
   </include>
 
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
+
+  <node name="irtviewer_xdisplay" if="$(arg launch_xdisplay)"
+        pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
+        args="/eus_vive_status_visualizer/output/image">
+    <rosparam subst_value="true">
+      max_width: $(arg xdisplay_max_width)
+      max_height: $(arg xdisplay_max_height)
+    </rosparam>
+  </node>
 
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />

@@ -13,6 +13,7 @@
     <arg name="debug" value="true" />
     <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="false" />
+    <arg name="launch_xdisplay" value="false" />
     <arg name="realsense_camera" value="false" />
     <arg name="spherical_camera" value="true" />
     <arg name="republish" value="true" />

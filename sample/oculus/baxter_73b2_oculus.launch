@@ -18,6 +18,7 @@
     <arg name="debug" value="true" />
     <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="true" />
+    <arg name="launch_xdisplay" value="true" />
     <arg name="realsense_camera" value="$(arg realsense_camera)" />
     <arg name="spherical_camera" value="$(arg spherical_camera)" />
     <arg name="republish" value="false" />
