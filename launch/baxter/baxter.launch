@@ -177,6 +177,7 @@
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="twitter_image_topics" value="/$(arg spherical_camera_ns)/image_raw" />
   </include>
 
 </launch>

@@ -2,6 +2,7 @@
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
   <arg name="camera_ns" default="realsense" />
+  <arg name="twitter_image_topics" default="/$(arg camera_ns)/color/image_rect_color" />
   <arg name="home_dir" default="$(env HOME)" />
 
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
@@ -13,6 +14,7 @@
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="twitter_image_topics" value="$(arg twitter_image_topics)" />
   </include>
 
   <group ns="lifelog">
