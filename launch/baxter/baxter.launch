@@ -9,6 +9,7 @@
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
   <arg name="mask_rcnn" default="false" />
+  <arg name="display" default="true" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
   <arg name="launch_xdisplay" default="false" />
