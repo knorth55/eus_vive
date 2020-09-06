@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>eus_vive</name>
-  <version>0.0.0</version>
+  <version>0.0.2</version>
   <description>The eus_vive package</description>
 
   <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
