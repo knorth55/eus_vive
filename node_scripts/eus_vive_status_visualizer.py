@@ -49,8 +49,9 @@ class EusViveStatusVisualizer(ConnectionBasedTransport):
                     imgs[arm][:, :, index] = 255
                 if self.hand_close[arm]:
                     # orange
-                    imgs[arm][int(2.0 * H / 3.0), :, 2] = 255
-                    imgs[arm][int(2.0 * H / 3.0), :, 1] = 165
+                    imgs[arm][int(2.0 * H / 3.0):, :, 0] = 0
+                    imgs[arm][int(2.0 * H / 3.0):, :, 1] = 165
+                    imgs[arm][int(2.0 * H / 3.0):, :, 2] = 255
             else:
                 # gray
                 imgs[arm][:] = 127
