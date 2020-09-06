@@ -4,6 +4,7 @@
 (ros::load-ros-manifest "eus_vive")
 (ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
+(ros::load-ros-manifest "std_msgs")
 (ros::load-ros-manifest "std_srvs")
 
 (load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
@@ -36,6 +37,7 @@
           larm-grasp-start-time
           larm-collision-p
           larm-coords-visualize-topic-name
+          larm-grasp-visualize-topic-name
           larm-current-end-coords
           larm-track-error-p
           rarm-enable
@@ -45,6 +47,7 @@
           rarm-grasp-start-time
           rarm-collision-p
           rarm-coords-visualize-topic-name
+          rarm-grasp-visualize-topic-name
           rarm-current-end-coords
           rarm-track-error-p
           ik-stop-step
@@ -97,10 +100,14 @@
         (ros::subscribe (eval collision-status-topic-name) collision-status-topic-type
                         #'send self :collision-status-cb arm))
       (send self :set-arm-val arm :coords-visualize-topic-name
-            (format nil "/eus_vive/~A/target_pose_stamped" (if (eq arm :larm) "left" "right"))))
+            (format nil "/eus_vive/~A/target_pose_stamped" (if (eq arm :larm) "left" "right")))
+      (send self :set-arm-val arm :grasp-visualize-topic-name
+            (format nil "/eus_vive/~A/hand_open_rate" (if (eq arm :larm) "left" "right"))))
     (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
+    (ros::advertise larm-grasp-visualize-topic-name std_msgs::Float32 1)
+    (ros::advertise rarm-grasp-visualize-topic-name std_msgs::Float32 1)
     (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
     (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
     (ros::advertise-service eus-vive-reset-service-name std_srvs::Empty
@@ -425,6 +432,10 @@
                     (angle-vector-to-display-robot-state
                       robot (send (send robot :link base-frame-id) :copy-worldcoords)))
       (ros::publish eus-vive-status-topic-name eus-vive-status-msg)
+      (ros::publish larm-grasp-visualize-topic-name
+                    (instance std_msgs::Float32 :init :data (if (send self :get-arm-val :larm :grasp) 0.0 1.0)))
+      (ros::publish rarm-grasp-visualize-topic-name
+                    (instance std_msgs::Float32 :init :data (if (send self :get-arm-val :rarm :grasp) 0.0 1.0)))
       (send *irtviewer* :draw-objects)
       (send camera-model :draw-objects camera-draw-object-list)
       (ros::publish irtviewer-visualize-topic-name
