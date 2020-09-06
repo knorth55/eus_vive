@@ -389,6 +389,7 @@
           (send msg :enable (send self :get-arm-val arm :enable))
           (send msg :collision (send self :get-arm-val arm :collision-p))
           (send msg :track_error (send self :get-arm-val arm :track-error-p))
+          (send msg :hand_close (send self :get-arm-val arm :grasp))
           (setq eus-vive-status (append eus-vive-status (list msg)))))
       (send eus-vive-status-msg :status eus-vive-status)
       eus-vive-status-msg))

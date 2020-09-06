@@ -59,6 +59,8 @@
   <arg name="image_left" default="/virtual_camera/left/rviz_image" />
   <arg name="image_right" default="/virtual_camera/right/rviz_image" />
 
+
+  <!-- launch rviz overlay -->
   <node name="rosconsole_overlay_text"
         pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
     <rosparam>
@@ -73,18 +75,12 @@
     </rosparam>
   </node>
 
-  <node name="eus_vive_status_visualizer"
-      pkg="eus_vive" type="eus_vive_status_visualizer.py">
-    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
-    <remap from="~input/status" to="/eus_vive/status" />
-  </node>
-
+  <!-- launch robot sounder -->
   <node name="eus_vive_status_sounder"
       pkg="eus_vive" type="eus_vive_status_sounder.py">
     <remap from="~output/sound" to="/robotsound" />
     <remap from="~input/status" to="/eus_vive/status" />
   </node>
-
   <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
   <node name="soundplay_node"
         pkg="sound_play" type="soundplay_node.py">
@@ -96,6 +92,7 @@
     <remap from="sound_play" to="robotsound_jp" />
   </node>
 
+  <!-- launch camera republish-->
   <group if="$(arg republish)">
     <node name="realsense_rgb_decompress" pkg="image_transport" type="republish"
           args="compressed in:=/$(arg camera_ns)/color/image_raw
@@ -108,6 +105,7 @@
                            out:=/$(arg spherical_camera_ns)_remote/image_raw" />
   </group>
 
+  <!-- launch rviz -->
   <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg head)"
         args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_visualization.rviz" />
   <group unless="$(arg head)">

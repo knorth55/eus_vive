@@ -74,6 +74,7 @@
                   right_tip_name:=right_gripper" />
 
 
+  <!-- launch baxter -->
   <include file="$(find jsk_baxter_startup)/baxter.launch">
     <arg name="load_robot_description" value="false" />
     <arg name="launch_robot_state_publisher" value="true" />
@@ -89,6 +90,7 @@
     <arg name="arm_control_mode" value="velocity" />
   </include>
 
+  <!-- launch softhands -->
   <group ns="rgripper" if="$(arg rgripper_softhand)">
     <include file="$(find softhand_ros)/launch/softhand_right.launch" />
   </group>
@@ -96,7 +98,7 @@
     <include file="$(find softhand_ros)/launch/softhand_left.launch" />
   </group>
 
-  <!-- realsense camera -->
+  <!-- launch realsense camera -->
   <group if="$(arg realsense_camera)">
     <node name="realsense_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
@@ -105,7 +107,8 @@
       <arg name="filters" value="pointcloud"/>
     </include>
   </group>
-  <!-- kodak camera -->
+
+  <!-- launch kodak camera -->
   <group if="$(arg spherical_camera)">
     <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
@@ -117,6 +120,7 @@
       <arg name="camera_name" value="$(arg spherical_camera_ns)" />
     </include>
   </group>
+
   <!-- virtual camera -->
   <group if="$(arg head)">
     <group ns="virtual_camera">
@@ -159,21 +163,32 @@
     </group>
   </group>
 
+  <!-- launch mask rcnn -->
   <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
     <arg name="INPUT_IMAGE" value="/$(arg camera_ns)/color/image_rect_color" />
   </include>
 
+  <!-- launch respeaker -->
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
 
+  <!-- launch status visualizer -->
+  <node name="eus_vive_status_visualizer" if="$(arg launch_xdisplay)"
+        pkg="eus_vive" type="eus_vive_status_visualizer.py"
+        output="screen" >
+    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
+    <remap from="~input/status" to="/eus_vive/status" />
+  </node>
   <node name="irtviewer_xdisplay" if="$(arg launch_xdisplay)"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
-        args="/eus_vive_status_visualizer/output/image">
+        args="/eus_vive_status_visualizer/output/image"
+        output="screen" >
     <rosparam subst_value="true">
       max_width: $(arg xdisplay_max_width)
       max_height: $(arg xdisplay_max_height)
     </rosparam>
   </node>
 
+  <!-- launch logging -->
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />

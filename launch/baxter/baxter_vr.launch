@@ -62,11 +62,13 @@
   <!-- launch baxter -->
   <include file="$(find eus_vive)/launch/baxter/baxter.launch" pass_all_args="true" if="$(arg launch_baxter)" />
 
+  <!-- launch vive-->
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" >
     <arg name="image_left" value="$(arg image_left)" />
     <arg name="image_right" value="$(arg image_right)" />
   </include>
 
+  <!-- launch eus_vive-->
   <group ns="eus_vive" if="$(arg vive)">
     <rosparam subst_value="true">
       b_lighthouse_id: $(arg b_lighthouse_id)
@@ -108,9 +110,11 @@
     </group>
   </group>
 
+  <!-- launch rqt_gui -->
   <node name="service_button" pkg="rqt_gui" type="rqt_gui"
         args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
 
+  <!-- launch display -->
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch"
            pass_all_args="true" if="$(arg display)" />
 
