@@ -105,8 +105,7 @@
             (setq target-pos
                   (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
                                 (elt vrbase->controller-pos 1)
-                                (- (+ robot-height (elt vrbase->controller-pos 2))
-                                   (+ vrbase->shoulder-z head->shoulder-z-distance))))
+                                (- (elt vrbase->controller-pos 2) vrbase->shoulder-z)))
             (setq target-rot (send vrbase->controller-coords :worldrot)))))
       (when (and target-pos target-rot)
         (when mirror
@@ -121,7 +120,10 @@
               (make-coords :pos (float-vector
                                   (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
                                   (* scale (elt target-pos 1))
-                                  (- robot-height (* scale (- robot-height (elt target-pos 2)))))
+                                  (if head
+                                    (+ robot-height (* scale (- (elt target-pos 2) robot-height)))
+                                    (+ (- robot-height head->shoulder-z-distance)
+                                       (* scale (elt target-pos 2)))))
                            :rot target-rot))
         (send target-coords :rotate (/ pi 4.0) :y))
       target-coords))
