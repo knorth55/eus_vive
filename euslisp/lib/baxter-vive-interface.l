@@ -33,7 +33,7 @@
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
     (send self :set-val 'arm-length 1000)
-    (send self :set-val 'head->shoulder-x-distance -100)
+    (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 30)
     (send self :set-val 'gripper-status-topic-name
           '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
