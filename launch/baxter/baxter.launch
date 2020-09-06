@@ -173,13 +173,15 @@
 
   <!-- launch status visualizer -->
   <node name="eus_vive_status_visualizer"
-      pkg="eus_vive" type="eus_vive_status_visualizer.py">
+        pkg="eus_vive" type="eus_vive_status_visualizer.py"
+        output="screen" >
     <remap from="~input/image" to="/eus_vive/irtviewer/image" />
     <remap from="~input/status" to="/eus_vive/status" />
   </node>
   <node name="irtviewer_xdisplay" if="$(arg launch_xdisplay)"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
-        args="/eus_vive_status_visualizer/output/image">
+        args="/eus_vive_status_visualizer/output/image"
+        output="screen" >
     <rosparam subst_value="true">
       max_width: $(arg xdisplay_max_width)
       max_height: $(arg xdisplay_max_height)
