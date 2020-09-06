@@ -44,7 +44,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.7
+            sound_msg.volume = 0.8
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/alert.wav')
             self.pub.publish(sound_msg)
@@ -52,7 +52,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 1.0
+            warning_msg.volume = 0.8
             warning_msg.arg = "collision error"
             self.pub.publish(warning_msg)
             rospy.sleep(1.0)
@@ -60,7 +60,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 1.0
+            sound_msg.volume = 0.8
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/warn.wav')
             self.pub.publish(sound_msg)
@@ -68,7 +68,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 1.0
+            warning_msg.volume = 0.8
             warning_msg.arg = "tracking error"
             self.pub.publish(warning_msg)
             rospy.sleep(1.0)
