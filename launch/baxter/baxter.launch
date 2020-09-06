@@ -12,7 +12,7 @@
   <arg name="display" default="true" />
   <arg name="custom_xdisplay" default="true" />
   <arg name="launch_baxter" default="true" />
-  <arg name="launch_xdisplay" default="true" />
+  <arg name="launch_xdisplay" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
@@ -172,7 +172,7 @@
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
 
   <!-- launch status visualizer -->
-  <node name="eus_vive_status_visualizer"
+  <node name="eus_vive_status_visualizer" if="$(arg launch_xdisplay)"
         pkg="eus_vive" type="eus_vive_status_visualizer.py"
         output="screen" >
     <remap from="~input/image" to="/eus_vive/irtviewer/image" />
