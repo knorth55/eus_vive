@@ -19,6 +19,10 @@
     uri: https://github.com/knorth55/jsk_robot.git
     version: vive-control
 - git:
+    local-name: knorth55/jsk_pr2eus
+    uri: https://github.com/knorth55/jsk_pr2eus.git
+    version: vive-control
+- git:
     local-name: knorth55/rviz_camera_stream
     uri: https://github.com/knorth55/rviz_camera_stream
     version: master
