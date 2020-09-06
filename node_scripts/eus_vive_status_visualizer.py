@@ -18,6 +18,7 @@ class EusViveStatusVisualizer(ConnectionBasedTransport):
         self.enable = {'larm': False, 'rarm': False}
         self.collision = {'larm': False, 'rarm': False}
         self.track_error = {'larm': False, 'rarm': False}
+        self.hand_close = {'larm': False, 'rarm': False}
         self.bridge = cv_bridge.CvBridge()
 
     def subscribe(self):
@@ -40,10 +41,18 @@ class EusViveStatusVisualizer(ConnectionBasedTransport):
         for index, arm in zip([1, 0], ['larm', 'rarm']):
             if self.enable[arm]:
                 if self.collision[arm] or self.track_error[arm]:
+                    # red
                     imgs[arm][:, :, 2] = 255
                 else:
+                    # larm: green
+                    # rarm: blue 
                     imgs[arm][:, :, index] = 255
+                if self.hand_close[arm]:
+                    # orange
+                    imgs[arm][int(2.0 * H / 3.0), :, 2] = 255
+                    imgs[arm][int(2.0 * H / 3.0), :, 1] = 165
             else:
+                # gray
                 imgs[arm][:] = 127
 
         img = np.concatenate((imgs['rarm'], img, imgs['larm']), axis=1)
@@ -59,6 +68,8 @@ class EusViveStatusVisualizer(ConnectionBasedTransport):
                 self.collision[status.part_name] = status.collision
             if status.part_name in self.track_error:
                 self.track_error[status.part_name] = status.track_error
+            if status.part_name in self.hand_close:
+                self.hand_close[status.part_name] = status.hand_close
 
 
 if __name__ == '__main__':
