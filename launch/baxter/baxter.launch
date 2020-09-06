@@ -165,6 +165,12 @@
 
   <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
 
+  <!-- launch status visualizer -->
+  <node name="eus_vive_status_visualizer"
+      pkg="eus_vive" type="eus_vive_status_visualizer.py">
+    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
+    <remap from="~input/status" to="/eus_vive/status" />
+  </node>
   <node name="irtviewer_xdisplay" if="$(arg launch_xdisplay)"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
         args="/eus_vive_status_visualizer/output/image">

@@ -73,12 +73,6 @@
     </rosparam>
   </node>
 
-  <node name="eus_vive_status_visualizer"
-      pkg="eus_vive" type="eus_vive_status_visualizer.py">
-    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
-    <remap from="~input/status" to="/eus_vive/status" />
-  </node>
-
   <node name="eus_vive_status_sounder"
       pkg="eus_vive" type="eus_vive_status_sounder.py">
     <remap from="~output/sound" to="/robotsound" />
