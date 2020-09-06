@@ -18,6 +18,8 @@ class EusViveStatusSounder(ConnectionBasedTransport):
         self.enable = {'larm': False, 'rarm': False}
         self.collision = {'larm': False, 'rarm': False}
         self.track_error = {'larm': False, 'rarm': False}
+        self.hand_close = {'larm': False, 'rarm': False}
+        self.prev_hand_close = {'larm': False, 'rarm': False}
         self.timer = rospy.Timer(rospy.Duration(1.0), self._timer_cb)
         self.rospack = rospkg.RosPack()
 
@@ -32,14 +34,18 @@ class EusViveStatusSounder(ConnectionBasedTransport):
         larm_enable = self.enable['larm']
         larm_collision = self.collision['larm'] if larm_enable else False
         larm_track_error = self.track_error['larm'] if larm_enable else False
+        lhand_move = self.hand_close['larm'] != self.prev_hand_close['larm']
         rarm_enable = self.enable['rarm']
         rarm_collision = self.collision['rarm'] if rarm_enable else False
         rarm_track_error = self.track_error['rarm'] if rarm_enable else False
+        rhand_move = self.hand_close['rarm'] != self.prev_hand_close['rarm']
         # reset
         self.collision['larm'] = False
         self.track_error['larm'] = False
         self.collision['rarm'] = False
         self.track_error['rarm'] = False
+        self.prev_hand_close = self.hand_close.copy()
+
         if larm_collision or rarm_collision:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
@@ -72,6 +78,29 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg.arg = "tracking error"
             self.pub.publish(warning_msg)
             rospy.sleep(1.0)
+        if lhand_move or rhand_move:
+            sound_msg = SoundRequest()
+            sound_msg.sound = SoundRequest.PLAY_FILE
+            sound_msg.command = SoundRequest.PLAY_ONCE
+            sound_msg.volume = 0.8
+            sound_msg.arg = os.path.join(
+                self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
+            self.pub.publish(sound_msg)
+            rospy.sleep(1.5)
+            warning_msg = SoundRequest()
+            warning_msg.sound = SoundRequest.SAY
+            warning_msg.command = SoundRequest.PLAY_ONCE
+            warning_msg.volume = 0.8
+            if lhand_move:
+                hand_close = self.hand_close['larm']
+            else:
+                hand_close = self.hand_close['rarm']
+            if hand_close:
+                warning_msg.arg = "hand closing"
+            else:
+                warning_msg.arg = "hand opening"
+            self.pub.publish(warning_msg)
+            rospy.sleep(1.0)
 
     def _status_cb(self, msg):
         for status in msg.status:
@@ -81,6 +110,8 @@ class EusViveStatusSounder(ConnectionBasedTransport):
                 self.collision[status.part_name] = status.collision
             if status.part_name in self.track_error:
                 self.track_error[status.part_name] = status.track_error
+            if status.part_name in self.hand_close:
+                self.hand_close[status.part_name] = status.hand_close
 
 
 if __name__ == '__main__':
