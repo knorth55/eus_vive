@@ -136,7 +136,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             else:
                 warning_msg.arg = "right arm collision error"
             self.pub.publish(warning_msg)
-            rospy.sleep(1.0)
+            rospy.sleep(2.0)
         elif larm_track_error or rarm_track_error:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
@@ -157,14 +157,14 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             else:
                 warning_msg.arg = "right arm tracking error"
             self.pub.publish(warning_msg)
-            rospy.sleep(1.0)
+            rospy.sleep(2.0)
 
         # gripper open and close
         if lhand_open or rhand_open:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
             self.pub.publish(sound_msg)
@@ -185,7 +185,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
             self.pub.publish(sound_msg)
