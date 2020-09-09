@@ -173,17 +173,17 @@
       (ros::rate rate)
       (ros::ros-info "Calibration start: ~A~%" (string-downcase arm))
       (ros::ros-info "Stretch your ~A arm and press trigger.~%" (string-downcase arm))
-      (send robot-interface :speak "Calibration starts." :wait t :volume 0.8)
+      (send robot-interface :speak "Calibration starts." :wait t :volume 0.6)
       (send robot-interface :speak
             (format nil "Please stretch your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right"))
-            :wait nil :volume 0.8)
+            :wait nil :volume 0.6)
       (setq first-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
       (ros::sleep)
       (send robot-interface :speak
             (format nil "Please fold your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right"))
-            :wait nil :volume 0.8)
+            :wait nil :volume 0.6)
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
       (setq second-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
       (if (and (and first-coords second-coords)
@@ -198,14 +198,14 @@
                 (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
           (send self :set-val 'vrbase->shoulder-z (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
-          (send robot-interface :speak "Calibration succeeded." :wait nil :volume 0.8)
+          (send robot-interface :speak "Calibration succeeded." :wait nil :volume 0.6)
           (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))
           (ros::ros-info "2nd coords: ~A" (send second-coords :worldpos))
           (send self :send-joy-feedback arm)
           t)
         (progn
           (ros::ros-error "Calibration is failed.~%")
-          (send robot-interface :speak "Calibration failed." :wait t :volume 0.8)
+          (send robot-interface :speak "Calibration failed." :wait t :volume 0.6)
           (ros::ros-error "1st coords: ~A" (send first-coords :worldpos))
           (ros::ros-error "2nd coords: ~A" (send second-coords :worldpos))
           (ros::duration-sleep 1)

@@ -78,7 +78,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.7
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/start.wav')
             self.pub.publish(sound_msg)
@@ -86,7 +86,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if larm_start and rarm_start:
                 warning_msg.arg = "both arm starting"
             elif larm_start:
@@ -98,7 +98,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.7
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/stop.wav')
             self.pub.publish(sound_msg)
@@ -106,7 +106,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if larm_stop and rarm_stop:
                 warning_msg.arg = "both arm stopping"
             elif larm_stop:
@@ -127,7 +127,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if lhand_open and rhand_open:
                 warning_msg.arg = "both hand opening"
             elif lhand_open:
@@ -149,7 +149,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if lhand_close and rhand_close:
                 warning_msg.arg = "both hand closing"
             elif lhand_close:
@@ -163,7 +163,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.7
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/alert.wav')
             self.pub.publish(sound_msg)
@@ -171,7 +171,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if larm_collision and rarm_collision:
                 warning_msg.arg = "both arm collision error"
             elif larm_collision:
@@ -184,7 +184,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.7
+            sound_msg.volume = 0.6
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/warn.wav')
             self.pub.publish(sound_msg)
@@ -192,7 +192,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.7
+            warning_msg.volume = 0.6
             if larm_track_error and rarm_track_error:
                 warning_msg.arg = "both arm tracking error"
             elif larm_track_error:
