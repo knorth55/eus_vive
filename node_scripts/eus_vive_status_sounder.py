@@ -78,7 +78,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.7
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/start.wav')
             self.pub.publish(sound_msg)
@@ -86,7 +86,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
+            warning_msg.volume = 0.7
             if larm_start and rarm_start:
                 warning_msg.arg = "both arm starting"
             elif larm_start:
@@ -98,7 +98,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.7
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/stop.wav')
             self.pub.publish(sound_msg)
@@ -106,7 +106,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
+            warning_msg.volume = 0.7
             if larm_stop and rarm_stop:
                 warning_msg.arg = "both arm stopping"
             elif larm_stop:
@@ -114,13 +114,56 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             else:
                 warning_msg.arg = "right arm stopping"
             self.pub.publish(warning_msg)
-
-        # collision and tracking error
-        if larm_collision or rarm_collision:
+        # gripper opening
+        elif lhand_open or rhand_open:
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.6
+            sound_msg.arg = os.path.join(
+                self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
+            self.pub.publish(sound_msg)
+            rospy.sleep(1.0)
+            warning_msg = SoundRequest()
+            warning_msg.sound = SoundRequest.SAY
+            warning_msg.command = SoundRequest.PLAY_ONCE
+            warning_msg.volume = 0.7
+            if lhand_open and rhand_open:
+                warning_msg.arg = "both hand opening"
+            elif lhand_open:
+                warning_msg.arg = "left hand opening"
+            else:
+                warning_msg.arg = "right hand opening"
+            self.pub.publish(warning_msg)
+            rospy.sleep(1.0)
+        # gripper closing
+        elif lhand_close or rhand_close:
+            sound_msg = SoundRequest()
+            sound_msg.sound = SoundRequest.PLAY_FILE
+            sound_msg.command = SoundRequest.PLAY_ONCE
+            sound_msg.volume = 0.6
+            sound_msg.arg = os.path.join(
+                self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
+            self.pub.publish(sound_msg)
+            rospy.sleep(1.0)
+            warning_msg = SoundRequest()
+            warning_msg.sound = SoundRequest.SAY
+            warning_msg.command = SoundRequest.PLAY_ONCE
+            warning_msg.volume = 0.7
+            if lhand_close and rhand_close:
+                warning_msg.arg = "both hand closing"
+            elif lhand_close:
+                warning_msg.arg = "left hand closing"
+            else:
+                warning_msg.arg = "right hand closing"
+            self.pub.publish(warning_msg)
+            rospy.sleep(1.0)
+        # collision and tracking error
+        elif larm_collision or rarm_collision:
+            sound_msg = SoundRequest()
+            sound_msg.sound = SoundRequest.PLAY_FILE
+            sound_msg.command = SoundRequest.PLAY_ONCE
+            sound_msg.volume = 0.7
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/alert.wav')
             self.pub.publish(sound_msg)
@@ -128,7 +171,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
+            warning_msg.volume = 0.7
             if larm_collision and rarm_collision:
                 warning_msg.arg = "both arm collision error"
             elif larm_collision:
@@ -141,7 +184,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             sound_msg = SoundRequest()
             sound_msg.sound = SoundRequest.PLAY_FILE
             sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.8
+            sound_msg.volume = 0.7
             sound_msg.arg = os.path.join(
                 self.rospack.get_path('eus_vive'), 'sounds/warn.wav')
             self.pub.publish(sound_msg)
@@ -149,7 +192,7 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             warning_msg = SoundRequest()
             warning_msg.sound = SoundRequest.SAY
             warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
+            warning_msg.volume = 0.7
             if larm_track_error and rarm_track_error:
                 warning_msg.arg = "both arm tracking error"
             elif larm_track_error:
@@ -159,49 +202,6 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             self.pub.publish(warning_msg)
             rospy.sleep(2.0)
 
-        # gripper open and close
-        if lhand_open or rhand_open:
-            sound_msg = SoundRequest()
-            sound_msg.sound = SoundRequest.PLAY_FILE
-            sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.6
-            sound_msg.arg = os.path.join(
-                self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
-            self.pub.publish(sound_msg)
-            rospy.sleep(1.0)
-            warning_msg = SoundRequest()
-            warning_msg.sound = SoundRequest.SAY
-            warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
-            if lhand_open and rhand_open:
-                warning_msg.arg = "both hand opening"
-            elif lhand_open:
-                warning_msg.arg = "left hand opening"
-            else:
-                warning_msg.arg = "right hand opening"
-            self.pub.publish(warning_msg)
-            rospy.sleep(1.0)
-        if lhand_close or rhand_close:
-            sound_msg = SoundRequest()
-            sound_msg.sound = SoundRequest.PLAY_FILE
-            sound_msg.command = SoundRequest.PLAY_ONCE
-            sound_msg.volume = 0.6
-            sound_msg.arg = os.path.join(
-                self.rospack.get_path('eus_vive'), 'sounds/gripper.wav')
-            self.pub.publish(sound_msg)
-            rospy.sleep(1.0)
-            warning_msg = SoundRequest()
-            warning_msg.sound = SoundRequest.SAY
-            warning_msg.command = SoundRequest.PLAY_ONCE
-            warning_msg.volume = 0.8
-            if lhand_close and rhand_close:
-                warning_msg.arg = "both hand closing"
-            elif lhand_close:
-                warning_msg.arg = "left hand closing"
-            else:
-                warning_msg.arg = "right hand closing"
-            self.pub.publish(warning_msg)
-            rospy.sleep(1.0)
 
     def _status_cb(self, msg):
         for status in msg.status:
