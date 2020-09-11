@@ -34,9 +34,9 @@
 (defun main (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                   (visualize t) (loop-enable t) (device-type :vive))
   (init :loop-enable t :device-type device-type)
-  (unless head
-    (while (not (send *ti* :calibrate))
-      (ros::spin-once)))
+  ; (unless head
+  ;   (while (not (send *ti* :calibrate))
+  ;     (ros::spin-once)))
   (unless loop-enable (send *ti* :disable))
   (if (eq device-type :oculus)
     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
