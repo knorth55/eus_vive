@@ -28,6 +28,8 @@
           eus-vive-enable-service-name
           eus-vive-disable-service-name
           eus-vive-calib-service-name
+          eus-vive-calib-larm-service-name
+          eus-vive-calib-rarm-service-name
           loop-enable
           draw-object-list
           larm-enable
@@ -93,6 +95,8 @@
     (send self :set-val 'eus-vive-enable-service-name "/eus_vive/enable")
     (send self :set-val 'eus-vive-disable-service-name "/eus_vive/disable")
     (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
+    (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
+    (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (eval gripper-status-topic-name)
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
@@ -118,6 +122,10 @@
                             #'send self :disable-service)
     (ros::advertise-service eus-vive-calib-service-name std_srvs::Empty
                             #'send self :calib-service)
+    (ros::advertise-service eus-vive-calib-larm-service-name std_srvs::Empty
+                            #'send self :calib-larm-service)
+    (ros::advertise-service eus-vive-calib-rarm-service-name std_srvs::Empty
+                            #'send self :calib-rarm-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset (&key (loop-enable t))
     (send self :set-val 'loop-enable loop-enable)
@@ -139,9 +147,9 @@
     (send self :reset :loop-enable t))
   (:disable ()
     (send self :reset :loop-enable nil))
-  (:calibrate ()
+  (:calibrate (&optional (arm :rarm))
     (let (calib-p)
-      (setq calib-p (send *ti* :calib-controller))
+      (setq calib-p (send *ti* :calib-controller arm))
       (unless calib-p (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
       calib-p))
   (:reset-service (req)
@@ -164,6 +172,20 @@
       (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
       (send self :reset :loop-enable t)
       (send self :calibrate)
+      (send self :reset :loop-enable nil)
+      res))
+  (:calib-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
+      (send self :reset :loop-enable t)
+      (send self :calibrate :larm)
+      (send self :reset :loop-enable nil)
+      res))
+  (:calib-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
+      (send self :reset :loop-enable t)
+      (send self :calibrate :rarm)
       (send self :reset :loop-enable nil)
       res))
   (:get-arm-val (arm name)
