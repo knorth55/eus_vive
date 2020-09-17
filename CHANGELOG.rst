@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2020-09-18)
+------------------
 * Merge pull request `#14 <https://github.com/knorth55/eus_vive/issues/14>`_ from knorth55/update-calib
   Update calib
 * update perspective
