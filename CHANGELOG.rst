@@ -2,6 +2,48 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#14 <https://github.com/knorth55/eus_vive/issues/14>`_ from knorth55/update-calib
+  Update calib
+* update perspective
+* skip calib service in main
+* add both arm calib service
+* update rviz config
+* update rviz config
+* tune volume
+* update rviz config
+* update eus_vive sounder
+* update rviz config
+* add rviz config
+* update eus_vive_status_sounder
+* modify package version in package.xml
+* add CHANGELOG.rst
+* add gripper state visualiztion
+* publish gripper open rate
+* add start and stop sound
+* add gripper sound
+* add front and top visualization
+* update kinetic.rosinstall
+* update kinetic.rosinstall
+* tune sound volume
+* fix target pos z for non-head control
+* updte baxter head->shoulder-x-distance
+* Merge pull request `#13 <https://github.com/knorth55/eus_vive/issues/13>`_ from knorth55/add-hand-close
+  Add hand close in status msg
+* launch xdisplay false
+* fix color
+* fix typo
+* launch xdisplay true
+* add output
+* add hand_close status visualizer
+* update comment in launch files
+* move status visualizer
+* publish hand_close status
+* add hand_close in EusViveStatus.msg
+* use package:// in reset_button.perspective
+* Contributors: Shingo Kitagawa
+
 0.0.2 (2020-08-28)
 ------------------
 * update rvizconfig
