@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="kinfu" default="false" />
+  <arg name="button_toggle" default="true" />
 
   <include file="$(find eus_vive)/launch/pr2/pr1012_vr.launch">
     <arg name="main" value="$(arg main)" />
@@ -11,5 +12,6 @@
     <arg name="mirror" value="false" />
     <arg name="logging" value="true" />
     <arg name="kinfu" value="$(arg kinfu)" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
   </include>
 </launch>
