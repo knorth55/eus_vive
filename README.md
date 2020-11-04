@@ -1,5 +1,5 @@
 # eus_vive
-[![Build Status](https://travis-ci.com/knorth55/eus_vive.svg?branch=master)](https://travis-ci.com/knorth55/eus_vive)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/knorth55/eus_vive/CI/master)](https://github.com/knorth55/eus_vive/actions)
 
 Robot remote control program with Vive/Oculus
 
