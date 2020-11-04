@@ -1,0 +1,4 @@
+- git:
+    local-name: knorth55/softhand_ros
+    uri: https://github.com/knorth55/softhand_ros.git
+    version: master

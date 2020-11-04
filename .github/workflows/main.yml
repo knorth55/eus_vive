@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: kinetic, ROS_REPO: testing, UPSTREAM_WORKSPACE: 'fc.rosinstall'}
-          - {ROS_DISTRO: kinetic, ROS_REPO: main, UPSTREAM_WORKSPACE: 'fc.rosinstall'}
-          - {ROS_DISTRO: melodic, ROS_REPO: testing, UPSTREAM_WORKSPACE: 'fc.rosinstall'}
-          - {ROS_DISTRO: melodic, ROS_REPO: main, UPSTREAM_WORKSPACE: 'fc.rosinstall'}
+          - {ROS_DISTRO: kinetic, ROS_REPO: testing, UPSTREAM_WORKSPACE: '.ci.rosinstall'}
+          - {ROS_DISTRO: kinetic, ROS_REPO: main, UPSTREAM_WORKSPACE: '.ci.rosinstall'}
+          - {ROS_DISTRO: melodic, ROS_REPO: testing, UPSTREAM_WORKSPACE: '.ci.rosinstall'}
+          - {ROS_DISTRO: melodic, ROS_REPO: main, UPSTREAM_WORKSPACE: '.ci.rosinstall'}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
