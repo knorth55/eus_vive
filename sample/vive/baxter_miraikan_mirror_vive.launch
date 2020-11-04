@@ -14,8 +14,8 @@
     <arg name="realsense_camera" value="false" />
     <arg name="spherical_camera" value="false" />
     <arg name="republish" value="false" />
-    <arg name="lgripper_softhand" value="false" />
-    <arg name="rgripper_softhand" value="false" />
+    <arg name="lgripper_type" value="parallel" />
+    <arg name="rgripper_type" value="parallel" />
     <arg name="button_toggle" value="true" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />
