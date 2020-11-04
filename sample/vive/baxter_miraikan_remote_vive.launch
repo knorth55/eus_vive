@@ -7,16 +7,8 @@
     <arg name="vive" value="$(arg vive)" />
     <arg name="oculus" value="false" />
     <arg name="head" value="false" />
-    <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />
-    <arg name="twitter" value="false" />
-    <arg name="debug" value="true" />
-    <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="false" />
-    <arg name="launch_xdisplay" value="false" />
-    <arg name="realsense_camera" value="false" />
-    <arg name="spherical_camera" value="true" />
-    <arg name="republish" value="true" />
     <arg name="display" value="false" />
     <arg name="lgripper_softhand" value="true" />
     <arg name="rgripper_softhand" value="true" />
