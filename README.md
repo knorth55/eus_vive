@@ -1,5 +1,5 @@
 # eus_vive
-[![Build Status](https://travis-ci.com/knorth55/eus_vive.svg?branch=master)](https://travis-ci.com/knorth55/eus_vive)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/knorth55/eus_vive/CI/master)](https://github.com/knorth55/eus_vive/actions)
 
 Robot remote control program with Vive/Oculus
 
@@ -65,12 +65,12 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ### ROS Workspace build
 
 ```bash
-mkdir ~/ros/vive_ws/src -p
-cd ~/ros/vive_ws/src
-wget https://raw.githubusercontent.com/knorth55/eus_vive/master/kinetic.rosinstall -O .rosinstall
+mkdir ~/vive_ws/src -p
+cd ~/vive_ws/src
+wget https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall -O .rosinstall
 wstool up
 rosdep install --ignore-src --from-path . -y -r -i
-cd ~/ros/vive_ws
+cd ~/vive_ws
 catkin config
 catkin build
 ```
