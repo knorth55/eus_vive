@@ -12,7 +12,7 @@
     version: baxter-vive-control
 - git:
     local-name: knorth55/eus_vive
-    uri: git@github.com:knorth55/eus_vive.git
+    uri: https://github.com/knorth55/eus_vive.git
     version: master
 - git:
     local-name: knorth55/jsk_robot
@@ -28,7 +28,7 @@
     version: master
 - git:
     local-name: knorth55/softhand_ros
-    uri: git@github.com:knorth55/softhand_ros.git
+    uri: https://github.com/knorth55/softhand_ros.git
     version: master
 - git:
     local-name: knorth55/vive_ros
@@ -36,11 +36,11 @@
     version: use-camera
 - git:
     local-name: pazeshun/dynamixel_motor
-    uri: git@github.com:pazeshun/dynamixel_motor.git
+    uri: https://github.com/pazeshun/dynamixel_motor.git
     version: gripper-v6-devel
 - git:
     local-name: strands-project/mongodb_store
-    uri: git@github.com:strands-project/mongodb_store.git
+    uri: https://github.com/strands-project/mongodb_store.git
     version: kinetic-devel
 - git:
     local-name: UTNuclearRoboticsPublic/rviz_textured_sphere
