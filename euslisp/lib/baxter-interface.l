@@ -1,6 +1,7 @@
 (require :baxter "package://baxtereus//baxter-util.l")
 (load "package://baxtereus/baxter-interface.l")
 (load "package://softhand_ros/euslisp/softhand-interface.l")
+(load "package://softhand_ros/euslisp/softhand-v2-interface.l")
 
 
 (unless (find-package "EUS_VIVE")
@@ -27,10 +28,20 @@
     (send-super* :init args)
     (setq lgripper-type lgripper)
     (setq rgripper-type rgripper)
-    (when (equal lgripper-type :softhand)
-      (setq lgripper-interface (instance softhand-interface :init :namespace "/lgripper")))
-    (when (equal rgripper-type :softhand)
-      (setq rgripper-interface (instance softhand-interface :init :namespace "/rgripper"))))
+    (setq lgripper-interface
+      (cond
+        ((equal lgripper-type :softhand)
+         (setq lgripper-interface (instance softhand-interface :init :namespace "/lgripper")))
+        ((equal lgripper-type :softhand-v2)
+         (setq lgripper-interface (instance softhand-v2-interface :init :namespace "/lgripper")))
+        (t nil)))
+    (setq rgripper-interface
+      (cond
+        ((equal rgripper-type :softhand)
+         (setq rgripper-interface (instance softhand-interface :init :namespace "/rgripper")))
+        ((equal rgripper-type :softhand-v2)
+         (setq rgripper-interface (instance softhand-v2-interface :init :namespace "/rgripper")))
+        (t nil))))
   (:start-grasp (&optional (arm :arms) &rest args)
     (if (equal arm :arms)
       (progn
@@ -39,7 +50,8 @@
       (cond
         ((equal (if (equal arm :larm) lgripper-type rgripper-type) :parallel)
          (send-super* :start-grasp arm args))
-        ((equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand)
+        ((or (equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand)
+             (equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand-v2))
          (send (if (equal arm :larm) lgripper-interface rgripper-interface) :start-grasp))
         (t nil))))
   (:stop-grasp (&optional (arm :arms) &rest args)
@@ -50,9 +62,26 @@
       (cond
         ((equal (if (equal arm :larm) lgripper-type rgripper-type) :parallel)
          (send-super* :stop-grasp arm args))
-        ((equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand)
+        ((or (equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand)
+             (equal (if (equal arm :larm) lgripper-type rgripper-type) :softhand-v2))
          (send (if (equal arm :larm) lgripper-interface rgripper-interface) :stop-grasp))
-        (t nil)))))
+        (t nil))))
+  (:open-thumb (&optional (arm :arms))
+    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
+      (cond
+        ((equal (if (equal a :larm) lgripper-type rgripper-type) :softhand-v2)
+         (send (if (equal a :larm) lgripper-interface rgripper-interface) :open-thumb))
+        (t
+         (ros::ros-error ":open-thumb is invalid for this gripper type")
+         nil))))
+  (:close-thumb (&optional (arm :arms))
+    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
+      (cond
+        ((equal (if (equal a :larm) lgripper-type rgripper-type) :softhand-v2)
+         (send (if (equal a :larm) lgripper-interface rgripper-interface) :close-thumb))
+        (t
+         (ros::ros-error ":close-thumb is invalid for this gripper type")
+         nil)))))
 
 
 (defun eus_vive::baxter-init
