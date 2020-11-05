@@ -4,5 +4,5 @@
     version: master
 - git:
     local-name: tohirose/dynamixel_motor
-    uri: https://github.com/pazeshun/dynamixel_motor.git
+    uri: https://github.com/tohirose/dynamixel_motor.git
     version: softhand-v2-devel
