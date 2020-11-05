@@ -3,6 +3,18 @@
 
 Robot remote control program with Vive/Oculus
 
+## Note
+
+This package depends on these branches below:
+- [knorth55/baxter_interface@baxter-vive-control](https://github.com/knorth55/baxter_interface/tree/baxter-vive-control)
+- [knorth55/jsk_robot@vive-control](https://github.com/knorth55/jsk_robot/tree/vive-control)
+  - [jsk-ros-pkg/jsk_robot#1150](https://github.com/jsk-ros-pkg/jsk_robot/pull/1150)
+- [knorth55/jsk_pr2eus@vive-control](https://github.com/knorth55/jsk_pr2eus/tree/vive-control)
+  - [jsk-ros-pkg/jsk_pr2eus#443](https://github.com/jsk-ros-pkg/jsk_pr2eus/pull/443)
+- [knorth55/rviz_camera_stream@master](https://github.com/knorth55/rviz_camera_stream)
+- [knorth55/vive_ros@use-camera](https://github.com/knorth55/vive_ros/tree/use-camera)
+- [tohirose/dynamixel_motor@softhand-v2-devel](https://github.com/tohirose/dynamixel_motor/tree/softhand-v2-devel)
+
 ## Tested Environment
 
 ### Build environment
