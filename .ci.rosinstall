@@ -3,6 +3,6 @@
     uri: https://github.com/knorth55/softhand_ros.git
     version: master
 - git:
-    local-name: pazeshun/dynamixel_motor
+    local-name: tohirose/dynamixel_motor
     uri: https://github.com/pazeshun/dynamixel_motor.git
-    version: gripper-v6-devel
+    version: softhand-v2-devel
