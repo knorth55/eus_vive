@@ -17,7 +17,6 @@
           menu-wait-count
           trackpad-wait-count
           grip-wait-count
-          button-toggle-p
           larm-trigger
           larm-prev-trigger
           larm-trigger-count
@@ -49,8 +48,6 @@
 
 (defmethod robot-vive-interface
   (:init (&key (loop-enable t))
-    ;; for controller
-    (send self :set-val 'button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
     ;; for calibration
     (send self :set-val 'vrbase->shoulder-x nil)
     (send self :set-val 'vrbase->shoulder-z nil)
@@ -245,8 +242,8 @@
           (progn
             (when controller-trigger-p
               (send self :set-arm-val arm :trigger-count trigger-wait-count))
-            controller-trigger-p))
-        controller-trigger-p)))
+            (if controller-trigger-p (cons controller-trigger-p trigger) nil)))
+        (if controller-trigger-p (cos controller-trigger-p trigger) nil))))
   (:controller-menu-p (arm)
     (let* ((menu (send self :get-arm-val arm :menu))
            (prev-menu (send self :get-arm-val arm :prev-menu))
@@ -259,9 +256,10 @@
             (send self :set-arm-val arm :menu-count (- menu-count 1))
             nil)
           (progn
-            (when controller-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
-            controller-menu-p))
-        controller-menu-p)))
+            (when controller-menu-p
+              (send self :set-arm-val arm :menu-count menu-wait-count))
+            (if controller-menu-p (cons controller-menu-p menu) nil)))
+        (if controller-menu-p (cos controller-menu-p menu) nil))))
   (:controller-trackpad-p (arm)
     (let* ((trackpad (send self :get-arm-val arm :trackpad))
            (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
@@ -276,8 +274,8 @@
           (progn
             (when controller-trackpad-p
               (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
-            controller-trackpad-p))
-        controller-trackpad-p)))
+            (if controller-trackpad-p (cons controller-trackpad-p trackpad) nil)))
+        (if controller-trackpad-p (cos controller-trackpad-p trackpad) nil))))
   (:controller-grip-p (arm)
     (let* ((grip (send self :get-arm-val arm :grip))
            (prev-grip (send self :get-arm-val arm :prev-grip))
@@ -292,8 +290,8 @@
           (progn
             (when controller-grip-p
               (send self :set-arm-val arm :grip-count grip-wait-count))
-            controller-grip-p))
-        controller-grip-p)))
+            (if controller-grip-p (cons controller-grip-p grip) nil)))
+        (if controller-grip-p (cos controller-grip-p grip) nil))))
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init

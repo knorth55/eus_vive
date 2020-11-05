@@ -32,6 +32,7 @@
           eus-vive-calib-rarm-service-name
           loop-enable
           draw-object-list
+          button-toggle-p
           larm-enable
           larm-grasp
           larm-grasping-p
@@ -97,6 +98,7 @@
     (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
     (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
     (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
+    (send self :set-val 'button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (eval gripper-status-topic-name)
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
@@ -369,7 +371,7 @@
                   (if mirror (send self :get-opposite-arm arm) arm) button))
           (grasp-p (send self :get-arm-val arm :grasp)))
       (when controller-button-p
-        (if grasp-p
+        (if (if button-toggle-p grasp-p (null (cdr controller-button-p)))
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
         (send self :set-arm-val arm :grasp (not grasp-p)))))
