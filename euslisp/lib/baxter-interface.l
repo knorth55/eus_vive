@@ -80,7 +80,7 @@
         ((equal (send self :get-gripper-type a) :softhand-v2)
          (send (send self :get-gripper-interface a) :open-thumb))
         (t
-         (ros::ros-error ":open-thumb is invalid for this gripper type")
+         (ros::ros-warn ":open-thumb is invalid for this gripper type")
          nil))))
   (:close-thumb (&optional (arm :arms))
     (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
@@ -88,7 +88,23 @@
         ((equal (send self :get-gripper-type a) :softhand-v2)
          (send (send self :get-gripper-interface a) :close-thumb))
         (t
-         (ros::ros-error ":close-thumb is invalid for this gripper type")
+         (ros::ros-warn ":close-thumb is invalid for this gripper type")
+         nil))))
+  (:start-heater (&optional (arm :arms))
+    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
+      (cond
+        ((equal (send self :get-gripper-type a) :softhand-v2)
+         (send (send self :get-gripper-interface a) :start-heater))
+        (t
+         (ros::ros-warn ":start-heater is invalid for this gripper type")
+         nil))))
+  (:stop-heater (&optional (arm :arms))
+    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
+      (cond
+        ((equal (send self :get-gripper-type a) :softhand-v2)
+         (send (send self :get-gripper-interface a) :stop-heater))
+        (t
+         (ros::ros-warn ":stop-heater is invalid for this gripper type")
          nil)))))
 
 
