@@ -19,11 +19,11 @@ Robot remote control program with Vive/Oculus
 ### VR Devices
 
 - Vive
-  - Arm motion tracking
-  - Controller button interface
-  - HMD visual interface 
-  - Vibration interface
-  - Sound interface
+  - [x] Arm motion tracking
+  - [x] Controller button interface
+  - [x] HMD visual interface 
+  - [x] Vibration interface
+  - [x] Sound interface
 - Oculus
   - [x] Arm motion tracking
   - [ ] Controller button interface
@@ -82,7 +82,6 @@ catkin build
 #### PR1040 in JSK 73B2
 
 ```bash
-steam
 rossetip
 rossetmaster pr1040
 roslaunch eus_vive pr2_73b2_vive.launch
@@ -91,7 +90,6 @@ roslaunch eus_vive pr2_73b2_vive.launch
 #### PR1012 in JSK 610 
 
 ```bash
-steam
 rossetip
 rossetmaster pr1012
 roslaunch eus_vive pr2_610_vive.launch
@@ -100,7 +98,6 @@ roslaunch eus_vive pr2_610_vive.launch
 #### Gazebo
 
 ```bash
-steam
 roslaunch eus_vive pr2_gazebo_vive.launch
 ```
 
@@ -109,7 +106,6 @@ roslaunch eus_vive pr2_gazebo_vive.launch
 #### Real Robot in JSK 73B2
 
 ```bash
-steam
 rossetip
 rossetmaster baxter
 roslaunch eus_vive baxter_73b2_vive.launch
@@ -118,20 +114,46 @@ roslaunch eus_vive baxter_73b2_vive.launch
 #### Gazebo
 
 ```bash
-steam
 roslaunch baxter_gazebo baxter_world.launch
 roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_gazebo_vive.launch
 ```
 
+### Demo & Experiments
+
 #### Miraikan Demo 2019/08/23-24
 
 ```bash
-steam
 rossetip
 rossetmaster baxter
 roslaunch eus_vive baxter_miraikan_mirror_vive.launch
 ```
+
+#### Miraikan Demo 2020/09/11-13
+
+##### Vive control PC (Pilot side)
+
+```bash
+rossetip
+rossetbaster
+roslaunch eus_vive baxter_miraikan_remote_vive.launch
+```
+##### Visualization, display and feedback PC (Pilot side)
+
+```bash
+rossetip
+rossetbaster
+roslaunch eus_vive baxter_miraikan_remove_display.launch
+```
+
+##### Robot control PC (Robot side)
+
+```bash
+rossetip
+rossetbaster
+roslaunch eus_vive baxter.launch
+```
+
 
 ## How to use Vive controller
 
