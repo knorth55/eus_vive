@@ -3,31 +3,9 @@
   <arg name="vive" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch">
-    <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
-    <arg name="oculus" value="false" />
     <arg name="head" value="false" />
     <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />
-    <arg name="twitter" value="false" />
-    <arg name="debug" value="true" />
-    <arg name="custom_xdisplay" value="true" />
-    <arg name="launch_baxter" value="false" />
-    <arg name="launch_xdisplay" value="false" />
-    <arg name="realsense_camera" value="false" />
-    <arg name="spherical_camera" value="true" />
     <arg name="republish" value="true" />
-    <arg name="lgripper_softhand" value="true" />
-    <arg name="rgripper_softhand" value="true" />
-    <arg name="b_lighthouse_id" value="8E924CC3" />
-    <arg name="c_lighthouse_id" value="11CFA4E1" />
-    <arg name="l_controller_id" value="FD35BD42" />
-    <arg name="r_controller_id" value="F7AFBF47" />
-    <arg name="workspace_max_x" value="1300.0" />
-    <arg name="workspace_min_x" value="300.0" />
-    <arg name="workspace_max_y" value="750.0" />
-    <arg name="workspace_min_y" value="-750.0" />
-    <arg name="workspace_max_z" value="1200.0" />
-    <arg name="workspace_min_z" value="-150.0" />
   </include>
 </launch>

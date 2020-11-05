@@ -32,6 +32,7 @@
           eus-vive-calib-rarm-service-name
           loop-enable
           draw-object-list
+          gripper-button-toggle-p
           larm-enable
           larm-grasp
           larm-grasping-p
@@ -97,6 +98,7 @@
     (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
     (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
     (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
+    (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
     (dolist (arm (list :larm :rarm))
       (ros::subscribe (eval gripper-status-topic-name)
                       actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb arm)
@@ -366,10 +368,11 @@
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((controller-button-p
             (send self :controller-button-p
-                  (if mirror (send self :get-opposite-arm arm) arm) button))
+                  (if mirror (send self :get-opposite-arm arm) arm) button
+                  :button-toggle gripper-button-toggle-p))
           (grasp-p (send self :get-arm-val arm :grasp)))
       (when controller-button-p
-        (if grasp-p
+        (if (if gripper-button-toggle-p grasp-p (null (cdr controller-button-p)))
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
         (send self :set-arm-val arm :grasp (not grasp-p)))))
@@ -469,7 +472,8 @@
   (:enable-arm (arm &key (mirror nil) (button :menu))
     (let ((enable-button-p
             (send self :controller-button-p
-                  (if mirror (send self :get-opposite-arm arm) arm) button))
+                  (if mirror (send self :get-opposite-arm arm) arm) button
+                  :button-toggle t))
           (enable-p (send self :get-arm-val arm :enable)))
       (when enable-button-p
         (if enable-p
@@ -570,7 +574,7 @@
   ;; place holders
   (:calib-controller ()
     (return-from :calib-controller t))
-  (:controller-button-p (arm button)
+  (:controller-button-p (arm button &key (button-toggle t))
     (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
     (return-from :send-joy-feedback nil))

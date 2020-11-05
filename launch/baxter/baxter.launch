@@ -24,6 +24,7 @@
   <arg name="device" value=":vive" unless="$(arg oculus)" />
 
   <!-- vive -->
+  <arg name="button_toggle" default="true" />
   <arg name="b_lighthouse_id" default="" />
   <arg name="c_lighthouse_id" default="" />
   <arg name="l_controller_id" default="" />

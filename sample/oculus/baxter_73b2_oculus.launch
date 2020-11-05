@@ -7,6 +7,7 @@
   <arg name="spherical_camera" default="true" />
   <arg name="lgripper_softhand" default="true" />
   <arg name="rgripper_softhand" default="true" />
+  <arg name="button_toggle" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
@@ -24,10 +25,7 @@
     <arg name="republish" value="false" />
     <arg name="lgripper_softhand" value="$(arg lgripper_softhand)" />
     <arg name="rgripper_softhand" value="$(arg rgripper_softhand)" />
-    <arg name="b_lighthouse_id" value="8E924CC3" />
-    <arg name="c_lighthouse_id" value="11CFA4E1" />
-    <arg name="l_controller_id" value="FD35BD42" />
-    <arg name="r_controller_id" value="F7AFBF47" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
     <arg name="workspace_max_x" value="1300.0" />
     <arg name="workspace_min_x" value="300.0" />
     <arg name="workspace_max_y" value="750.0" />

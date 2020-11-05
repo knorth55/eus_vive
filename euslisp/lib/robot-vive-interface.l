@@ -156,7 +156,7 @@
       (when wait-trigger
         (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
         (while (and (ros::ok) (not controller-trigger-p))
-          (setq controller-trigger-p (send self :controller-trigger-p arm))
+          (setq controller-trigger-p (send self :controller-trigger-p arm :button-toggle t))
           (ros::spin-once)
           (ros::sleep)))
       (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
@@ -221,60 +221,77 @@
       (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
       (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
       (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
-  (:controller-button-p (arm button)
+  (:controller-button-p (arm button &key (button-toggle t))
     (cond
-      ((eq button :trigger) (send self :controller-trigger-p arm))
-      ((eq button :menu) (send self :controller-menu-p arm))
-      ((eq button :trackpad) (send self :controller-trackpad-p arm))
-      ((eq button :grip) (send self :controller-grip-p arm))
+      ((eq button :trigger) (send self :controller-trigger-p arm :button-toggle button-toggle))
+      ((eq button :menu) (send self :controller-menu-p arm :button-toggle button-toggle))
+      ((eq button :trackpad) (send self :controller-trackpad-p arm :button-toggle button-toggle))
+      ((eq button :grip) (send self :controller-grip-p arm :button-toggle button-toggle))
       (t nil)))
-  (:controller-trigger-p (arm)
-    (let ((trigger (send self :get-arm-val arm :trigger))
-          (prev-trigger (send self :get-arm-val arm :prev-trigger))
-          (trigger-count (send self :get-arm-val arm :trigger-count)))
-      (if (> trigger-count 0)
-        (progn
-          (send self :set-arm-val arm :trigger-count (- trigger-count 1))
-          nil)
-        (let ((controller-trigger-p (and (not (eq trigger prev-trigger)) trigger)))
-          (when controller-trigger-p
-            (send self :set-arm-val arm :trigger-count trigger-wait-count))
-          controller-trigger-p))))
-  (:controller-menu-p (arm)
-    (let ((menu (send self :get-arm-val arm :menu))
-          (prev-menu (send self :get-arm-val arm :prev-menu))
-          (menu-count (send self :get-arm-val arm :menu-count)))
-      (if (> menu-count 0)
-        (progn
-          (send self :set-arm-val arm :menu-count (- menu-count 1))
-          nil)
-        (let ((controller-menu-p (and (not (eq menu prev-menu)) menu)))
-          (when controller-menu-p (send self :set-arm-val arm :menu-count menu-wait-count))
-          controller-menu-p))))
-  (:controller-trackpad-p (arm)
-    (let ((trackpad (send self :get-arm-val arm :trackpad))
-          (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
-          (trackpad-count (send self :get-arm-val arm :trackpad-count)))
-      (if (> trackpad-count 0)
-        (progn
-          (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
-          nil)
-        (let ((controller-trackpad-p (and (not (eq trackpad prev-trackpad)) trackpad)))
-          (when controller-trackpad-p
-            (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
-          controller-trackpad-p))))
-  (:controller-grip-p (arm)
-    (let ((grip (send self :get-arm-val arm :grip))
-          (prev-grip (send self :get-arm-val arm :prev-grip))
-          (grip-count (send self :get-arm-val arm :grip-count)))
-      (if (> grip-count 0)
-        (progn
-          (send self :set-arm-val arm :grip-count (- grip-count 1))
-          nil)
-        (let ((controller-grip-p (and (not (eq grip prev-grip)) grip)))
-          (when controller-grip-p
-            (send self :set-arm-val arm :grip-count grip-wait-count))
-          controller-grip-p))))
+  (:controller-trigger-p (arm &key (button-toggle t))
+    (let* ((trigger (send self :get-arm-val arm :trigger))
+           (prev-trigger (send self :get-arm-val arm :prev-trigger))
+           (trigger-count (send self :get-arm-val arm :trigger-count))
+           (controller-trigger-p (and (not (eq trigger prev-trigger))
+                                      (if button-toggle trigger t))))
+      (if button-toggle
+        (if (> trigger-count 0)
+          (progn
+            (send self :set-arm-val arm :trigger-count (- trigger-count 1))
+            nil)
+          (progn
+            (when controller-trigger-p
+              (send self :set-arm-val arm :trigger-count trigger-wait-count))
+            (if controller-trigger-p (cons controller-trigger-p trigger) nil)))
+        (if controller-trigger-p (cons controller-trigger-p trigger) nil))))
+  (:controller-menu-p (arm &key (button-toggle t))
+    (let* ((menu (send self :get-arm-val arm :menu))
+           (prev-menu (send self :get-arm-val arm :prev-menu))
+           (menu-count (send self :get-arm-val arm :menu-count))
+           (controller-menu-p (and (not (eq menu prev-menu))
+                                   (if button-toggle menu t))))
+      (if button-toggle
+        (if (> menu-count 0)
+          (progn
+            (send self :set-arm-val arm :menu-count (- menu-count 1))
+            nil)
+          (progn
+            (when controller-menu-p
+              (send self :set-arm-val arm :menu-count menu-wait-count))
+            (if controller-menu-p (cons controller-menu-p menu) nil)))
+        (if controller-menu-p (cons controller-menu-p menu) nil))))
+  (:controller-trackpad-p (arm &key (button-toggle t))
+    (let* ((trackpad (send self :get-arm-val arm :trackpad))
+           (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
+           (trackpad-count (send self :get-arm-val arm :trackpad-count))
+           (controller-trackpad-p (and (not (eq trackpad prev-trackpad))
+                                       (if button-toggle trackpad t))))
+      (if button-toggle
+        (if (> trackpad-count 0)
+          (progn
+            (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
+            nil)
+          (progn
+            (when controller-trackpad-p
+              (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
+            (if controller-trackpad-p (cons controller-trackpad-p trackpad) nil)))
+        (if controller-trackpad-p (cons controller-trackpad-p trackpad) nil))))
+  (:controller-grip-p (arm &key (button-toggle t))
+    (let* ((grip (send self :get-arm-val arm :grip))
+           (prev-grip (send self :get-arm-val arm :prev-grip))
+           (grip-count (send self :get-arm-val arm :grip-count))
+           (controller-grip-p (and (not (eq grip prev-grip))
+                                   (if button-toggle grip t))))
+      (if button-toggle
+        (if (> grip-count 0)
+          (progn
+            (send self :set-arm-val arm :grip-count (- grip-count 1))
+            nil)
+          (progn
+            (when controller-grip-p
+              (send self :set-arm-val arm :grip-count grip-wait-count))
+            (if controller-grip-p (cons controller-grip-p grip) nil)))
+        (if controller-grip-p (cons controller-grip-p grip) nil))))
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
