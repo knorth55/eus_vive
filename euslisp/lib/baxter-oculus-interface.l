@@ -89,7 +89,8 @@
   (setq *background-cube* (make-cube 10 6000 6000))
   (send *background-cube* :set-color #f(1 1 1))
   (send *background-cube* :translate #f(-1000 0 0))
-  (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable
+                       :lgripper lgripper :rgripper rgripper)))
 
 
 (defun signal-hook (sig code)
