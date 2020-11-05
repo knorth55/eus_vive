@@ -31,16 +31,16 @@
     (setq lgripper-interface
       (cond
         ((equal lgripper-type :softhand)
-         (setq lgripper-interface (instance softhand-interface :init :namespace "/lgripper")))
+         (instance softhand-interface :init :namespace "/lgripper"))
         ((equal lgripper-type :softhand-v2)
-         (setq lgripper-interface (instance softhand-v2-interface :init :namespace "/lgripper")))
+         (instance softhand-v2-interface :init :namespace "/lgripper"))
         (t nil)))
     (setq rgripper-interface
       (cond
         ((equal rgripper-type :softhand)
-         (setq rgripper-interface (instance softhand-interface :init :namespace "/rgripper")))
+         (instance softhand-interface :init :namespace "/rgripper"))
         ((equal rgripper-type :softhand-v2)
-         (setq rgripper-interface (instance softhand-v2-interface :init :namespace "/rgripper")))
+         (instance softhand-v2-interface :init :namespace "/rgripper"))
         (t nil))))
   (:start-grasp (&optional (arm :arms) &rest args)
     (if (equal arm :arms)
