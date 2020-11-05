@@ -5,8 +5,8 @@
   <arg name="mirror" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
-  <arg name="lgripper_softhand" default="true" />
-  <arg name="rgripper_softhand" default="true" />
+  <arg name="lgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand" />
   <arg name="button_toggle" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
@@ -23,8 +23,8 @@
     <arg name="realsense_camera" value="$(arg realsense_camera)" />
     <arg name="spherical_camera" value="$(arg spherical_camera)" />
     <arg name="republish" value="false" />
-    <arg name="lgripper_softhand" value="$(arg lgripper_softhand)" />
-    <arg name="rgripper_softhand" value="$(arg rgripper_softhand)" />
+    <arg name="lgripper_type" value="$(arg lgripper_type)" />
+    <arg name="rgripper_type" value="$(arg rgripper_type)" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
     <arg name="workspace_max_x" value="1300.0" />
     <arg name="workspace_min_x" value="300.0" />

@@ -16,8 +16,8 @@
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
   <arg name="republish" default="false" />
-  <arg name="lgripper_softhand" default="true" />
-  <arg name="rgripper_softhand" default="true" />
+  <arg name="lgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand" />
 
   <!-- device -->
   <arg name="device" value=":oculus" if="$(arg oculus)" />
@@ -45,14 +45,14 @@
   <arg name="xdisplay_max_width" default="1920" if="$(arg custom_xdisplay)" />
   <arg name="xdisplay_max_height" default="600" unless="$(arg custom_xdisplay)" />
   <arg name="xdisplay_max_height" default="1200" if="$(arg custom_xdisplay)" />
-  <arg name="lgripper_type" value=":softhand" if="$(arg lgripper_softhand)" />
-  <arg name="lgripper_type" value=":parallel" unless="$(arg lgripper_softhand)" />
-  <arg name="rgripper_type" value=":softhand" if="$(arg rgripper_softhand)" />
-  <arg name="rgripper_type" value=":parallel" unless="$(arg rgripper_softhand)" />
-  <arg name="lgripper_visualize" value="true" unless="$(arg lgripper_softhand)" />
-  <arg name="lgripper_visualize" value="false" if="$(arg lgripper_softhand)" />
-  <arg name="rgripper_visualize" value="true" unless="$(arg rgripper_softhand)" />
-  <arg name="rgripper_visualize" value="false" if="$(arg rgripper_softhand)" />
+  <arg name="lgripper_visualize" value="true"
+       if="$(eval arg('lgripper_type') == 'parallel')" />
+  <arg name="lgripper_visualize" value="false"
+       if="$(eval arg('lgripper_type') in ['softhand', 'softhand-v2'])" />
+  <arg name="rgripper_visualize" value="true"
+       if="$(eval arg('rgripper_type') == 'parallel')" />
+  <arg name="rgripper_visualize" value="false"
+       if="$(eval arg('rgripper_type') in ['softhand', 'softhand-v2'])" />
 
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
@@ -92,11 +92,17 @@
   </include>
 
   <!-- launch softhands -->
-  <group ns="rgripper" if="$(arg rgripper_softhand)">
-    <include file="$(find softhand_ros)/launch/softhand_right.launch" />
+  <group ns="lgripper" if="$(eval arg('lgripper_type') in ['softhand', 'softhand-v2'])">
+    <include file="$(find softhand_ros)/launch/softhand_left.launch"
+             if="$(eval arg('lgripper_type') == 'softhand')"/>
+    <include file="$(find softhand_ros)/launch/softhand_v2_left.launch"
+             if="$(eval arg('lgripper_type') == 'softhand-v2')"/>
   </group>
-  <group ns="lgripper" if="$(arg lgripper_softhand)">
-    <include file="$(find softhand_ros)/launch/softhand_left.launch" />
+  <group ns="rgripper" if="$(eval arg('rgripper_type') in ['softhand', 'softhand-v2'])">
+    <include file="$(find softhand_ros)/launch/softhand_right.launch"
+             if="$(eval arg('rgripper_type') == 'softhand')"/>
+    <include file="$(find softhand_ros)/launch/softhand_v2_right.launch"
+             if="$(eval arg('rgripper_type') == 'softhand-v2')"/>
   </group>
 
   <!-- launch realsense camera -->
