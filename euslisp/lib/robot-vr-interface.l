@@ -43,6 +43,7 @@
           larm-grasp-visualize-topic-name
           larm-current-end-coords
           larm-track-error-p
+          larm-gripper-type
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -53,6 +54,7 @@
           rarm-grasp-visualize-topic-name
           rarm-current-end-coords
           rarm-track-error-p
+          rarm-gripper-type
           ik-stop-step
           scale
           av-tm
@@ -79,8 +81,10 @@
 
 
 (defmethod robot-vr-interface
-  (:init (&key (loop-enable t))
+  (:init (&key (loop-enable t) (lgripper nil) (rgripper nil))
     (send self :reset :loop-enable loop-enable)
+    (send self :set-val 'larm-gripper-type lgripper)
+    (send self :set-val 'rarm-gripper-type rgripper)
     ;; for workspace
     (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x"))
     (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y"))
