@@ -7,7 +7,8 @@
 
 (defclass baxter-vive-interface
   :super robot-vive-interface
-  :slots ())
+  :slots (larm-thumb-open
+          rarm-thumb-open))
 
 
 (defmethod baxter-vive-interface
@@ -81,7 +82,30 @@
       (send* robot :inverse-kinematics-raw target-coords
              :rotation-axis t :move-target (send robot arm :end-coords)
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
-             :debug-view nil args))))
+             :debug-view nil args)))
+  (:thumb-rotate-cb (arm &key (mirror nil) (button :trackpad))
+    (if (equal (send self :get-arm-val arm :gripper-type) :softhand-v2)
+      (let ((thumb-rotate-button-p
+              (send self :controller-button-p
+                    (if mirror (send self :get-opposite-arm arm) arm) button
+                    :button-toggle t))
+            (thumb-open-p (send self :get-arm-val arm :thumb-open)))
+        (when thumb-rotate-button-p
+          (if thumb-open-p
+            (send self :close-thumb arm)
+            (send self :open-thumb arm))
+          (send self :set-arm-val arm :thumb-open (not thumb-open-p))))))
+  (:arm-motion-cb (&key (mirror nil) (thumb-rotate-button :trackpad) &rest args)
+    (cond
+      ((and larm-enable rarm-enable)
+       (send self :thumb-rotate-cb :larm :mirror mirror :button thumb-rotate-button)
+       (send self :thumb-rotate-cb :rarm :mirror mirror :button thumb-rotate-button))
+      ((and larm-enable (not rarm-enable))
+       (send self :thumb-rotate-cb :larm :mirror mirror :button thumb-rotate-button))
+      ((and (not larm-enable) rarm-enable)
+       (send self :thumb-rotate-cb :rarm :mirror mirror :button thumb-rotate-button))
+      (t nil))
+    (send-super* :arm-motion-cb :mirror mirror args)))
 
 
 (defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
@@ -100,7 +124,8 @@
   (setq *background-cube* (make-cube 10 6000 6000))
   (send *background-cube* :set-color #f(1 1 1))
   (send *background-cube* :translate #f(-1000 0 0))
-  (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable
+                       :lgripper lgripper :rgripper rgripper)))
 
 
 (defun signal-hook (sig code)
