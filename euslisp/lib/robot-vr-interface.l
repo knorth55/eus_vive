@@ -366,17 +366,17 @@
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
-    (let ((controller-button-p
+    (let ((gripper-button-p
             (send self :controller-button-p
                   (if mirror (send self :get-opposite-arm arm) arm) button
                   :button-toggle gripper-button-toggle-p))
           (grasp-p (send self :get-arm-val arm :grasp)))
-      (when controller-button-p
-        (if (if gripper-button-toggle-p grasp-p (null (cdr controller-button-p)))
+      (when gripper-button-p
+        (if (if gripper-button-toggle-p grasp-p (null (cdr gripper-button-p)))
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
         (send self :set-arm-val arm :grasp
-              (if gripper-button-toggle-p (not grasp-p) (cdr controller-button-p))))))
+              (if gripper-button-toggle-p (not grasp-p) (cdr gripper-button-p))))))
   (:gripper-status-cb (arm msg)
     (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status)))
           (prev-grasping-p (send self :get-arm-val arm :grasping-p))
