@@ -368,7 +368,8 @@
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((controller-button-p
             (send self :controller-button-p
-                  (if mirror (send self :get-opposite-arm arm) arm) button))
+                  (if mirror (send self :get-opposite-arm arm) arm) button
+                  :button-toggle button-toggle-p))
           (grasp-p (send self :get-arm-val arm :grasp)))
       (when controller-button-p
         (if (if button-toggle-p grasp-p (null (cdr controller-button-p)))
@@ -471,7 +472,8 @@
   (:enable-arm (arm &key (mirror nil) (button :menu))
     (let ((enable-button-p
             (send self :controller-button-p
-                  (if mirror (send self :get-opposite-arm arm) arm) button))
+                  (if mirror (send self :get-opposite-arm arm) arm) button
+                  :button-toggle t))
           (enable-p (send self :get-arm-val arm :enable)))
       (when enable-button-p
         (if enable-p
@@ -572,7 +574,7 @@
   ;; place holders
   (:calib-controller ()
     (return-from :calib-controller t))
-  (:controller-button-p (arm button)
+  (:controller-button-p (arm button &key (button-toggle t))
     (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
     (return-from :send-joy-feedback nil))
