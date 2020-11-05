@@ -375,7 +375,8 @@
         (if (if gripper-button-toggle-p grasp-p (null (cdr controller-button-p)))
           (send self :stop-grasp arm :wait nil)
           (send self :start-grasp arm :wait nil))
-        (send self :set-arm-val arm :grasp (not grasp-p)))))
+        (send self :set-arm-val arm :grasp
+              (if gripper-button-toggle-p (not grasp-p) (cdr controller-button-p))))))
   (:gripper-status-cb (arm msg)
     (let ((grasping-p (some #'(lambda (x) (eq x 1)) (send-all (send msg :status_list) :status)))
           (prev-grasping-p (send self :get-arm-val arm :grasping-p))
