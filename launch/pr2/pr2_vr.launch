@@ -132,6 +132,7 @@
   </group>
   <group ns="eus_vive" unless="$(arg vive)">
     <rosparam subst_value="true">
+      button_toggle: $(arg button_toggle)
       workspace:
         max_x: $(arg workspace_max_x)
         min_x: $(arg workspace_min_x)
