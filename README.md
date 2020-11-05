@@ -136,7 +136,6 @@ roslaunch eus_vive baxter_miraikan_mirror_vive.launch
 ```bash
 rossetip
 rossetbaster
-roslaunch eus_vive
 roslaunch eus_vive baxter_miraikan_remove_vive.launch
 ```
 ##### Visualization, display and feedback PC (Pilot side)
@@ -144,7 +143,6 @@ roslaunch eus_vive baxter_miraikan_remove_vive.launch
 ```bash
 rossetip
 rossetbaster
-roslaunch eus_vive
 roslaunch eus_vive baxter_miraikan_remove_display.launch
 ```
 
@@ -153,7 +151,6 @@ roslaunch eus_vive baxter_miraikan_remove_display.launch
 ```bash
 rossetip
 rossetbaster
-roslaunch eus_vive
 roslaunch eus_vive baxter.launch
 ```
 
