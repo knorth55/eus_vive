@@ -73,7 +73,7 @@
 
 
 (defun baxter-oculus-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_oculus::baxter-init :lgripper lgripper :rgripper rgripper)
+  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
