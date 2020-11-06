@@ -17,7 +17,7 @@
 
 
 (defmethod eus_vive::baxter-interface
-  (:init (&key (lgripper :parallel) (rgripper :parallel) &rest args &allow-other-keys)
+  (:init (&rest args &key (lgripper :parallel) (rgripper :parallel) &allow-other-keys)
     (send-super* :init args)
     (setq lgripper-type lgripper)
     (setq rgripper-type rgripper)

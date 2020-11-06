@@ -95,7 +95,7 @@
             (send self :close-thumb arm)
             (send self :open-thumb arm))
           (send self :set-arm-val arm :thumb-open (not thumb-open-p))))))
-  (:arm-motion-cb (&key (mirror nil) (thumb-rotate-button :trackpad) &rest args)
+  (:arm-motion-cb (&rest args &key (mirror nil) (thumb-rotate-button :trackpad))
     (cond
       ((and larm-enable rarm-enable)
        (send self :thumb-rotate-cb :larm :mirror mirror :button thumb-rotate-button)
