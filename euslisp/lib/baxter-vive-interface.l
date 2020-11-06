@@ -36,10 +36,11 @@
 
 (defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
   (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
+  (make-irtviewer-no-window)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
-                                :name "camera" :create-viewer t))
+                                :name "camera" :create-viewer t :no-window t))
   (send *camera-model* :translate #f(1500 0 600))
   (send *camera-model* :rotate -pi/2 :y :world)
   (send *camera-model* :rotate -pi/2 :x :world)
