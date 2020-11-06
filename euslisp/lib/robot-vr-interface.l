@@ -369,6 +369,9 @@
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
+  (:controller-button-p (arm button &key (button-toggle t))
+    (send self (read-from-string (format nil ":controller-~A-button-p" (string-downcase button)))
+           arm :button-toggle button-toggle))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p
@@ -579,8 +582,6 @@
   ;; place holders
   (:calib-controller ()
     (return-from :calib-controller t))
-  (:controller-button-p (arm button &key (button-toggle t))
-    (return-from :controller-button-p nil))
   (:send-joy-feedback (arm)
     (return-from :send-joy-feedback nil))
   (:get-head-ypr-angle ()

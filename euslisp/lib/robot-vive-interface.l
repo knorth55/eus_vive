@@ -221,13 +221,6 @@
       (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
       (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
       (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
-  (:controller-button-p (arm button &key (button-toggle t))
-    (cond
-      ((eq button :trigger) (send self :controller-trigger-p arm :button-toggle button-toggle))
-      ((eq button :menu) (send self :controller-menu-p arm :button-toggle button-toggle))
-      ((eq button :trackpad) (send self :controller-trackpad-p arm :button-toggle button-toggle))
-      ((eq button :grip) (send self :controller-grip-p arm :button-toggle button-toggle))
-      (t nil)))
   (:controller-trigger-button-p (arm &key (button-toggle t))
     (let* ((trigger (send self :get-arm-val arm :trigger))
            (prev-trigger (send self :get-arm-val arm :prev-trigger))
