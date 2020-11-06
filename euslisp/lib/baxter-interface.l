@@ -1,4 +1,4 @@
-(require :baxter "package://baxtereus//baxter-util.l")
+(require :baxter "package://eus_vive/euslisp/lib/baxter-util.l")
 (load "package://baxtereus/baxter-interface.l")
 (load "package://softhand_ros/euslisp/softhand-interface.l")
 (load "package://softhand_ros/euslisp/softhand-v2-interface.l")
@@ -6,13 +6,6 @@
 
 (unless (find-package "EUS_VIVE")
   (make-package "EUS_VIVE"))
-
-
-(defmethod baxter-robot
-  (:reset-teleop-pose ()
-    (send self :angle-vector
-          (float-vector 0.0 0.0 -25 -40 70 -40 80  130
-                            0.0 -25  40 70  40 80 -130))))
 
 
 (defclass eus_vive::baxter-interface
