@@ -156,7 +156,8 @@
       (when wait-trigger
         (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
         (while (and (ros::ok) (not controller-trigger-button-p))
-          (setq controller-trigger-button-p (send self :controller-trigger-button-p arm :button-toggle t))
+          (setq controller-trigger-button-p
+                (send self :controller-trigger-button-p arm :button-toggle t))
           (ros::spin-once)
           (ros::sleep)))
       (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)

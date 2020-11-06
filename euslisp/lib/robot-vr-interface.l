@@ -466,9 +466,11 @@
                       robot (send (send robot :link base-frame-id) :copy-worldcoords)))
       (ros::publish eus-vive-status-topic-name eus-vive-status-msg)
       (ros::publish larm-grasp-visualize-topic-name
-                    (instance std_msgs::Float32 :init :data (if (send self :get-arm-val :larm :grasp) 0.0 1.0)))
+                    (instance std_msgs::Float32 :init :data
+                              (if (send self :get-arm-val :larm :grasp) 0.0 1.0)))
       (ros::publish rarm-grasp-visualize-topic-name
-                    (instance std_msgs::Float32 :init :data (if (send self :get-arm-val :rarm :grasp) 0.0 1.0)))
+                    (instance std_msgs::Float32 :init :data
+                              (if (send self :get-arm-val :rarm :grasp) 0.0 1.0)))
       (send *irtviewer* :draw-objects)
       (send camera-model :draw-objects camera-draw-object-list)
       (ros::publish irtviewer-visualize-topic-name
