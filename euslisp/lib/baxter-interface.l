@@ -119,12 +119,14 @@
       (if safe
         (setq *baxter* (instance baxter-robot-safe :init))
         (setq *baxter* (instance baxter-robot :init))))
-    ;; overwrite s0, e0 joint limit
-    ;; do not rotate s0, e0 joint and stay arm in front of the robot
+    ;; overwrite s0, e0, e1 joint limit
+    ;; do not rotate s0, e0, e1 joint and stay arm in front of the robot
     (send *baxter* :left_s0 :max-angle 30)
     (send *baxter* :left_e0 :max-angle 30)
+    (send *baxter* :left_e1 :min-angle 5)
     (send *baxter* :right_s0 :min-angle -30)
     (send *baxter* :right_e0 :min-angle -30)
+    (send *baxter* :right_e1 :min-angle 5)
     (when (equal lgripper :parallel) (send *ri* :calib-grasp :larm))
     (when (equal rgripper :parallel) (send *ri* :calib-grasp :rarm))))
 
