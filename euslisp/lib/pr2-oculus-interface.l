@@ -67,7 +67,8 @@
   (pr2-init)
   (objects (list *pr2*))
   (setq *camera-model*
-        (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5))
+        (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+                                :create-viewer t))
   (send *camera-model* :translate #f(1500 0 800))
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
