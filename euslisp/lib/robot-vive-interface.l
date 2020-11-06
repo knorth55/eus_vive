@@ -47,7 +47,7 @@
 
 
 (defmethod robot-vive-interface
-  (:init (&key (loop-enable t))
+  (:init (&rest args)
     ;; for calibration
     (send self :set-val 'vrbase->shoulder-x nil)
     (send self :set-val 'vrbase->shoulder-z nil)
@@ -64,7 +64,7 @@
       (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :controller-frame-id))
                       sensor_msgs::Joy #'send self :controller-button-cb arm))
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
-    (send-super :init :loop-enable loop-enable))
+    (send-super* :init args))
   (:reset-arm (arm)
     (send-super :reset-arm arm)
     (send self :set-arm-val arm :trigger nil)
