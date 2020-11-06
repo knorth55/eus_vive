@@ -86,12 +86,12 @@
     (send self :set-val 'larm-gripper-type lgripper)
     (send self :set-val 'rarm-gripper-type rgripper)
     ;; for workspace
-    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x"))
-    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y"))
-    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_vive/workspace/max_z"))
-    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_vive/workspace/min_x"))
-    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y"))
-    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z"))
+    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x" nil))
+    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y" nil))
+    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_vive/workspace/max_z" nil))
+    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_vive/workspace/min_x" nil))
+    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y" nil))
+    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z" nil))
     ;; for eus_vive
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
