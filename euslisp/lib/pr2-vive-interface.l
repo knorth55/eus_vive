@@ -38,8 +38,10 @@
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
-    (send self :set-val 'gripper-status-topic-name
-          '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
+    (send self :set-arm-val :larm :gripper-status-topic-name
+          "/l_gripper_controller/gripper_action/status")
+    (send self :set-arm-val :rarm :gripper-status-topic-name
+          "/r_gripper_controller/gripper_action/status")
     ;; for pr2 move base
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)

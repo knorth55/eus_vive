@@ -18,8 +18,6 @@
           camera-model
           base-frame-id
           head-frame-id
-          gripper-status-topic-name
-          collision-status-topic-name
           collision-status-topic-type
           robot-state-visualize-topic-name
           irtviewer-visualize-topic-name
@@ -41,6 +39,8 @@
           larm-collision-p
           larm-coords-visualize-topic-name
           larm-grasp-visualize-topic-name
+          larm-gripper-status-topic-name
+          larm-collision-status-topic-name
           larm-current-end-coords
           larm-track-error-p
           larm-gripper-type
@@ -52,6 +52,8 @@
           rarm-collision-p
           rarm-coords-visualize-topic-name
           rarm-grasp-visualize-topic-name
+          rarm-gripper-status-topic-name
+          rarm-collision-status-topic-name
           rarm-current-end-coords
           rarm-track-error-p
           rarm-gripper-type
@@ -104,16 +106,18 @@
     (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
     (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
 
-    (ros::subscribe (eval gripper-status-topic-name)
+    (ros::subscribe larm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :larm)
-    (ros::subscribe (eval gripper-status-topic-name)
+    (ros::subscribe rarm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :rarm)
-    (if (and collision-status-topic-name collision-status-topic-type)
+    (if (and larm-collision-status-topic-name
+             rarm-collision-status-topic-name
+             collision-status-topic-type)
       (progn
-        (ros::subscribe (eval collision-status-topic-name) collision-status-topic-type
-                        #'send self :collision-status-cb :larm)
-        (ros::subscribe (eval collision-status-topic-name) collision-status-topic-type
-                        #'send self :collision-status-cb :rarm)))
+        (ros::subscribe larm-collision-status-topic-name
+                        collision-status-topic-type #'send self :collision-status-cb :larm)
+        (ros::subscribe rarm-collision-status-topic-name
+                        collision-status-topic-type #'send self :collision-status-cb :rarm)))
     (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
     (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
     (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")

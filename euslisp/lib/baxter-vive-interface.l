@@ -36,10 +36,14 @@
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 30)
-    (send self :set-val 'gripper-status-topic-name
-          '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
-    (send self :set-val 'collision-status-topic-name
-          '(format nil "/robot/limb/~A/collision_detection_state" (if (eq arm :larm) "left" "right")))
+    (send self :set-arm-val :larm :gripper-status-topic-name
+          "/robot/end_effector/left_gripper/gripper_action/status")
+    (send self :set-arm-val :rarm :gripper-status-topic-name
+          "/robot/end_effector/right_gripper/gripper_action/status")
+    (send self :set-arm-val :larm :collision-status-topic-name
+          "/robot/limb/left/collision_detection_state")
+    (send self :set-arm-val :rarm :collision-status-topic-name
+          "/robot/limb/right/collision_detection_state")
     (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
     (send-super* :init args))
   (:reset-service (req)
