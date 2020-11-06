@@ -19,7 +19,7 @@
   (send *ri* :wait-interpolation))
 
 
-(defun init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t) (device-type :vive))
+(defun init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
   (ros::roseus "baxter_vr_main" :anonymous nil)
   (if (eq device-type :oculus)
     (oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
@@ -35,7 +35,7 @@
 
 
 (defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t)
-                  (lgripper :parallel) (rgripper parallel) (loop-enable t) (device-type :vive))
+                  (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
   (init :lgripper lgripper :rgripper rgripper :loop-enable t :device-type device-type)
   ; (unless head
   ;   (while (not (send *ti* :calibrate))
