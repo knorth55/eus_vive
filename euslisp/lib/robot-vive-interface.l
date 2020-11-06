@@ -102,8 +102,10 @@
             (progn
               (send vrbase->controller-coords
                     :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-              (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-              (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+              (send vrbase->controller-coords :transform
+                    (make-coords :rpy (float-vector 0 pi/2 0)))
+              (send vrbase->controller-coords :transform
+                    (make-coords :rpy (float-vector 0 0 -pi/2)))
               (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
               (setq target-pos
                     (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
