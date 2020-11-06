@@ -56,9 +56,8 @@
     (let (coords)
       (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
-      (when coords
-        (send coords :rotate pi/2 :y :world)
-        coords)))
+      (if coords (send coords :rotate pi/2 :y :world))
+      coords))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -94,11 +93,12 @@
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri*)
-    (ros::ros-info "cancel larm controller")
-    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-    (ros::ros-info "cancel rarm controller")
-    (send *ri* :cancel-angle-vector :controller-type :rarm-controller))
+  (if (boundp '*ri*)
+    (progn
+      (ros::ros-info "cancel larm controller")
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (ros::ros-info "cancel rarm controller")
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
   (reset))
 
 

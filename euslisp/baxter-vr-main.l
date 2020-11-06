@@ -31,11 +31,11 @@
 (defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t)
                   (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
   (init :lgripper lgripper :rgripper rgripper :loop-enable t :device-type device-type)
-  ; (unless head
+  ; (if (not head)
   ;   (while (not (send *ti* :calibrate))
   ;     (ros::spin-once)))
   (send *ri* :nod)
-  (unless loop-enable (send *ti* :disable))
+  (if (not loop-enable) (send *ti* :disable))
   (send *ti* :main-loop :head head :torso nil
         :safe-arm safe-arm :mirror mirror
         :enable-button :menu :gripper-button :trigger :visualize visualize))

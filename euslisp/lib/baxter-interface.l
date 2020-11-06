@@ -4,7 +4,7 @@
 (load "package://softhand_ros/euslisp/softhand-v2-interface.l")
 
 
-(unless (find-package "EUS_VIVE")
+(if (not (find-package "EUS_VIVE"))
   (make-package "EUS_VIVE"))
 
 
@@ -105,17 +105,18 @@
   (&key (safe t) (type :default-controller) (moveit t)
         (lgripper :parallel) (rgripper :parallel))
   (let (mvit-env mvit-rb)
-    (when moveit
-      (setq mvit-env (instance baxter-moveit-environment))
-      (setq mvit-rb (instance baxter-robot :init)))
-    (when (not (boundp '*ri*))
+    (if moveit
+      (progn
+        (setq mvit-env (instance baxter-moveit-environment))
+        (setq mvit-rb (instance baxter-robot :init))))
+    (if (not (boundp '*ri*))
       (setq *ri* (instance eus_vive::baxter-interface :init :type type
                            :moveit-environment mvit-env
                            :moveit-robot mvit-rb
                            :controller-timeout 10
                            :lgripper lgripper
                            :rgripper rgripper)))
-    (when (not (boundp '*baxter*))
+    (if (not (boundp '*baxter*))
       (if safe
         (setq *baxter* (instance baxter-robot-safe :init))
         (setq *baxter* (instance baxter-robot :init))))
@@ -127,7 +128,7 @@
     (send *baxter* :right_s0 :min-angle -30)
     (send *baxter* :right_e0 :min-angle -30)
     (send *baxter* :right_e1 :min-angle 5)
-    (when (equal lgripper :parallel) (send *ri* :calib-grasp :larm))
-    (when (equal rgripper :parallel) (send *ri* :calib-grasp :rarm))))
+    (if (equal lgripper :parallel) (send *ri* :calib-grasp :larm))
+    (if (equal rgripper :parallel) (send *ri* :calib-grasp :rarm))))
 
 (provide :baxter-interface)

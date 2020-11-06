@@ -75,10 +75,11 @@
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri*)
-    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-    (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
-    (send *ri* :cancel-angle-vector :controller-type :torso-controller))
+  (if (boundp '*ri*)
+    (progn
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
+      (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
   (reset))
 
 (unix:signal 2 'signal-hook)

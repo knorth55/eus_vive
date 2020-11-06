@@ -58,19 +58,19 @@
     (let (coords)
       (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
-      (when coords
-        (send coords :rotate pi/2 :y :world)
-        coords)))
+      (if coords (send coords :rotate pi/2 :y :world))
+      coords))
   (:get-hmd->vive-coords (arm)
     (let* ((coords (send-super :get-hmd->vive-coords arm))
            (bvive->hmd-coords (send self :get-bvive->hmd-coords))
            (rpy-angle
-             (when bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
-      (when (and coords rpy-angle)
-        (setq coords
-              (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0))
-                    :transform coords))
-        coords)))
+             (if bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
+      (if (and coords rpy-angle)
+        (progn
+          (setq coords
+                (send (make-coords :rpy (float-vector 0 (* -1 (elt rpy-angle 2)) 0))
+                      :transform coords))
+          coords))))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -90,11 +90,12 @@
                     (if mirror (send self :get-opposite-arm arm) arm) button
                     :button-toggle t))
             (thumb-open-p (send self :get-arm-val arm :thumb-open)))
-        (when thumb-rotate-button-p
-          (if thumb-open-p
-            (send self :close-thumb arm)
-            (send self :open-thumb arm))
-          (send self :set-arm-val arm :thumb-open (not thumb-open-p))))))
+        (if thumb-rotate-button-p
+          (progn
+            (if thumb-open-p
+              (send self :close-thumb arm)
+              (send self :open-thumb arm))
+            (send self :set-arm-val arm :thumb-open (not thumb-open-p)))))))
   (:arm-motion-cb (&rest args &key (mirror nil) (thumb-rotate-button :trackpad))
     (cond
       ((and larm-enable rarm-enable)
@@ -129,11 +130,12 @@
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri*)
-    (ros::ros-info "cancel larm controller")
-    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-    (ros::ros-info "cancel rarm controller")
-    (send *ri* :cancel-angle-vector :controller-type :rarm-controller))
+  (if (boundp '*ri*)
+    (progn
+      (ros::ros-info "cancel larm controller")
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (ros::ros-info "cancel rarm controller")
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
   (reset))
 
 

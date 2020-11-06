@@ -88,78 +88,85 @@
                 (send self :get-hmd->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm)))
                controller-coords)
-          (when hmd->controller-coords
-            (setq controller-coords (send head-coords :transform hmd->controller-coords))
-            (setq target-pos (send controller-coords :worldpos))
-            (setq target-rot (send controller-coords :worldrot))))
+          (if hmd->controller-coords
+            (progn
+              (setq controller-coords (send head-coords :transform hmd->controller-coords))
+              (setq target-pos (send controller-coords :worldpos))
+              (setq target-rot (send controller-coords :worldrot)))))
         (let ((vrbase->controller-coords
                 (send self :get-vrbase->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
               vrbase->controller-pos)
-          (when vrbase->controller-coords
-            (send vrbase->controller-coords
-                  :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
-            (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-            (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
-            (setq target-pos
-                  (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
-                                (elt vrbase->controller-pos 1)
-                                (- (elt vrbase->controller-pos 2) vrbase->shoulder-z)))
-            (setq target-rot (send vrbase->controller-coords :worldrot)))))
-      (when (and target-pos target-rot)
-        (when mirror
-          (let* ((mirror-coords (make-coords :rot target-rot))
-                 (rpy-angle (car (send mirror-coords :rpy-angle))))
-            (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
-            (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
-            (setq mirror-coords (make-coords :rpy rpy-angle))
-            (setq target-rot (send mirror-coords :worldrot))
-            (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
-        (setq target-coords
-              (make-coords :pos (float-vector
-                                  (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
-                                  (* scale (elt target-pos 1))
-                                  (if head
-                                    (+ robot-height (* scale (- (elt target-pos 2) robot-height)))
-                                    (+ (- robot-height head->shoulder-z-distance)
-                                       (* scale (elt target-pos 2)))))
-                           :rot target-rot))
-        (send target-coords :rotate (/ pi 4.0) :y))
+          (if vrbase->controller-coords
+            (progn
+              (send vrbase->controller-coords
+                    :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
+              (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 pi/2 0)))
+              (send vrbase->controller-coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+              (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
+              (setq target-pos
+                    (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
+                                  (elt vrbase->controller-pos 1)
+                                  (- (elt vrbase->controller-pos 2) vrbase->shoulder-z)))
+              (setq target-rot (send vrbase->controller-coords :worldrot))))))
+      (if (and target-pos target-rot)
+        (progn
+          (if mirror
+            (let* ((mirror-coords (make-coords :rot target-rot))
+                   (rpy-angle (car (send mirror-coords :rpy-angle))))
+              (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
+              (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
+              (setq mirror-coords (make-coords :rpy rpy-angle))
+              (setq target-rot (send mirror-coords :worldrot))
+              (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
+          (setq target-coords
+                (make-coords :pos (float-vector
+                                    (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
+                                    (* scale (elt target-pos 1))
+                                    (if head
+                                      (+ robot-height (* scale (- (elt target-pos 2) robot-height)))
+                                      (+ (- robot-height head->shoulder-z-distance)
+                                         (* scale (elt target-pos 2)))))
+                             :rot target-rot))
+          (send target-coords :rotate (/ pi 4.0) :y)))
       target-coords))
   (:get-head-ypr-angle ()
     (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
-      (when coords
-        (setq rpy-angle
-              (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
-                (car (send coords :rpy-angle))
-                (cadr (send coords :rpy-angle))))
-        (list (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0))))
+      (if coords
+        (progn
+          (setq rpy-angle
+                (if (> pi/2 (abs (elt (car (send coords :rpy-angle)) 0)))
+                  (car (send coords :rpy-angle))
+                  (cadr (send coords :rpy-angle))))
+          (list (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0)))))
   (:get-hmd->controller-coords (arm)
-    (when (not (or (eq arm :larm) (eq arm :rarm)))
-      (ros::ros-error (format nil "~A arm is not supported ~%" arm))
-      (return-from :get-hmd->controller-coords nil))
+    (if (not (or (eq arm :larm) (eq arm :rarm)))
+      (progn
+        (ros::ros-error (format nil "~A arm is not supported ~%" arm))
+        (return-from :get-hmd->controller-coords nil)))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           coords)
       (send tfl :wait-for-transform hmd-frame-id controller-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform hmd-frame-id controller-frame-id (ros::time 0)))
-      (when coords
-        (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world)
-        (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world)
-        (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
-        (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))
-        coords)))
+      (if coords
+        (progn
+          (send coords :transform (make-coords :rpy (float-vector 0 0 pi)) :world)
+          (send coords :transform (make-coords :rpy (float-vector -pi/2 0 0)) :world)
+          (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
+          (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))))
+      coords))
   (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-button-p)
-      (when wait-trigger
-        (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
-        (while (and (ros::ok) (not controller-trigger-button-p))
-          (setq controller-trigger-button-p
-                (send self :controller-trigger-button-p arm :button-toggle t))
-          (ros::spin-once)
-          (ros::sleep)))
+      (if wait-trigger
+        (progn
+          (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
+          (while (and (ros::ok) (not controller-trigger-button-p))
+            (setq controller-trigger-button-p
+                  (send self :controller-trigger-button-p arm :button-toggle t))
+            (ros::spin-once)
+            (ros::sleep))))
       (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
       (setq coords (send tfl :lookup-transform vrbase-frame-id controller-frame-id start-time))
       coords))
@@ -167,7 +174,7 @@
     (let (coords)
       (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
-      (when coords
+      (if coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   (:calib-controller (&optional (arm :rarm))
     (let (first-coords second-coords)
@@ -213,15 +220,16 @@
           (send self :send-joy-feedback arm)
           nil))))
   (:controller-button-cb (arm msg)
-    (when loop-enable
-      (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
-      (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
-      (send self :set-arm-val arm :prev-trackpad (send self :get-arm-val arm :trackpad))
-      (send self :set-arm-val arm :prev-grip (send self :get-arm-val arm :grip))
-      (send self :set-arm-val arm :trigger (> (elt (send msg :buttons) 1) 0))
-      (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
-      (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
-      (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0))))
+    (if loop-enable
+      (progn
+        (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
+        (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))
+        (send self :set-arm-val arm :prev-trackpad (send self :get-arm-val arm :trackpad))
+        (send self :set-arm-val arm :prev-grip (send self :get-arm-val arm :grip))
+        (send self :set-arm-val arm :trigger (> (elt (send msg :buttons) 1) 0))
+        (send self :set-arm-val arm :menu (> (elt (send msg :buttons) 0) 0))
+        (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
+        (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0)))))
   (:controller-trigger-button-p (arm &key (button-toggle t))
     (let* ((trigger (send self :get-arm-val arm :trigger))
            (prev-trigger (send self :get-arm-val arm :prev-trigger))
@@ -234,10 +242,11 @@
             (send self :set-arm-val arm :trigger-count (- trigger-count 1))
             nil)
           (progn
-            (when controller-trigger-button-p
-              (send self :set-arm-val arm :trigger-count trigger-wait-count))
-            (if controller-trigger-button-p (cons controller-trigger-button-p trigger) nil)))
-        (if controller-trigger-button-p (cons controller-trigger-button-p trigger) nil))))
+            (if controller-trigger-button-p
+              (progn
+                (send self :set-arm-val arm :trigger-count trigger-wait-count)
+                (cons controller-trigger-button-p trigger)))))
+        (if controller-trigger-button-p (cons controller-trigger-button-p trigger)))))
   (:controller-menu-button-p (arm &key (button-toggle t))
     (let* ((menu (send self :get-arm-val arm :menu))
            (prev-menu (send self :get-arm-val arm :prev-menu))
@@ -250,10 +259,11 @@
             (send self :set-arm-val arm :menu-count (- menu-count 1))
             nil)
           (progn
-            (when controller-menu-button-p
-              (send self :set-arm-val arm :menu-count menu-wait-count))
-            (if controller-menu-button-p (cons controller-menu-button-p menu) nil)))
-        (if controller-menu-button-p (cons controller-menu-button-p menu) nil))))
+            (if controller-menu-button-p
+              (progn
+                (send self :set-arm-val arm :menu-count menu-wait-count)
+                (cons controller-menu-button-p menu)))))
+        (if controller-menu-button-p (cons controller-menu-button-p menu)))))
   (:controller-trackpad-button-p (arm &key (button-toggle t))
     (let* ((trackpad (send self :get-arm-val arm :trackpad))
            (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
@@ -266,10 +276,11 @@
             (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
             nil)
           (progn
-            (when controller-trackpad-button-p
-              (send self :set-arm-val arm :trackpad-count trackpad-wait-count))
-            (if controller-trackpad-button-p (cons controller-trackpad-button-p trackpad) nil)))
-        (if controller-trackpad-button-p (cons controller-trackpad-button-p trackpad) nil))))
+            (if controller-trackpad-button-p
+              (progn
+                (send self :set-arm-val arm :trackpad-count trackpad-wait-count)
+                (cons controller-trackpad-button-p trackpad)))))
+        (if controller-trackpad-button-p (cons controller-trackpad-button-p trackpad)))))
   (:controller-grip-button-p (arm &key (button-toggle t))
     (let* ((grip (send self :get-arm-val arm :grip))
            (prev-grip (send self :get-arm-val arm :prev-grip))
@@ -282,10 +293,11 @@
             (send self :set-arm-val arm :grip-count (- grip-count 1))
             nil)
           (progn
-            (when controller-grip-button-p
-              (send self :set-arm-val arm :grip-count grip-wait-count))
-            (if controller-grip-button-p (cons controller-grip-button-p grip) nil)))
-        (if controller-grip-button-p (cons controller-grip-button-p grip) nil))))
+            (if controller-grip-button-p
+              (progn
+                (send self :set-arm-val arm :grip-count grip-wait-count)
+                (cons controller-grip-button-p grip)))))
+        (if controller-grip-button-p (cons controller-grip-button-p grip)))))
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
@@ -336,7 +348,7 @@
         ((and rarm-trigger
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
          ;; for unsafe teleop
-         (when (and (not safe) larm-trigger) (setf (elt buttons 9) 1))
+         (if (and (not safe) larm-trigger) (setf (elt buttons 9) 1))
          (setf (elt buttons 10) 1)
          (setf (elt axes 3)
                (* (if mirror -1.0 1.0)
@@ -380,14 +392,14 @@
     (send self :switch-joy joy-org-topic-name))
   (:enable-cb (&key (mirror nil) (base t) (button :menu))
     (send-super :enable-cb :mirror mirror :button button)
-    (when base (send self :enable-base)))
+    (if base (send self :enable-base)))
   (:enable-base ()
     (cond
       ((and (not larm-enable) (not rarm-enable))
-       (unless base-enable (send self :switch-joy-to-controller))
+       (if (not base-enable) (send self :switch-joy-to-controller))
        (send self :set-val 'base-enable t))
       ((or larm-enable rarm-enable)
-       (when base-enable (send self :switch-joy-to-ps3joy))
+       (if base-enable (send self :switch-joy-to-ps3joy))
        (send self :set-val 'base-enable nil))
       (t nil)))
   (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
@@ -399,7 +411,7 @@
                (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
                      :gripper-button gripper-button)))
         ((and loop-enable base-enable)
-         (when base (send self :base-cb :safe safe-base :mirror mirror)))
+         (if base (send self :base-cb :safe safe-base :mirror mirror)))
         (t nil))
       visualize-arm-coords))
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
@@ -411,7 +423,7 @@
             (send self :motion-cb :head head :torso torso
                   :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror
                   :gripper-button gripper-button))
-      (when (and head loop-enable) (send self :head-cb))
-      (when visualize (send self :visualize visualize-arm-coords)))))
+      (if (and head loop-enable) (send self :head-cb))
+      (if visualize (send self :visualize visualize-arm-coords)))))
 
 (provide :robot-vive-interface)
