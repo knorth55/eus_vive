@@ -60,9 +60,10 @@
     (send self :set-val 'rarm-controller-frame-id
           (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    (dolist (arm (list :larm :rarm))
-      (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val arm :controller-frame-id))
-                      sensor_msgs::Joy #'send self :controller-button-cb arm))
+    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :larm :controller-frame-id))
+                          sensor_msgs::Joy #'send self :controller-button-cb :larm)
+    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :rarm :controller-frame-id))
+                          sensor_msgs::Joy #'send self :controller-button-cb :rarm)
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (send-super* :init args))
   (:reset-arm (arm)

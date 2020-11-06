@@ -44,61 +44,85 @@
           ((equal arm :rarm) rgripper-interface)
           (t nil)))
   (:start-grasp (&optional (arm :arms) &rest args)
-    (if (equal arm :arms)
-      (progn
-        (send* self :start-grasp :larm :wait nil args)
-        (send* self :start-grasp :rarm args))
-      (cond
-        ((equal (send self :get-gripper-type arm) :parallel)
-         (send-super* :start-grasp arm args))
-        ((or (equal (send self :get-gripper-type arm) :softhand)
-             (equal (send self :get-gripper-type arm) :softhand-v2))
-         (send (send self :get-gripper-interface arm) :start-grasp))
-        (t nil))))
+    (cond
+      ((equal arm :arms)
+       (and (send* self :start-grasp-step :larm args)
+            (send* self :start-grasp-step :rarm args)))
+      (t (send self :start-grasp-step arm))))
+  (:start-grasp-step (arm &rest args)
+    (cond
+      ((equal (send self :get-gripper-type arm) :parallel)
+       (send-super* :start-grasp arm args))
+      ((or (equal (send self :get-gripper-type arm) :softhand)
+           (equal (send self :get-gripper-type arm) :softhand-v2))
+       (send (send self :get-gripper-interface arm) :start-grasp))
+      (t nil)))
   (:stop-grasp (&optional (arm :arms) &rest args)
-    (if (equal arm :arms)
-      (progn
-        (send* self :stop-grasp :larm :wait nil args)
-        (send* self :stop-grasp :rarm args))
-      (cond
-        ((equal (send self :get-gripper-type arm) :parallel)
-         (send-super* :stop-grasp arm args))
-        ((or (equal (send self :get-gripper-type arm) :softhand)
-             (equal (send self :get-gripper-type arm) :softhand-v2))
-         (send (send self :get-gripper-interface arm) :stop-grasp))
-        (t nil))))
+    (cond
+      ((equal arm :arms)
+       (and (send* self :stop-grasp-step :larm args)
+            (send* self :stop-grasp-step :rarm args)))
+      (t (send self :stop-grasp-step arm))))
+  (:stop-grasp-step (arm &rest args)
+    (cond
+      ((equal (send self :get-gripper-type arm) :parallel)
+       (send-super* :stop-grasp arm args))
+      ((or (equal (send self :get-gripper-type arm) :softhand)
+           (equal (send self :get-gripper-type arm) :softhand-v2))
+       (send (send self :get-gripper-interface arm) :stop-grasp))
+      (t nil)))
   (:open-thumb (&optional (arm :arms))
-    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
-      (cond
-        ((equal (send self :get-gripper-type a) :softhand-v2)
-         (send (send self :get-gripper-interface a) :open-thumb))
-        (t
-         (ros::ros-warn ":open-thumb is invalid for this gripper type")
-         nil))))
+    (cond
+      ((equal arm :arms)
+       (and (send self :open-thumb-step :larm)
+            (send self :open-thumb-step :rarm)))
+      (t (send self :open-thumb-step arm))))
+  (:open-thumb-step (arm)
+    (cond
+      ((equal (send self :get-gripper-type arm) :softhand-v2)
+       (send (send self :get-gripper-interface arm) :open-thumb))
+      (t
+       (ros::ros-warn ":open-thumb is invalid for this gripper type")
+       nil)))
   (:close-thumb (&optional (arm :arms))
-    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
-      (cond
-        ((equal (send self :get-gripper-type a) :softhand-v2)
-         (send (send self :get-gripper-interface a) :close-thumb))
-        (t
-         (ros::ros-warn ":close-thumb is invalid for this gripper type")
-         nil))))
+    (cond
+      ((equal arm :arms)
+       (and (send self :close-thumb-step :larm)
+            (send self :close-thumb-step :rarm)))
+      (t (send self :close-thumb-step arm))))
+  (:close-thumb-step (arm)
+    (cond
+      ((equal (send self :get-gripper-type arm) :softhand-v2)
+       (send (send self :get-gripper-interface arm) :close-thumb))
+      (t
+       (ros::ros-warn ":close-thumb is invalid for this gripper type")
+       nil)))
   (:start-heater (&optional (arm :arms))
-    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
-      (cond
-        ((equal (send self :get-gripper-type a) :softhand-v2)
-         (send (send self :get-gripper-interface a) :start-heater))
-        (t
-         (ros::ros-warn ":start-heater is invalid for this gripper type")
-         nil))))
+    (cond
+      ((equal arm :arms)
+       (and (send self :start-heater-step :larm)
+            (send self :start-heater-step :rarm)))
+      (t (send self :start-heater-step arm))))
+  (:start-heater-step (arm)
+    (cond
+      ((equal (send self :get-gripper-type arm) :softhand-v2)
+       (send (send self :get-gripper-interface arm) :start-heater))
+      (t
+       (ros::ros-warn ":start-heater is invalid for this gripper type")
+       nil)))
   (:stop-heater (&optional (arm :arms))
-    (dolist (a (if (eq arm :arms) (list :larm :rarm) (list arm)))
-      (cond
-        ((equal (send self :get-gripper-type a) :softhand-v2)
-         (send (send self :get-gripper-interface a) :stop-heater))
-        (t
-         (ros::ros-warn ":stop-heater is invalid for this gripper type")
-         nil)))))
+    (cond
+      ((equal arm :arms)
+       (and (send self :stop-heater-step :larm)
+            (send self :stop-heater-step :rarm)))
+      (t (send self :stop-heater-step arm))))
+  (:stop-heater-step (arm)
+    (cond
+      ((equal (send self :get-gripper-type arm) :softhand-v2)
+       (send (send self :get-gripper-interface arm) :stop-heater))
+      (t
+       (ros::ros-warn ":stop-heater is invalid for this gripper type")
+       nil))))
 
 
 (defun eus_vive::baxter-init
