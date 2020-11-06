@@ -24,12 +24,6 @@
   (if (eq device-type :oculus)
     (oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
     (vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
-  ;; overwrite s0, e0 joint limit
-  ;; do not rotate s0, e0 joint and stay arm in front of the robot
-  (send *baxter* :left_s0 :max-angle 30)
-  (send *baxter* :left_e0 :max-angle 30)
-  (send *baxter* :right_s0 :min-angle -30)
-  (send *baxter* :right_e0 :min-angle -30)
   (send *irtviewer* :draw-objects)
   (x::window-main-one))
 
