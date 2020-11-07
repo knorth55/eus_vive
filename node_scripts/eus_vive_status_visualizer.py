@@ -45,7 +45,7 @@ class EusViveStatusVisualizer(ConnectionBasedTransport):
                     imgs[arm][:, :, 2] = 255
                 else:
                     # larm: green
-                    # rarm: blue 
+                    # rarm: blue
                     imgs[arm][:, :, index] = 255
                 if self.hand_close[arm]:
                     # orange

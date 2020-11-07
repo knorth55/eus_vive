@@ -43,8 +43,10 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             lhand_open = False
             lhand_close = False
         else:
-            lhand_open = not self.hand_close['larm'] and self.prev_hand_close['larm']
-            lhand_close = self.hand_close['larm'] and not self.prev_hand_close['larm']
+            lhand_open = (not self.hand_close['larm']
+                          and self.prev_hand_close['larm'])
+            lhand_close = (self.hand_close['larm']
+                           and not self.prev_hand_close['larm'])
         larm_collision = self.collision['larm'] if larm_enable else False
         larm_track_error = self.track_error['larm'] if larm_enable else False
 
@@ -59,8 +61,10 @@ class EusViveStatusSounder(ConnectionBasedTransport):
             rhand_open = False
             rhand_close = False
         else:
-            rhand_open = not self.hand_close['rarm'] and self.prev_hand_close['rarm']
-            rhand_close = self.hand_close['rarm'] and not self.prev_hand_close['rarm']
+            rhand_open = (not self.hand_close['rarm']
+                          and self.prev_hand_close['rarm'])
+            rhand_close = (self.hand_close['rarm']
+                           and not self.prev_hand_close['rarm'])
         rarm_collision = self.collision['rarm'] if rarm_enable else False
         rarm_collision = self.collision['rarm'] if rarm_enable else False
         rarm_track_error = self.track_error['rarm'] if rarm_enable else False
@@ -201,7 +205,6 @@ class EusViveStatusSounder(ConnectionBasedTransport):
                 warning_msg.arg = "right arm tracking error"
             self.pub.publish(warning_msg)
             rospy.sleep(2.0)
-
 
     def _status_cb(self, msg):
         for status in msg.status:
