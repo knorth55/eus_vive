@@ -87,6 +87,14 @@
              :rotation-axis t :move-target (send robot arm :end-coords)
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
              :debug-view nil args)))
+  (:open-thumb (arm)
+    (send robot-interface :open-thumb arm))
+  (:close-thumb (arm)
+    (send robot-interface :close-thumb arm))
+  (:start-heater (arm)
+    (send robot-interface :start-heater arm))
+  (:stop-heater (arm)
+    (send robot-interface :stop-heater arm))
   (:thumb-rotate-cb (arm &key (mirror nil) (button :trackpad))
     (if (equal (send self :get-arm-val arm :gripper-type) :softhand-v2)
       (let ((thumb-rotate-button-p
