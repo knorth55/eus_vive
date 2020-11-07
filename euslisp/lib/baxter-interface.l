@@ -74,8 +74,9 @@
   (:open-thumb (&optional (arm :arms))
     (cond
       ((equal arm :arms)
-       (and (send self :open-thumb-step :larm)
-            (send self :open-thumb-step :rarm)))
+       (let ((larm-open-thumb-p (send self :open-thumb-step :larm))
+             (rarm-open-thumb-p (send self :open-thumb-step :rarm)))
+         (and larm-open-thumb-p rarm-open-thumb-p)))
       (t (send self :open-thumb-step arm))))
   (:open-thumb-step (arm)
     (cond
@@ -87,8 +88,9 @@
   (:close-thumb (&optional (arm :arms))
     (cond
       ((equal arm :arms)
-       (and (send self :close-thumb-step :larm)
-            (send self :close-thumb-step :rarm)))
+       (let ((larm-close-thumb-p (send self :close-thumb-step :larm))
+             (rarm-close-thumb-p (send self :close-thumb-step :rarm)))
+         (and larm-close-thumb-p rarm-close-thumb-p)))
       (t (send self :close-thumb-step arm))))
   (:close-thumb-step (arm)
     (cond
@@ -100,8 +102,9 @@
   (:start-heater (&optional (arm :arms))
     (cond
       ((equal arm :arms)
-       (and (send self :start-heater-step :larm)
-            (send self :start-heater-step :rarm)))
+       (let ((larm-start-heater-p (send self :start-heater-step :larm))
+             (rarm-start-heater-p (send self :start-heater-step :rarm)))
+         (and larm-start-heater-p rarm-start-heater-p)))
       (t (send self :start-heater-step arm))))
   (:start-heater-step (arm)
     (cond
@@ -113,8 +116,9 @@
   (:stop-heater (&optional (arm :arms))
     (cond
       ((equal arm :arms)
-       (and (send self :stop-heater-step :larm)
-            (send self :stop-heater-step :rarm)))
+       (let ((larm-stop-heater-p (send self :stop-heater-step :larm))
+             (rarm-stop-heater-p (send self :stop-heater-step :rarm)))
+         (and larm-stop-heater-p rarm-stop-heater-p)))
       (t (send self :stop-heater-step arm))))
   (:stop-heater-step (arm)
     (cond
