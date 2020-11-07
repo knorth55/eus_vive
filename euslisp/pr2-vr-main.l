@@ -6,20 +6,14 @@
 
 (defun vive-init (&key (loop-enable t))
   (pr2-vive-init :loop-enable loop-enable)
-  (send *ri* :angle-vector (send *pr2* :reset-pose))
-  (send *ri* :stop-grasp :arms :wait nil)
-  (send *ri* :wait-interpolation)
-  (send *ri* :clear-costmap)
+  (send *ti* :reset-pose)
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
 
 (defun oculus-init (&key (loop-enable t))
   (pr2-oculus-init :loop-enable loop-enable)
-  (send *ri* :angle-vector (send *pr2* :reset-pose))
-  (send *ri* :stop-grasp :arms :wait nil)
-  (send *ri* :wait-interpolation)
-  (send *ri* :clear-costmap))
+  (send *ti* :reset-pose))
 
 
 (defun init (&key (loop-enable t) (device-type :vive))
@@ -34,10 +28,10 @@
 (defun main (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                   (visualize t) (loop-enable t) (device-type :vive))
   (init :loop-enable t :device-type device-type)
-  ; (unless head
+  ; (if (not head)
   ;   (while (not (send *ti* :calibrate))
   ;     (ros::spin-once)))
-  (unless loop-enable (send *ti* :disable))
+  (if (not loop-enable) (send *ti* :disable))
   (if (eq device-type :oculus)
     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
           :enable-button :menu :gripper-button :trigger :visualize visualize)

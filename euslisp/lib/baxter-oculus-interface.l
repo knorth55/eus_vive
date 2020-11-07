@@ -34,19 +34,26 @@
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance -100)
     (send self :set-val 'head->shoulder-z-distance 30)
-    (send self :set-val 'gripper-status-topic-name
-          '(format nil "/robot/end_effector/~A_gripper/gripper_action/status" (if (eq arm :larm) "left" "right")))
-    (send self :set-val 'collision-status-topic-name
-          '(format nil "/robot/limb/~A/collision_detection_state" (if (eq arm :larm) "left" "right")))
+    (send self :set-arm-val :larm :gripper-status-topic-name
+          "/robot/end_effector/left_gripper/gripper_action/status")
+    (send self :set-arm-val :rarm :gripper-status-topic-name
+          "/robot/end_effector/right_gripper/gripper_action/status")
+    (send self :set-arm-val :larm :collision-status-topic-name
+          "/robot/limb/left/collision_detection_state")
+    (send self :set-arm-val :rarm :collision-status-topic-name
+          "/robot/limb/right/collision_detection_state")
     (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
     (send-super* :init args))
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send-super :reset-service req)
-      (send self :stop-grasp :arms :wait nil)
-      (send self :angle-vector (send robot :reset-teleop-pose) 5000)
-      (send robot-interface :wait-interpolation)
+      (send self :reset-pose)
       res))
+  (:reset-pose ()
+    (send self :stop-grasp :arms :wait nil)
+    (send self :close-thumb :arms)
+    (send self :angle-vector (send robot :reset-teleop-pose) 5000)
+    (send robot-interface :wait-interpolation))
   (:move-head (yaw pitch roll)
     ;; no pitch joint
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
@@ -56,9 +63,8 @@
     (let (coords)
       (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
-      (when coords
-        (send coords :rotate pi/2 :y :world)
-        coords)))
+      (if coords (send coords :rotate pi/2 :y :world))
+      coords))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -74,11 +80,11 @@
 
 
 (defun baxter-oculus-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_oculus::baxter-init :lgripper lgripper :rgripper rgripper)
+  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
-                                :name "camera"))
+                                :name "camera" :create-viewer t))
   (send *camera-model* :translate #f(1500 0 600))
   (send *camera-model* :rotate -pi/2 :y :world)
   (send *camera-model* :rotate -pi/2 :x :world)
@@ -89,15 +95,17 @@
   (setq *background-cube* (make-cube 10 6000 6000))
   (send *background-cube* :set-color #f(1 1 1))
   (send *background-cube* :translate #f(-1000 0 0))
-  (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable
+                       :lgripper lgripper :rgripper rgripper)))
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri*)
-    (ros::ros-info "cancel larm controller")
-    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-    (ros::ros-info "cancel rarm controller")
-    (send *ri* :cancel-angle-vector :controller-type :rarm-controller))
+  (if (boundp '*ri*)
+    (progn
+      (ros::ros-info "cancel larm controller")
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (ros::ros-info "cancel rarm controller")
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
   (reset))
 
 

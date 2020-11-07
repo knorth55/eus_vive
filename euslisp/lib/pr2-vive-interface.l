@@ -38,8 +38,10 @@
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
-    (send self :set-val 'gripper-status-topic-name
-          '(format nil "/~A_gripper_controller/gripper_action/status" (if (eq arm :larm) "l" "r")))
+    (send self :set-arm-val :larm :gripper-status-topic-name
+          "/l_gripper_controller/gripper_action/status")
+    (send self :set-arm-val :rarm :gripper-status-topic-name
+          "/r_gripper_controller/gripper_action/status")
     ;; for pr2 move base
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
@@ -51,10 +53,13 @@
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send self :reset :loop-enable nil)
-      (send self :stop-grasp :arms :wait nil)
-      (send self :angle-vector (send robot :reset-pose) 5000)
-      (send robot-interface :wait-interpolation)
+      (send self :reset-pose)
       res))
+  (:reset-pose ()
+    (send self :stop-grasp :arms :wait nil)
+    (send self :angle-vector (send robot :reset-pose) 5000)
+    (send robot-interface :wait-interpolation)
+    (send robot-interface :clear-costmap))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -75,7 +80,8 @@
   (pr2-init)
   (objects (list *pr2*))
   (setq *camera-model*
-        (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5))
+        (make-camera-from-param :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+                                :create-viewer t))
   (send *camera-model* :translate #f(1500 0 800))
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
@@ -83,12 +89,12 @@
 
 
 (defun signal-hook (sig code)
-  (when (boundp '*ri*)
-    (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-    (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
-    (send *ri* :cancel-angle-vector :controller-type :torso-controller))
-  (when (boundp '*ti*)
-    (send *ti* :switch-joy-to-ps3joy))
+  (if (boundp '*ri*)
+    (progn
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
+      (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
+  (if (boundp '*ti*) (send *ti* :switch-joy-to-ps3joy))
   (reset))
 
 (unix:signal 2 'signal-hook)
