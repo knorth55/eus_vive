@@ -5,18 +5,14 @@
 
 (defun vive-init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t))
   (baxter-vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
-  (send *ri* :stop-grasp :arms :wait nil)
-  (send *ri* :angle-vector-raw (send *baxter* :reset-teleop-pose) 5000)
-  (send *ri* :wait-interpolation)
+  (send *ti* :reset-pose)
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
 
 (defun oculus-init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t))
   (baxter-oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
-  (send *ri* :stop-grasp :arms :wait nil)
-  (send *ri* :angle-vector-raw (send *baxter* :reset-teleop-pose) 5000)
-  (send *ri* :wait-interpolation))
+  (send *ti* :reset-pose))
 
 
 (defun init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
