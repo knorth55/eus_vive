@@ -1,4 +1,5 @@
 # eus_vive
+
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/knorth55/eus_vive/CI/master)](https://github.com/knorth55/eus_vive/actions)
 
 Robot remote control program with Vive/Oculus
@@ -6,6 +7,7 @@ Robot remote control program with Vive/Oculus
 ## Note
 
 This package depends on these branches below:
+
 - [knorth55/baxter_interface@baxter-vive-control](https://github.com/knorth55/baxter_interface/tree/baxter-vive-control)
 - [knorth55/jsk_robot@vive-control](https://github.com/knorth55/jsk_robot/tree/vive-control)
   - [jsk-ros-pkg/jsk_robot#1150](https://github.com/jsk-ros-pkg/jsk_robot/pull/1150)
@@ -33,13 +35,13 @@ This package depends on these branches below:
 - Vive
   - [x] Arm motion tracking
   - [x] Controller button interface
-  - [x] HMD visual interface 
+  - [x] HMD visual interface
   - [x] Vibration interface
   - [x] Sound interface
 - Oculus
   - [x] Arm motion tracking
   - [ ] Controller button interface
-  - [ ] HMD visual interface 
+  - [ ] HMD visual interface
   - [ ] Vibration interface
   - [ ] Sound interface
 
@@ -87,7 +89,7 @@ catkin config
 catkin build
 ```
 
-## How to start 
+## How to start
 
 ### PR2 + Vive
 
@@ -99,7 +101,7 @@ rossetmaster pr1040
 roslaunch eus_vive pr2_73b2_vive.launch
 ```
 
-#### PR1012 in JSK 610 
+#### PR1012 in JSK 610
 
 ```bash
 rossetip
@@ -150,6 +152,7 @@ rossetip
 rossetbaster
 roslaunch eus_vive baxter_miraikan_remote_vive.launch
 ```
+
 ##### Visualization, display and feedback PC (Pilot side)
 
 ```bash
@@ -166,11 +169,9 @@ rossetbaster
 roslaunch eus_vive baxter.launch
 ```
 
-
 ## How to use Vive controller
 
 ![Vive controller](https://www.vive.com/media/filer_public/e3/da/e3daf208-4d4e-4adf-b911-22f9458ab883/guid-2d5454b7-1225-449c-b5e5-50a5ea4184d6-web.png)
-
 
 ### PR2
 
@@ -186,7 +187,7 @@ You can enable arm mode of right and left arm separately.
 
 | Command | Usage |
 |:-:|:-:|
-| 7 / Trigger | Gripper toggle: open/close (Default: open) | 
+| 7 / Trigger | Gripper toggle: open/close (Default: open) |
 | Controller pose | robot end effector's pose |
 
 #### Base mode
@@ -219,16 +220,18 @@ You can enable arm mode of right and left arm separately.
 ## Demo
 
 ### PR2 Fridge demo
-- Trial 1: https://drive.google.com/open?id=1NsNnplM9bZQi78BY5IJC7CGwROcHd_Nc
-- Trial 2: https://drive.google.com/open?id=1BSpfWCgKMXQykrTQrrrhYMP5UryFPHr7
-- Trial 3: https://drive.google.com/open?id=13E_h0JvgZn_RpvnEMDYGR6lNazLvFG0w
+
+- [Trial 1](https://drive.google.com/open?id=1NsNnplM9bZQi78BY5IJC7CGwROcHd_Nc)
+- [Trial 2](https://drive.google.com/open?id=1BSpfWCgKMXQykrTQrrrhYMP5UryFPHr7)
+- [Trial 3](https://drive.google.com/open?id=13E_h0JvgZn_RpvnEMDYGR6lNazLvFG0w)
 
 ### Baxter APC demo
-- Trial 1: https://drive.google.com/open?id=156y7_M6OwD9z6B4RKwZ0UPLnyHKaNKFm
-- Trial 2: https://drive.google.com/open?id=1Qb0k0Uzj0pTZhNvM7VIgD6g0RC1ohqg1
-- Trial 3: https://drive.google.com/open?id=10XZ_5bBKgEk_QqtONCfnXYRLKTE6rpgE
-- Trial 4: https://drive.google.com/open?id=1IyVME3OggckIfDYCDwIjQmdNneWYdXWd
-- Trial 5: https://drive.google.com/open?id=1jwq_UdDzgDf-UfBpAS0G0KeykvZ-gLhW
+
+- [Trial 1](https://drive.google.com/open?id=156y7_M6OwD9z6B4RKwZ0UPLnyHKaNKFm)
+- [Trial 2](https://drive.google.com/open?id=1Qb0k0Uzj0pTZhNvM7VIgD6g0RC1ohqg1)
+- [Trial 3](https://drive.google.com/open?id=10XZ_5bBKgEk_QqtONCfnXYRLKTE6rpgE)
+- [Trial 4](https://drive.google.com/open?id=1IyVME3OggckIfDYCDwIjQmdNneWYdXWd)
+- [Trial 5](https://drive.google.com/open?id=1jwq_UdDzgDf-UfBpAS0G0KeykvZ-gLhW)
 
 ## Tips
 
