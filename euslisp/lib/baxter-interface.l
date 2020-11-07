@@ -55,7 +55,7 @@
        (send-super* :start-grasp arm args))
       ((or (equal (send self :get-gripper-type arm) :softhand)
            (equal (send self :get-gripper-type arm) :softhand-v2))
-       (send (send self :get-gripper-interface arm) :start-grasp arm))
+       (send (send self :get-gripper-interface arm) :start-grasp))
       (t nil)))
   (:stop-grasp (&optional (arm :arms) &rest args)
     (cond
@@ -69,7 +69,7 @@
        (send-super* :stop-grasp arm args))
       ((or (equal (send self :get-gripper-type arm) :softhand)
            (equal (send self :get-gripper-type arm) :softhand-v2))
-       (send (send self :get-gripper-interface arm) :stop-grasp arm))
+       (send (send self :get-gripper-interface arm) :stop-grasp))
       (t nil)))
   (:open-thumb (&optional (arm :arms))
     (cond
@@ -80,7 +80,7 @@
   (:open-thumb-step (arm)
     (cond
       ((equal (send self :get-gripper-type arm) :softhand-v2)
-       (send (send self :get-gripper-interface arm) :open-thumb arm))
+       (send (send self :get-gripper-interface arm) :open-thumb))
       (t
        (ros::ros-warn ":open-thumb is invalid for this gripper type")
        nil)))
@@ -93,7 +93,7 @@
   (:close-thumb-step (arm)
     (cond
       ((equal (send self :get-gripper-type arm) :softhand-v2)
-       (send (send self :get-gripper-interface arm) :close-thumb arm))
+       (send (send self :get-gripper-interface arm) :close-thumb))
       (t
        (ros::ros-warn ":close-thumb is invalid for this gripper type")
        nil)))
@@ -106,7 +106,7 @@
   (:start-heater-step (arm)
     (cond
       ((equal (send self :get-gripper-type arm) :softhand-v2)
-       (send (send self :get-gripper-interface arm) :start-heater arm))
+       (send (send self :get-gripper-interface arm) :start-heater))
       (t
        (ros::ros-warn ":start-heater is invalid for this gripper type")
        nil)))
@@ -119,7 +119,7 @@
   (:stop-heater-step (arm)
     (cond
       ((equal (send self :get-gripper-type arm) :softhand-v2)
-       (send (send self :get-gripper-interface arm) :stop-heater arm))
+       (send (send self :get-gripper-interface arm) :stop-heater))
       (t
        (ros::ros-warn ":stop-heater is invalid for this gripper type")
        nil))))
