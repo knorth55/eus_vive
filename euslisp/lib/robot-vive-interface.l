@@ -334,6 +334,7 @@
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
   (:reset (&key (loop-enable t))
     (send-super :reset :loop-enable loop-enable)
+    (send robot-interface :clear-costmap)
     (send self :set-val 'vx 0.0)
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
