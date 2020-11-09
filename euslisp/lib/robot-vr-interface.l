@@ -37,12 +37,12 @@
           larm-grasp-timeout-p
           larm-grasp-start-time
           larm-collision-p
+          larm-current-end-coords
+          larm-track-error-p
           larm-coords-visualize-topic-name
           larm-grasp-visualize-topic-name
           larm-gripper-status-topic-name
           larm-collision-status-topic-name
-          larm-current-end-coords
-          larm-track-error-p
           larm-gripper-type
           rarm-enable
           rarm-grasp
@@ -50,12 +50,12 @@
           rarm-grasp-timeout-p
           rarm-grasp-start-time
           rarm-collision-p
+          rarm-current-end-coords
+          rarm-track-error-p
           rarm-coords-visualize-topic-name
           rarm-grasp-visualize-topic-name
           rarm-gripper-status-topic-name
           rarm-collision-status-topic-name
-          rarm-current-end-coords
-          rarm-track-error-p
           rarm-gripper-type
           ik-stop-step
           scale
@@ -143,9 +143,11 @@
                             #'send self :calib-rarm-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset-arm-val (arm)
+    (send self :set-arm-val arm :enable nil)
     (send self :set-arm-val arm :grasp nil)
     (send self :set-arm-val arm :grasping-p nil)
-    (send self :set-arm-val arm :enable nil)
+    (send self :set-arm-val arm :grasp-timeout-p nil)
+    (send self :set-arm-val arm :grasp-start-time nil)
     (send self :set-arm-val arm :collision-p nil)
     (send self :set-arm-val arm :current-end-coords nil)
     (send self :set-arm-val arm :track-error-p nil))
