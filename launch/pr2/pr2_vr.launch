@@ -7,6 +7,7 @@
   <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
+  <arg name="display" default="true" />
   <arg name="home_dir" default="$(env HOME)" />
 
   <!-- device -->
@@ -29,10 +30,6 @@
   <arg name="workspace_min_z" default="false" />
 
   <!-- camera-->
-  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
-  <arg name="RGB_CAMERA_INFO" default="/kinect_head/rgb/camera_info" />
-  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
-  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
   <arg name="image_left" default="/virtual_camera/left/rviz_image" />
   <arg name="image_right" default="/virtual_camera/right/rviz_image" />
   <arg name="DECOMP_CAMERA_INFO"
@@ -43,6 +40,13 @@
        default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+
+  <!-- pr1012 and pr1040 parameters -->
+  <arg name="CAMERA_INFO" />
+  <arg name="RGB_CAMERA_INFO" />
+  <arg name="IMAGE_COLOR" />
+  <arg name="IMAGE_DEPTH" />
+
   <!-- prosilica -->
   <!--
   <arg name="PROSILICA_RGB_CAMERA_INFO"
@@ -157,43 +161,16 @@
     </group>
   </group>
 
-  <node name="rosconsole_overlay_text"
-        pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
-    <rosparam>
-      nodes:
-        - /pr2_vr_main
-      exclude_regexes:
-        - .*follow_joint_trajectory.*
-        - .*:joint-angle.*
-        - .*:wait-interpolation-until.*
-        - ^;;.*
-        - if you do not have gripper,.*
-    </rosparam>
-  </node>
+  <!-- launch display -->
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_display.launch"
+           pass_all_args="true" if="$(arg display)" />
 
-  <!-- launch robot sounder -->
-  <node name="eus_vive_status_sounder"
-      pkg="eus_vive" type="eus_vive_status_sounder.py">
-    <remap from="~output/sound" to="/remotesound" />
-    <remap from="~input/status" to="/eus_vive/status" />
-  </node>
-  <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
-  <node name="remote_soundplay_node"
-        pkg="sound_play" type="soundplay_node.py">
-    <remap from="sound_play" to="remotesound" />
-  </node>
-  <node name="remote_soundplay_jp_node"
-        pkg="sound_play" type="soundplay_node.py">
-    <remap from="remotesound" to="remotesound_jp" />
-    <remap from="sound_play" to="remotesound_jp" />
-  </node>
+  <!-- launch logging -->
+  <include file="$(find eus_vive)/launch/pr2/pr2_logging.launch" if="$(arg logging)">
+    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
+    <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
+    <arg name="COMP_IMAGE_COLOR" value="$(arg COMP_IMAGE_COLOR)" />
+    <arg name="COMP_IMAGE_DEPTH" value="$(arg COMP_IMAGE_DEPTH)" />
+  </include>
 
-  <!-- launch rqt_gui -->
-  <node name="service_button" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
-
-  <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg kinfu)"
-        args="-d $(find eus_vive)/rvizconfig/pr2/pr2_vr_visualization_with_kinfu.rviz" respawn="true" />
-  <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg kinfu)"
-        args="-d $(find eus_vive)/rvizconfig/pr2/pr2_vr_visualization.rviz" respawn="true" />
 </launch>

@@ -1,0 +1,16 @@
+<launch>
+  <arg name="CAMERA_INFO" />
+  <arg name="RGB_CAMERA_INFO" />
+  <arg name="COMP_IMAGE_COLOR" />
+  <arg name="COMP_IMAGE_DEPTH" />
+
+  <node name="pr2_vr_rosbag_record" pkg="rosbag" type="record"
+        args="/eus_vive/status /tf /joint_states
+              $(CAMERA_INFO)
+              $(RGB_CAMERA_INFO)
+              $(COMP_IMAGE_COLOR)
+              $(COMP_IMAGE_DEPTH)
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vr"
+        output="screen" if="$(arg logging)" />
+
+</launch>
