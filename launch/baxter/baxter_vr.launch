@@ -113,10 +113,6 @@
     </group>
   </group>
 
-  <!-- launch rqt_gui -->
-  <node name="service_button" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
-
   <!-- launch display -->
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch"
            pass_all_args="true" if="$(arg display)" />
