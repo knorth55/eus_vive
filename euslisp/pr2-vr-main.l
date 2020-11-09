@@ -6,14 +6,20 @@
 
 (defun vive-init (&key (loop-enable t))
   (pr2-vive-init :loop-enable loop-enable)
-  (send *ti* :reset-pose)
+  (send *ti* :reset-arm :larm :wait nil)
+  (send *ti* :reset-arm :rarm :wait nil)
+  (send *ti* :reset-torso :wait nil)
+  (send *ri* :wait-interpolation)
   (send *ti* :send-joy-feedback :larm)
   (send *ti* :send-joy-feedback :rarm))
 
 
 (defun oculus-init (&key (loop-enable t))
   (pr2-oculus-init :loop-enable loop-enable)
-  (send *ti* :reset-pose))
+  (send *ti* :reset-arm :larm :wait nil)
+  (send *ti* :reset-arm :rarm :wait nil)
+  (send *ti* :reset-torso :wait nil)
+  (send *ri* :wait-interpolation))
 
 
 (defun init (&key (loop-enable t) (device-type :vive))
