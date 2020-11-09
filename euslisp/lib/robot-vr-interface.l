@@ -156,7 +156,7 @@
     (send self :reset-arm :larm :wait nil)
     (send self :reset-arm :rarm :wait nil)
     (if torso (send self :reset-torso :wait nil))
-    (send self :wait-interpolation))
+    (send robot-interface :wait-interpolation))
   (:reset-arm (arm &key (wait t) (reset-pose :reset-pose))
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
