@@ -68,15 +68,3 @@
   (send *camera-model* :rotate -1.57 :y :world)
   (send *camera-model* :rotate -1.57 :x :world)
   (setq *ti* (instance pr2-oculus-interface :init :loop-enable loop-enable)))
-
-
-(defun signal-hook (sig code)
-  (if (boundp '*ri*)
-    (progn
-      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
-      (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
-  (reset))
-
-(unix:signal 2 'signal-hook)
-(unix:signal 15 'signal-hook)

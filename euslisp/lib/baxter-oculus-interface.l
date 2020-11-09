@@ -94,17 +94,3 @@
   (send *background-cube* :translate #f(-1000 0 0))
   (setq *ti* (instance baxter-oculus-interface :init :loop-enable loop-enable
                        :lgripper lgripper :rgripper rgripper)))
-
-
-(defun signal-hook (sig code)
-  (if (boundp '*ri*)
-    (progn
-      (ros::ros-info "cancel larm controller")
-      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-      (ros::ros-info "cancel rarm controller")
-      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
-  (reset))
-
-
-(unix:signal 2 'signal-hook)
-(unix:signal 15 'signal-hook)
