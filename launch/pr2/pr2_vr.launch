@@ -171,12 +171,27 @@
     </rosparam>
   </node>
 
+  <!-- launch robot sounder -->
+  <node name="eus_vive_status_sounder"
+      pkg="eus_vive" type="eus_vive_status_sounder.py">
+    <remap from="~output/sound" to="/remotesound" />
+    <remap from="~input/status" to="/eus_vive/status" />
+  </node>
   <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
 
   <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons" output="screen">
     <rosparam subst_value="true" >
       layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
     </rosparam>
+  </node>
+  <node name="remote_soundplay_node"
+        pkg="sound_play" type="soundplay_node.py">
+    <remap from="sound_play" to="remotesound" />
+  </node>
+  <node name="remote_soundplay_jp_node"
+        pkg="sound_play" type="soundplay_node.py">
+    <remap from="remotesound" to="remotesound_jp" />
+    <remap from="sound_play" to="remotesound_jp" />
   </node>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg kinfu)"
