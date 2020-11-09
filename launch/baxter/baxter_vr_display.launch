@@ -111,8 +111,12 @@
         args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
 
   <!-- launch rviz -->
-  <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg head)"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_visualization.rviz" />
+  <group unless="$(arg head)">
+    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg republish)"
+          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_hmd_visualization.rviz" />
+    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" unless="$(arg republish)"
+          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_visualization.rviz" />
+  </group>
   <group unless="$(arg head)">
     <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg mirror)"
           args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_mirror_visualization.rviz" />
