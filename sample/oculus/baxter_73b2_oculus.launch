@@ -16,7 +16,7 @@
     <arg name="head" value="$(arg head)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="twitter" value="true" />
-    <arg name="debug" value="true" />
+    <arg name="debug" value="false" />
     <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="true" />
     <arg name="launch_xdisplay" value="true" />

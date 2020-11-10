@@ -7,7 +7,7 @@
     <arg name="head" value="false" />
     <arg name="respeaker" value="false" />
     <arg name="twitter" value="false" />
-    <arg name="debug" value="true" />
+    <arg name="debug" value="false" />
     <arg name="custom_xdisplay" value="false" />
     <arg name="launch_baxter" value="true" />
     <arg name="launch_xdisplay" value="true" />
