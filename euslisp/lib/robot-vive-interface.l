@@ -238,7 +238,7 @@
            (prev-trigger (send self :get-arm-val arm :prev-trigger))
            (trigger-count (send self :get-arm-val arm :trigger-count))
            (controller-trigger-button-p (and (not (eq trigger prev-trigger))
-                                      (if button-toggle trigger t))))
+                                             (if button-toggle trigger t))))
       (if button-toggle
         (if (> trigger-count 0)
           (progn
@@ -255,7 +255,7 @@
            (prev-menu (send self :get-arm-val arm :prev-menu))
            (menu-count (send self :get-arm-val arm :menu-count))
            (controller-menu-button-p (and (not (eq menu prev-menu))
-                                   (if button-toggle menu t))))
+                                          (if button-toggle menu t))))
       (if button-toggle
         (if (> menu-count 0)
           (progn
@@ -272,7 +272,7 @@
            (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
            (trackpad-count (send self :get-arm-val arm :trackpad-count))
            (controller-trackpad-button-p (and (not (eq trackpad prev-trackpad))
-                                       (if button-toggle trackpad t))))
+                                              (if button-toggle trackpad t))))
       (if button-toggle
         (if (> trackpad-count 0)
           (progn
@@ -289,7 +289,7 @@
            (prev-grip (send self :get-arm-val arm :prev-grip))
            (grip-count (send self :get-arm-val arm :grip-count))
            (controller-grip-button-p (and (not (eq grip prev-grip))
-                                   (if button-toggle grip t))))
+                                          (if button-toggle grip t))))
       (if button-toggle
         (if (> grip-count 0)
           (progn
