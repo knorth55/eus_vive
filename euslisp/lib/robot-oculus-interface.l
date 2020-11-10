@@ -3,7 +3,7 @@
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
 
-(load "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
 (defclass robot-oculus-interface
