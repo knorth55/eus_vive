@@ -2,6 +2,7 @@
 (ros::load-ros-manifest "baxter_core_msgs")
 
 (require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
+(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 (require :baxter-vr-interface "package://eus_vive/euslisp/lib/baxter-vr-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
