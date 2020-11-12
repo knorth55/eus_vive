@@ -223,7 +223,7 @@
           (send self :send-joy-feedback arm)
           nil))))
   (:controller-button-cb (arm msg)
-    (if loop-enable
+    (if (and loop-enable (send self :get-arm-val arm :loop-enable))
       (progn
         (send self :set-arm-val arm :prev-trigger (send self :get-arm-val arm :trigger))
         (send self :set-arm-val arm :prev-menu (send self :get-arm-val arm :menu))

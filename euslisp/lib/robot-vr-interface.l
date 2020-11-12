@@ -54,6 +54,7 @@
           larm-gripper-status-topic-name
           larm-collision-status-topic-name
           larm-gripper-type
+          larm-loop-enable
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -67,6 +68,7 @@
           rarm-gripper-status-topic-name
           rarm-collision-status-topic-name
           rarm-gripper-type
+          rarm-loop-enable
           ik-stop-step
           scale
           av-tm
@@ -193,6 +195,8 @@
     (send self :set-arm-val arm :track-error-p nil))
   (:reset (&key (loop-enable t) (torso t))
     (send self :set-val 'loop-enable loop-enable)
+    (send self :set-arm-val :larm :loop-enable loop-enable)
+    (send self :set-arm-val :rarm :loop-enable loop-enable)
     (send self :reset-arm :larm :wait nil)
     (send self :reset-arm :rarm :wait nil)
     (if torso (send self :reset-torso :wait nil))
@@ -215,6 +219,8 @@
         (if wait (send robot-interface :wait-interpolation :torso-controller)))))
   (:enable (&key (torso t))
     (send self :set-val 'loop-enable t)
+    (send self :set-arm-val :larm :loop-enable t)
+    (send self :set-arm-val :rarm :loop-enable t)
     (send self :enable-arm :larm)
     (send self :enable-arm :rarm)
     (if torso (send self :enable-torso)))
@@ -227,6 +233,8 @@
       (send robot-interface :cancel-angle-vector :controller-type :torso-controller)))
   (:disable (&key (torso t))
     (send self :set-val 'loop-enable nil)
+    (send self :set-arm-val :larm :loop-enable nil)
+    (send self :set-arm-val :rarm :loop-enable nil)
     (send self :disable-arm :larm)
     (send self :disable-arm :rarm)
     (if torso (send self :disable-torso)))
@@ -265,11 +273,15 @@
   (:enable-larm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Enable button pressed. Left arm starts." :wait nil :volume 0.6)
+      (send self :set-val 'loop-enable t)
+      (send self :set-arm-val :larm :loop-enable t)
       (send self :enable-arm :larm)
       res))
   (:enable-rarm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Enable button pressed. Right arm starts." :wait nil :volume 0.6)
+      (send self :set-val 'loop-enable t)
+      (send self :set-arm-val :rarm :loop-enable t)
       (send self :enable-arm :rarm)
       res))
   (:disable-service (req)
@@ -280,35 +292,47 @@
   (:disable-larm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Disable button pressed. Left arm stops." :wait nil :volume 0.6)
+      (send self :set-arm-val :larm :loop-enable nil)
+      (if (not rarm-loop-enable) (send self :set-val 'loop-enable nil))
       (send self :disable-arm :larm)
       (send self :disable-torso)
       res))
   (:disable-rarm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Disable button pressed. Right arm stops." :wait nil :volume 0.6)
+      (send self :set-arm-val :rarm :loop-enable nil)
+      (if (not larm-loop-enable) (send self :set-val 'loop-enable nil))
       (send self :disable-arm :rarm)
       (send self :disable-torso)
       res))
   (:calib-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
-      (send self :reset :loop-enable t)
+      (send self :set-val 'loop-enable t)
+      (send self :set-arm-val :larm :loop-enable t)
+      (send self :set-arm-val :rarm :loop-enable t)
       (send self :calibrate)
-      (send self :reset :loop-enable nil)
+      (send self :set-val 'loop-enable nil)
+      (send self :set-arm-val :larm :loop-enable nil)
+      (send self :set-arm-val :rarm :loop-enable nil)
       res))
   (:calib-larm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
-      (send self :reset :loop-enable t)
+      (send self :set-val 'loop-enable t)
+      (send self :set-arm-val :larm :loop-enable t)
       (send self :calibrate :larm)
-      (send self :reset :loop-enable nil)
+      (send self :set-val 'loop-enable nil)
+      (send self :set-arm-val :larm :loop-enable nil)
       res))
   (:calib-rarm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Calibrate button pressed." :wait t :volume 0.6)
-      (send self :reset :loop-enable t)
+      (send self :set-val 'loop-enable t)
+      (send self :set-arm-val :rarm :loop-enable t)
       (send self :calibrate :rarm)
-      (send self :reset :loop-enable nil)
+      (send self :set-val 'loop-enable nil)
+      (send self :set-arm-val :rarm :loop-enable nil)
       res))
   (:start-grasp-larm-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
@@ -417,12 +441,12 @@
   (:arm-cb (arm &key (head t) (torso t) (safe t) (mirror nil))
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
-               (send self :get-target-coords :larm :head head :mirror mirror))
+               (if larm-loop-enable (send self :get-target-coords :larm :head head :mirror mirror)))
              (larm-target-coords
                (if safe (send self :filter-unsafe-target-coords :larm larm-raw-target-coords)
                  larm-raw-target-coords))
              (rarm-raw-target-coords
-               (send self :get-target-coords :rarm :head head :mirror mirror))
+               (if rarm-loop-enable (send self :get-target-coords :rarm :head head :mirror mirror)))
              (rarm-target-coords
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
                  rarm-raw-target-coords))
@@ -479,7 +503,8 @@
             (t nil)))
         ik-target-coords)
       (let* ((raw-target-coords
-               (send self :get-target-coords arm :head head :mirror mirror))
+               (if (send self :get-arm-val arm :enable)
+                 (send self :get-target-coords arm :head head :mirror mirror)))
              (opposite-arm-coords
                (send self :get-arm-val (send self :get-opposite-arm arm)
                      :current-end-coords))
@@ -734,7 +759,7 @@
     (send self :update-current-end-coords)
     (send *ri* :speak "I'm ready to start demo." :wait nil :volume 0.6)
     (while (ros::ok)
-      (send* self :main-loop-step args)
+      (if loop-enable (send* self :main-loop-step args))
       (ros::spin-once)
       (ros::sleep)))
   ;; place holders
