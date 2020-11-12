@@ -34,6 +34,10 @@
           eus-vive-calib-service-name
           eus-vive-calib-larm-service-name
           eus-vive-calib-rarm-service-name
+          eus-vive-start-grasp-larm-service-name
+          eus-vive-start-grasp-rarm-service-name
+          eus-vive-stop-grasp-larm-service-name
+          eus-vive-stop-grasp-rarm-service-name
           loop-enable
           draw-object-list
           gripper-button-toggle-p
@@ -116,6 +120,10 @@
     (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
     (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
     (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
+    (send self :set-val 'eus-vive-start-grasp-larm-service-name "/eus_vive/larm/start_grasp")
+    (send self :set-val 'eus-vive-start-grasp-rarm-service-name "/eus_vive/rarm/start_grasp")
+    (send self :set-val 'eus-vive-stop-grasp-larm-service-name "/eus_vive/larm/stop_grasp")
+    (send self :set-val 'eus-vive-stop-grasp-rarm-service-name "/eus_vive/rarm/stop_grasp")
     (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
 
     (ros::subscribe larm-gripper-status-topic-name
@@ -165,6 +173,14 @@
                             #'send self :calib-larm-service)
     (ros::advertise-service eus-vive-calib-rarm-service-name std_srvs::Empty
                             #'send self :calib-rarm-service)
+    (ros::advertise-service eus-vive-start-grasp-larm-service-name std_srvs::Empty
+                            #'send self :start-grasp-larm-service)
+    (ros::advertise-service eus-vive-start-grasp-rarm-service-name std_srvs::Empty
+                            #'send self :start-grasp-rarm-service)
+    (ros::advertise-service eus-vive-stop-grasp-larm-service-name std_srvs::Empty
+                            #'send self :stop-grasp-larm-service)
+    (ros::advertise-service eus-vive-stop-grasp-rarm-service-name std_srvs::Empty
+                            #'send self :stop-grasp-rarm-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   (:reset-arm-val (arm)
     (send self :set-arm-val arm :enable nil)
@@ -293,6 +309,26 @@
       (send self :reset :loop-enable t)
       (send self :calibrate :rarm)
       (send self :reset :loop-enable nil)
+      res))
+  (:start-grasp-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Start grasp button pressed. Left arm starts grasping." :wait t :volume 0.6)
+      (send self :start-grasp :larm :wait t)
+      res))
+  (:start-grasp-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Start grasp button pressed. Right arm starts grasping." :wait t :volume 0.6)
+      (send self :start-grasp :rarm :wait t)
+      res))
+  (:stop-grasp-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Stop grasp button pressed. Left arm stops grasping." :wait t :volume 0.6)
+      (send self :stop-grasp :larm :wait t)
+      res))
+  (:stop-grasp-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Stop grasp button pressed. Right arm stops grasping." :wait t :volume 0.6)
+      (send self :stop-grasp :rarm :wait t)
       res))
   (:get-arm-val (arm name)
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
