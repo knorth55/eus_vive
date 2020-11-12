@@ -331,8 +331,16 @@
       (send self :stop-grasp :rarm :wait t)
       res))
   (:get-arm-val (arm name)
+    (if (not (or (eq arm :larm) (eq arm :rarm)))
+      (progn
+        (ros::ros-error (format nil "Invalid args: (send self :get-arm-val ~A ~A)" arm name))
+        (return-from :get-arm-val nil)))
     (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
   (:set-arm-val (arm name val)
+    (if (not (or (eq arm :larm) (eq arm :rarm)))
+      (progn
+        (ros::ros-error (format nil "Invalid args: (send self :set-arm-val: ~A ~A ~A)" arm name val))
+        (return-from :set-arm-val nil)))
     (send self :set-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name))) val))
   (:get-arm-controller (arm)
     (cond
