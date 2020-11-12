@@ -38,6 +38,8 @@
           eus-vive-start-grasp-rarm-service-name
           eus-vive-stop-grasp-larm-service-name
           eus-vive-stop-grasp-rarm-service-name
+          eus-vive-toggle-grasp-service-name
+          eus-vive-hold-grasp-service-name
           loop-enable
           draw-object-list
           gripper-button-toggle-p
@@ -126,6 +128,8 @@
     (send self :set-val 'eus-vive-start-grasp-rarm-service-name "/eus_vive/rarm/start_grasp")
     (send self :set-val 'eus-vive-stop-grasp-larm-service-name "/eus_vive/larm/stop_grasp")
     (send self :set-val 'eus-vive-stop-grasp-rarm-service-name "/eus_vive/rarm/stop_grasp")
+    (send self :set-val 'eus-vive-toggle-grasp-service-name "/eus_vive/toggle_grasp")
+    (send self :set-val 'eus-vive-hold-grasp-service-name "/eus_vive/hold_grasp")
     (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
 
     (ros::subscribe larm-gripper-status-topic-name
@@ -183,7 +187,12 @@
                             #'send self :stop-grasp-larm-service)
     (ros::advertise-service eus-vive-stop-grasp-rarm-service-name std_srvs::Empty
                             #'send self :stop-grasp-rarm-service)
+    (ros::advertise-service eus-vive-toggle-grasp-service-name std_srvs::Empty
+                            #'send self :toggle-grasp-service)
+    (ros::advertise-service eus-vive-hold-grasp-service-name std_srvs::Empty
+                            #'send self :hold-grasp-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
+  ;; fundamental methods
   (:reset-arm-val (arm)
     (send self :set-arm-val arm :enable nil)
     (send self :set-arm-val arm :grasp nil)
@@ -250,6 +259,7 @@
       (setq calib-p (send *ti* :calib-controller arm))
       (if (not calib-p) (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
       calib-p))
+  ;; services
   (:reset-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Reset button pressed. I go back to reset pose." :wait nil :volume 0.6)
@@ -354,6 +364,17 @@
       (send *ri* :speak "Stop grasp button pressed. Right arm stops grasping." :wait nil :volume 0.6)
       (send self :stop-grasp :rarm :wait t)
       res))
+  (:toggle-grasp-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Toggle grasp button pressed." :wait nil :volume 0.6)
+      (send self :set-val 'gripper-button-toggle-p t)
+      res))
+  (:hold-grasp-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Hold grasp button pressed." :wait nil :volume 0.6)
+      (send self :set-val 'gripper-button-toggle-p nil)
+      res))
+  ;; motion methods
   (:get-arm-val (arm name)
     (if (not (or (eq arm :larm) (eq arm :rarm)))
       (progn
