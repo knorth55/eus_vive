@@ -107,8 +107,10 @@
   </group>
 
   <!-- launch rqt_gui -->
-  <node name="service_button" pkg="rqt_gui" type="rqt_gui"
+  <node name="$(anon reset_button)" pkg="rqt_gui" type="rqt_gui"
         args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
+  <node name="$(anon gripper_button)" pkg="rqt_gui" type="rqt_gui"
+        args="--perspective-file $(find eus_vive)/resource/gripper_button.perspective" />
 
   <!-- launch rviz -->
   <group if="$(arg head)">
