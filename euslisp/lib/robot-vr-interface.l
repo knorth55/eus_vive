@@ -630,9 +630,9 @@
                     (ros::image->sensor_msgs/Image (send camera-model :get-image)))
       (x::window-main-one)))
   (:enable-cb (&key (mirror nil) (button :menu))
-    (send self :enable-arm :larm :mirror mirror :button button)
-    (send self :enable-arm :rarm :mirror mirror :button button))
-  (:enable-arm (arm &key (mirror nil) (button :menu))
+    (send self :loop-enable-arm :larm :mirror mirror :button button)
+    (send self :loop-enable-arm :rarm :mirror mirror :button button))
+  (:loop-enable-arm (arm &key (mirror nil) (button :menu))
     (let ((enable-button-p
             (send self :controller-button-p
                   (if mirror (send self :get-opposite-arm arm) arm) button
