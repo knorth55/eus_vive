@@ -23,8 +23,14 @@
           irtviewer-visualize-topic-name
           eus-vive-status-topic-name
           eus-vive-reset-service-name
+          eus-vive-reset-larm-service-name
+          eus-vive-reset-rarm-service-name
           eus-vive-enable-service-name
+          eus-vive-enable-larm-service-name
+          eus-vive-enable-rarm-service-name
           eus-vive-disable-service-name
+          eus-vive-disable-larm-service-name
+          eus-vive-disable-rarm-service-name
           eus-vive-calib-service-name
           eus-vive-calib-larm-service-name
           eus-vive-calib-rarm-service-name
@@ -99,8 +105,14 @@
     (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
     (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
     (send self :set-val 'eus-vive-reset-service-name "/eus_vive/reset")
+    (send self :set-val 'eus-vive-reset-larm-service-name "/eus_vive/larm/reset")
+    (send self :set-val 'eus-vive-reset-rarm-service-name "/eus_vive/rarm/reset")
     (send self :set-val 'eus-vive-enable-service-name "/eus_vive/enable")
+    (send self :set-val 'eus-vive-enable-larm-service-name "/eus_vive/larm/enable")
+    (send self :set-val 'eus-vive-enable-rarm-service-name "/eus_vive/rarm/enable")
     (send self :set-val 'eus-vive-disable-service-name "/eus_vive/disable")
+    (send self :set-val 'eus-vive-disable-larm-service-name "/eus_vive/larm/disable")
+    (send self :set-val 'eus-vive-disable-rarm-service-name "/eus_vive/rarm/disable")
     (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
     (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
     (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
@@ -131,10 +143,22 @@
     (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
     (ros::advertise-service eus-vive-reset-service-name std_srvs::Empty
                             #'send self :reset-service)
+    (ros::advertise-service eus-vive-reset-larm-service-name std_srvs::Empty
+                            #'send self :reset-larm-service)
+    (ros::advertise-service eus-vive-reset-rarm-service-name std_srvs::Empty
+                            #'send self :reset-rarm-service)
     (ros::advertise-service eus-vive-enable-service-name std_srvs::Empty
                             #'send self :enable-service)
+    (ros::advertise-service eus-vive-enable-larm-service-name std_srvs::Empty
+                            #'send self :enable-larm-service)
+    (ros::advertise-service eus-vive-enable-rarm-service-name std_srvs::Empty
+                            #'send self :enable-rarm-service)
     (ros::advertise-service eus-vive-disable-service-name std_srvs::Empty
                             #'send self :disable-service)
+    (ros::advertise-service eus-vive-disable-larm-service-name std_srvs::Empty
+                            #'send self :disable-larm-service)
+    (ros::advertise-service eus-vive-disable-rarm-service-name std_srvs::Empty
+                            #'send self :disable-rarm-service)
     (ros::advertise-service eus-vive-calib-service-name std_srvs::Empty
                             #'send self :calib-service)
     (ros::advertise-service eus-vive-calib-larm-service-name std_srvs::Empty
@@ -207,15 +231,47 @@
       (send *ri* :speak "Reset button pressed. I go back to reset pose." :wait nil :volume 0.6)
       (send self :reset :loop-enable nil)
       res))
+  (:reset-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Reset button pressed. Left arm goes back to reset pose." :wait nil :volume 0.6)
+      (send self :reset-arm :larm :wait t)
+      res))
+  (:reset-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Reset button pressed. Right arm goes back to reset pose." :wait nil :volume 0.6)
+      (send self :reset-arm :rarm :wait t)
+      res))
   (:enable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Enable button pressed. Demo started." :wait nil :volume 0.6)
       (send self :enable)
       res))
+  (:enable-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Enable button pressed. Left arm started." :wait nil :volume 0.6)
+      (send self :enable-arm :larm)
+      res))
+  (:enable-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Enable button pressed. Right arm started." :wait nil :volume 0.6)
+      (send self :enable-arm :rarm)
+      res))
   (:disable-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
       (send *ri* :speak "Disable button pressed. Demo stopped." :wait nil :volume 0.6)
       (send self :disable)
+      res))
+  (:disable-larm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Disable button pressed. Left arm stopped." :wait nil :volume 0.6)
+      (send self :disable-arm :larm)
+      (send self :disable-torso)
+      res))
+  (:disable-rarm-service (req)
+    (let ((res (instance std_srvs::EmptyResponse :init)))
+      (send *ri* :speak "Disable button pressed. Right arm stopped." :wait nil :volume 0.6)
+      (send self :disable-arm :rarm)
+      (send self :disable-torso)
       res))
   (:calib-service (req)
     (let ((res (instance std_srvs::EmptyResponse :init)))
