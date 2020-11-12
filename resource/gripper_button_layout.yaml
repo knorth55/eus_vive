@@ -1,0 +1,30 @@
+- name: 'Reset larm'
+  service: '/eus_vive/larm/reset'
+  column: 0
+- name: 'Reset rarm'
+  service: '/eus_vive/rarm/reset'
+  column: 0
+- name: 'Enable larm'
+  service: '/eus_vive/larm/enable'
+  column: 1
+- name: 'Enable rarm'
+  service: '/eus_vive/rarm/enable'
+  column: 1
+- name: 'Disable larm'
+  service: '/eus_vive/larm/disable'
+  column: 2
+- name: 'Disable rarm'
+  service: '/eus_vive/rarm/disable'
+  column: 2
+- name: 'Start grasp larm'
+  service: '/eus_vive/larm/start_grasp'
+  column: 3
+- name: 'Start grasp rarm'
+  service: '/eus_vive/rarm/start_grasp'
+  column: 3
+- name: 'Stop grasp larm'
+  service: '/eus_vive/larm/stop_grasp'
+  column: 4
+- name: 'Stop grasp rarm'
+  service: '/eus_vive/rarm/stop_grasp'
+  column: 4
