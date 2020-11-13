@@ -46,6 +46,8 @@
   <arg name="RGB_CAMERA_INFO" />
   <arg name="IMAGE_COLOR" />
   <arg name="IMAGE_DEPTH" />
+  <arg name="COMP_IMAGE_COLOR" />
+  <arg name="COMP_IMAGE_DEPTH" />
 
   <!-- prosilica -->
   <!--
@@ -171,6 +173,7 @@
     <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
     <arg name="COMP_IMAGE_COLOR" value="$(arg COMP_IMAGE_COLOR)" />
     <arg name="COMP_IMAGE_DEPTH" value="$(arg COMP_IMAGE_DEPTH)" />
+    <arg name="home_dir" value="$(arg home_dir)" />
   </include>
 
 </launch>

@@ -7,6 +7,7 @@
   <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
+  <arg name="display" default="true" />
   <arg name="home_dir" default="$(env HOME)" />
 
   <!-- device -->
@@ -45,6 +46,8 @@
   <arg name="RGB_CAMERA_INFO" />
   <arg name="IMAGE_COLOR" />
   <arg name="IMAGE_DEPTH" />
+  <arg name="COMP_IMAGE_COLOR" />
+  <arg name="COMP_IMAGE_DEPTH" />
 
   <!-- prosilica -->
   <!--
