@@ -6,7 +6,7 @@
 
   <group ns="$(arg audio_ns)">
     <node name="audio_play" pkg="audio_play" type="audio_play" output="screen">
-      <remap from="$(arg audio_ns)/audio" to="/audio/audio" />
+      <remap from="/$(arg audio_ns)/audio" to="/audio" />
       <param name="dst" value="$(arg dst)"/>
       <param name="do_timestamp" value="$(arg do_timestamp)"/>
       <param name="format" value="$(arg format)" />
