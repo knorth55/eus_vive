@@ -103,7 +103,9 @@
     <remap from="~output/sound" to="/remotesound" />
     <remap from="~input/status" to="/eus_vive/status" />
   </node>
-  <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)" />
+  <include file="$(find eus_vive)/launch/include/audio_play.launch" if="$(arg respeaker)">
+    <arg name="audio_ns" value="remote_audio" />
+  </include>
   <node name="remote_soundplay_node"
         pkg="sound_play" type="soundplay_node.py">
     <remap from="sound_play" to="remotesound" />
