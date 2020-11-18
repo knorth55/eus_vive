@@ -1,3 +1,3 @@
-#elp video
+#insta360 video
 KERNEL=="video[02468]", SUBSYSTEM=="video4linux", SUBSYSTEMS=="usb", ATTRS{idVendor}=="2e1a", ATTRS{idProduct}=="1000", MODE="0666", GROUP="video", SYMLINK+="insta-head"
 SUBSYSTEMS=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="2e1a", ATTRS{idProduct}=="1000", MODE="0666"
