@@ -1,37 +1,7 @@
 <launch>
-  <arg name="main" default="true" />
-  <arg name="vive" default="true" />
-  <arg name="oculus" default="false" />
-  <arg name="head" default="true" />
-  <arg name="respeaker" default="true" />
-  <arg name="mirror" default="false" />
-  <arg name="logging" default="true" />
   <arg name="kinfu" default="false" />
-  <arg name="display" default="true" />
-  <arg name="home_dir" default="$(env HOME)" />
-
-  <!-- device -->
-  <arg name="device" value=":oculus" if="$(arg oculus)" />
-  <arg name="device" value=":vive" unless="$(arg oculus)" />
-
-  <!-- vive -->
-  <arg name="button_toggle" default="true" />
-  <arg name="b_lighthouse_id" default="" />
-  <arg name="c_lighthouse_id" default="" />
-  <arg name="l_controller_id" default="" />
-  <arg name="r_controller_id" default="" />
-
-  <!-- workspace -->
-  <arg name="workspace_max_x" default="false" />
-  <arg name="workspace_min_x" default="false" />
-  <arg name="workspace_max_y" default="false" />
-  <arg name="workspace_min_y" default="false" />
-  <arg name="workspace_max_z" default="false" />
-  <arg name="workspace_min_z" default="false" />
 
   <!-- camera-->
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
   <arg name="DECOMP_CAMERA_INFO"
        default="/kinect_head_decompressed/depth_registered/camera_info" />
   <arg name="DECOMP_RGB_CAMERA_INFO"
@@ -46,27 +16,6 @@
   <arg name="RGB_CAMERA_INFO" />
   <arg name="IMAGE_COLOR" />
   <arg name="IMAGE_DEPTH" />
-  <arg name="COMP_IMAGE_COLOR" />
-  <arg name="COMP_IMAGE_DEPTH" />
-
-  <!-- prosilica -->
-  <!--
-  <arg name="PROSILICA_RGB_CAMERA_INFO"
-       default="/prosilica/camera_info" />
-  <arg name="PROSILICA_IMAGE_COLOR"
-       default="/prosilica/image_rect" />
-  <arg name="PROSILICA_DECOMP_RGB_CAMERA_INFO"
-       default="/prosilica_decompressed/rgb/camera_info" />
-  <arg name="PROSILICA_DECOMP_IMAGE_COLOR"
-       default="/prosilica_decompressed/rgb/image_rect_color" />
-
-  <group ns="prosilica_decompressed">
-    <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
-          args="$(arg PROSILICA_RGB_CAMERA_INFO) $(arg PROSILICA_DECOMP_RGB_CAMERA_INFO)" />
-    <node name="rgb_image_transport" pkg="image_transport" type="republish"
-          args="theora in:=$(arg PROSILICA_IMAGE_COLOR) raw out:=$(arg PROSILICA_DECOMP_IMAGE_COLOR)" />
-  </group>
-  -->
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"

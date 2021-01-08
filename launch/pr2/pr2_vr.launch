@@ -10,10 +10,6 @@
   <arg name="display" default="true" />
   <arg name="home_dir" default="$(env HOME)" />
 
-  <!-- device -->
-  <arg name="device" value=":oculus" if="$(arg oculus)" />
-  <arg name="device" value=":vive" unless="$(arg oculus)" />
-
   <!-- vive -->
   <arg name="button_toggle" default="true" />
   <arg name="b_lighthouse_id" default="" />
@@ -40,6 +36,10 @@
        default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+
+  <!-- device -->
+  <arg name="device" value=":oculus" if="$(arg oculus)" />
+  <arg name="device" value=":vive" unless="$(arg oculus)" />
 
   <!-- pr1012 and pr1040 parameters -->
   <arg name="CAMERA_INFO" />
@@ -164,8 +164,18 @@
   </group>
 
   <!-- launch display -->
-  <include file="$(find eus_vive)/launch/pr2/pr2_vr_display.launch"
-           pass_all_args="true" if="$(arg display)" />
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_display.launch">
+    <arg name="kinfu" value="$(arg kinfu)" />
+    <arg name="DECOMP_CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
+    <arg name="DECOMP_RGB_CAMERA_INFO" value="$(arg DECOMP_RGB_CAMERA_INFO)" />
+    <arg name="DECOMP_IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
+    <arg name="DECOMP_IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
+    <arg name="DECOMP_POINTS" value="$(arg DECOMP_POINTS)" />
+    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
+    <arg name="RGB_CAMERA_INFO" value="(arg RGB_CAMERA_INFO)" />
+    <arg name="IMAGE_COLOR" value="$(arg IMAGE_COLOR)" />
+    <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DEPTH)" />
+  </include>
 
   <!-- launch logging -->
   <include file="$(find eus_vive)/launch/pr2/pr2_logging.launch" if="$(arg logging)">
