@@ -1,42 +1,17 @@
 <launch>
-  <arg name="main" default="true" />
-  <arg name="vive" default="true" />
-  <arg name="oculus" default="false" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
-  <arg name="mirror" default="false" />
   <arg name="logging" default="true" />
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
+  <arg name="home_dir" default="$(env HOME)" />
   <arg name="mask_rcnn" default="false" />
-  <arg name="display" default="true" />
   <arg name="custom_xdisplay" default="true" />
-  <arg name="launch_baxter" default="true" />
   <arg name="launch_xdisplay" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
-  <arg name="republish" default="false" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
-
-  <!-- device -->
-  <arg name="device" value=":oculus" if="$(arg oculus)" />
-  <arg name="device" value=":vive" unless="$(arg oculus)" />
-
-  <!-- vive -->
-  <arg name="button_toggle" default="true" />
-  <arg name="b_lighthouse_id" default="" />
-  <arg name="c_lighthouse_id" default="" />
-  <arg name="l_controller_id" default="" />
-  <arg name="r_controller_id" default="" />
-
-  <!-- workspace -->
-  <arg name="workspace_max_x" default="false" />
-  <arg name="workspace_min_x" default="false" />
-  <arg name="workspace_max_y" default="false" />
-  <arg name="workspace_min_y" default="false" />
-  <arg name="workspace_max_z" default="false" />
-  <arg name="workspace_min_z" default="false" />
 
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
@@ -57,8 +32,6 @@
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
   <arg name="spherical_camera_ns" default="kodak_head" />
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
 
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
@@ -201,6 +174,7 @@
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="twitter_image_topics" value="/$(arg spherical_camera_ns)/image_raw" />
+    <arg name="home_dir" value="$(arg home_dir)" />
   </include>
 
 </launch>
