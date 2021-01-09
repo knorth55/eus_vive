@@ -524,7 +524,7 @@
             (t nil)))
         ik-target-coords)
       (let* ((raw-target-coords
-               (if (send self :get-arm-val arm :enable)
+               (if (send self :get-arm-val arm :loop-enable)
                  (send self :get-target-coords arm :head head :mirror mirror)))
              (opposite-arm-coords
                (send self :get-arm-val (send self :get-opposite-arm arm)
