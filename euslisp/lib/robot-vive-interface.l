@@ -66,6 +66,7 @@
                           sensor_msgs::Joy #'send self :controller-button-cb :rarm)
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
     (send-super* :init args))
+  ;; redefine :reset-arm-val
   (:reset-arm-val (arm)
     (send-super :reset-arm-val arm)
     (send self :set-arm-val arm :trigger nil)
@@ -80,6 +81,7 @@
     (send self :set-arm-val arm :grip nil)
     (send self :set-arm-val arm :prev-grip nil)
     (send self :set-arm-val arm :grip-count 0))
+  ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
@@ -133,6 +135,7 @@
                              :rot target-rot))
           (send target-coords :rotate (/ pi 4.0) :y)))
       target-coords))
+  ;; :get-head-ypr-angle
   (:get-head-ypr-angle ()
     (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
       (if coords
@@ -142,6 +145,7 @@
                   (car (send coords :rpy-angle))
                   (cadr (send coords :rpy-angle))))
           (list (elt rpy-angle 1) (* -1 (elt rpy-angle 2)) 0)))))
+  ;; coordinate function for vive
   (:get-hmd->controller-coords (arm)
     (if (not (or (eq arm :larm) (eq arm :rarm)))
       (progn
@@ -158,6 +162,7 @@
           (send coords :transform (make-coords :rpy (float-vector 0 0 -pi/2)))
           (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))))
       coords))
+  ;; coordinate function for vive
   (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
@@ -173,12 +178,14 @@
       (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
       (setq coords (send tfl :lookup-transform vrbase-frame-id controller-frame-id start-time))
       coords))
+  ;; coordinate function for vive
   (:get-vrbase->hmd-coords ()
     (let (coords)
       (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
       (if coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
+  ;; :calib-controller
   (:calib-controller (&optional (arm :rarm))
     (let (first-coords second-coords)
       (ros::rate rate)
@@ -222,6 +229,7 @@
           (ros::duration-sleep 1)
           (send self :send-joy-feedback arm)
           nil))))
+  ;; controller button callbacks
   (:controller-button-cb (arm msg)
     (if (and loop-enable (send self :get-arm-val arm :loop-enable))
       (progn
@@ -301,6 +309,7 @@
                 (send self :set-arm-val arm :grip-count grip-wait-count)
                 (cons controller-grip-button-p grip)))))
         (if controller-grip-button-p (cons controller-grip-button-p grip)))))
+  ;; vive vibration feedback
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
       (setq msg (instance sensor_msgs::JoyFeedback :init
@@ -332,6 +341,7 @@
     (send self :set-val 'joy-org-topic-name "/joy_org")
     (send self :set-val 'joy-other-topic-name "/joy_other")
     (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
+  ;; redefine :reset
   (:reset (&key (loop-enable t))
     (send-super :reset :loop-enable loop-enable)
     (send robot-interface :clear-costmap)
@@ -339,6 +349,7 @@
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
+  ;; redefine :base-cb
   (:base-cb (&key (safe t) (mirror nil))
     (let (msg (axes (make-list 29 :initial-element 0))
               (buttons (make-list 17 :initial-element 0)))
@@ -369,6 +380,7 @@
       (send msg :axes axes)
       (send msg :buttons buttons)
       (ros::publish joy-other-topic-name msg)))
+  ;; controller button callbacks
   (:controller-button-cb (arm msg)
     (send-super :controller-button-cb arm msg)
     (cond
@@ -384,6 +396,7 @@
              (if (send self :get-arm-val arm :trackpad)
                (* -1 (elt (send msg :axes) 0)) 0)))
       (t nil)))
+  ;; switch joy from ps3joy to vive
   (:switch-joy (joy-topic-name)
     (let ((joy-mux-service-name "/multiple_joystick_mux/select")
           mux-req)
@@ -394,6 +407,7 @@
     (send self :switch-joy joy-other-topic-name))
   (:switch-joy-to-ps3joy ()
     (send self :switch-joy joy-org-topic-name))
+  ;; redefine :enable-cb for base
   (:enable-cb (&key (mirror nil) (base t) (button :menu))
     (send-super :enable-cb :mirror mirror :button button)
     (if base (send self :enable-base)))
@@ -406,6 +420,7 @@
        (if base-enable (send self :switch-joy-to-ps3joy))
        (send self :set-val 'base-enable nil))
       (t nil)))
+  ;; redefine :motion-cb for base
   (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                     (gripper-button :trigger))
     (let (visualize-arm-coords)
@@ -418,6 +433,7 @@
          (if base (send self :base-cb :safe safe-base :mirror mirror)))
         (t nil))
       visualize-arm-coords))
+  ;; redefine :main-loop-step for base
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                          (enable-button :menu) (gripper-button :trigger) (visualize t))
     (let (visualize-arm-coords)
