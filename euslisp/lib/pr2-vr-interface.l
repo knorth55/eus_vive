@@ -53,4 +53,24 @@
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
 
 
+(defun signal-hook (sig code)
+  (if (boundp '*ri*)
+    (progn
+      (ros::ros-info "cancel larm controller")
+      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
+      (ros::ros-info "cancel rarm controller")
+      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)
+      (ros::ros-info "cancel torso controller")
+      (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
+  (if (and (boundp '*ti*) (find-method *ti* :switch-joy-to-ps3joy))
+    (progn
+      (ros::ros-info "switch joy form vive to ps3joy")
+      (send *ti* :switch-joy-to-ps3joy)))
+  (reset))
+
+
+(unix:signal 2 'signal-hook)
+(unix:signal 15 'signal-hook)
+
+
 (provide :pr2-vr-interface)

@@ -794,17 +794,4 @@
     (return-from :get-head-ypr-angle nil)))
 
 
-(defun signal-hook (sig code)
-  (if (boundp '*ri*)
-    (progn
-      (ros::ros-info "cancel larm controller")
-      (send *ri* :cancel-angle-vector :controller-type :larm-controller)
-      (ros::ros-info "cancel rarm controller")
-      (send *ri* :cancel-angle-vector :controller-type :rarm-controller)))
-  (reset))
-
-
-(unix:signal 2 'signal-hook)
-(unix:signal 15 'signal-hook)
-
 (provide :robot-vr-interface)
