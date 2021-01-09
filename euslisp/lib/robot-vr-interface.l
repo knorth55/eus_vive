@@ -560,8 +560,10 @@
     (send self :angle-vector (send robot :angle-vector) av-tm
           :head-controller 0 :min-time min-time :scale av-scale))
   (:controller-button-p (arm button &key (button-toggle t))
-    (send self (read-from-string (format nil ":controller-~A-button-p" (string-downcase button)))
-           arm :button-toggle button-toggle))
+    (let ((controller-button-method
+            (read-from-string (format nil ":controller-~A-button-p" (string-downcase button)))))
+      (if (find-method self controller-button-method)
+        (send self controller-button-method arm :button-toggle button-toggle))))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p
