@@ -122,6 +122,7 @@
 
   <!-- launch display -->
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch" if="$(arg display)">
+    <arg name="head" value="$(arg head)" />
     <arg name="respeaker" value="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="republish" value="$(arg republish)" />

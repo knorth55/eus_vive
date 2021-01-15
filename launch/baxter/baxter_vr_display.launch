@@ -1,4 +1,5 @@
 <launch>
+  <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="republish" default="false" />
