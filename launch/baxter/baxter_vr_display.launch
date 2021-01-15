@@ -52,12 +52,6 @@
                            out:=/$(arg spherical_camera_ns)_remote/image_raw" />
   </group>
 
-  <!-- launch rqt_gui -->
-  <node name="$(anon reset_button)" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
-  <node name="$(anon gripper_button)" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/gripper_button.perspective" />
-
   <!-- launch rviz -->
   <group if="$(arg head)">
     <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg republish)"
@@ -83,4 +77,8 @@
           args="-d $(find eus_vive)/rvizconfig/baxter/baxter_visualization.rviz" />
     -->
   </group>
+
+  <!-- launch rqt_gui -->
+  <include file="$(find eus_vive)/launch/baxter/baxter_rqt_gui.launch" />
+
 </launch>

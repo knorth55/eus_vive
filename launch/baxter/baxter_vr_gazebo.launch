@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="oculus" default="false" />
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
 
@@ -19,55 +20,45 @@
   <arg name="workspace_max_z" default="false" />
   <arg name="workspace_min_z" default="false" />
 
+  <!-- initialize baxter in gazebo -->
   <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
 
-  <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" />
+  <!-- baxter_vr -->
+  <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
+    <arg name="oculus" value="$(arg oculus)" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="respeaker" value="false" />
+    <arg name="logging" value="false" />
+    <arg name="twitter" value="false" />
+    <arg name="debug" value="false" />
+    <arg name="home_dir" value="$(env HOME)" />
+    <arg name="mask_rcnn" value="false" />
+    <arg name="display" value="false" />
+    <arg name="custom_xdisplay" value="false" />
+    <arg name="launch_baxter" value="false" />
+    <arg name="launch_xdisplay" value="false" />
+    <arg name="realsense_camera" value="false" />
+    <arg name="spherical_camera" value="false" />
+    <arg name="republish" value="false" />
+    <arg name="lgripper_type" value="parallel" />
+    <arg name="rgripper_type" value="parallel" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
+    <arg name="b_lighthouse_id" value="$(arg b_lighthouse_id)" />
+    <arg name="c_lighthouse_id" value="$(arg c_lighthouse_id)" />
+    <arg name="l_controller_id" value="$(arg l_controller_id)" />
+    <arg name="r_controller_id" value="$(arg r_controller_id)" />
+    <arg name="workspace_max_x" value="$(arg workspace_max_x)" />
+    <arg name="workspace_min_x" value="$(arg workspace_min_x)" />
+    <arg name="workspace_max_y" value="$(arg workspace_max_y)" />
+    <arg name="workspace_min_y" value="$(arg workspace_min_y)" />
+    <arg name="workspace_max_z" value="$(arg workspace_max_z)" />
+    <arg name="workspace_min_z" value="$(arg workspace_min_z)" />
+  </include>
 
-  <group ns="eus_vive" if="$(arg vive)">
-    <rosparam subst_value="true">
-      button_toggle: $(arg button_toggle)
-      b_lighthouse_id: $(arg b_lighthouse_id)
-      c_lighthouse_id: $(arg c_lighthouse_id)
-      l_controller_id: $(arg l_controller_id)
-      r_controller_id: $(arg r_controller_id)
-      workspace:
-        max_x: $(arg workspace_max_x)
-        min_x: $(arg workspace_min_x)
-        max_y: $(arg workspace_max_y)
-        min_y: $(arg workspace_min_y)
-        max_z: $(arg workspace_max_z)
-        min_z: $(arg workspace_min_z)
-    </rosparam>
-  </group>
-  <group ns="eus_vive" unless="$(arg vive)">
-    <rosparam subst_value="true">
-      button_toggle: $(arg button_toggle)
-      workspace:
-        max_x: $(arg workspace_max_x)
-        min_x: $(arg workspace_min_x)
-        max_y: $(arg workspace_max_y)
-        min_y: $(arg workspace_min_y)
-        max_z: $(arg workspace_max_z)
-        min_z: $(arg workspace_min_z)
-    </rosparam>
-  </group>
-  <group if="$(arg main)">
-    <group if="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head t :mirror t :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head nil :mirror t :loop-enable nil)&quot;" output="screen" />
-    </group>
-    <group unless="$(arg mirror)">
-      <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head t :mirror nil :loop-enable nil)&quot;" output="screen" />
-      <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head nil :mirror nil :loop-enable nil)&quot;" output="screen" />
-    </group>
-  </group>
-  <node name="service_button" pkg="jsk_rqt_plugins" type="rqt_service_buttons">
-    <rosparam subst_value="true" >
-      layout_yaml_file: file://$(find eus_vive)/resource/reset_button_layout.yaml
-    </rosparam>
-  </node>
+  <!-- launch rqt_gui -->
+  <include file="$(find eus_vive)/launch/baxter/baxter_rqt_gui.launch" />
+
 </launch>
