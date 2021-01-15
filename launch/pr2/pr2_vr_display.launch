@@ -66,14 +66,12 @@
     <remap from="sound_play" to="remotesound_jp" />
   </node>
 
-  <!-- launch rqt_gui -->
-  <node name="$(anon reset_button)" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/reset_button.perspective" />
-  <node name="$(anon gripper_button)" pkg="rqt_gui" type="rqt_gui"
-        args="--perspective-file $(find eus_vive)/resource/gripper_button.perspective" />
-
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg kinfu)"
         args="-d $(find eus_vive)/rvizconfig/pr2/pr2_vr_visualization_with_kinfu.rviz" respawn="true" />
   <node name="$(anon rviz)" pkg="rviz" type="rviz" unless="$(arg kinfu)"
         args="-d $(find eus_vive)/rvizconfig/pr2/pr2_vr_visualization.rviz" respawn="true" />
+
+  <!-- launch rqt_gui -->
+  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+
 </launch>

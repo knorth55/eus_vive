@@ -59,6 +59,6 @@
   </include>
 
   <!-- launch rqt_gui -->
-  <include file="$(find eus_vive)/launch/baxter/baxter_rqt_gui.launch" />
+  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
 
 </launch>
