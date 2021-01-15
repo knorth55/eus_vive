@@ -1,5 +1,6 @@
 <launch>
   <arg name="kinfu" default="false" />
+  <arg name="respeaker" default="true" />
 
   <!-- camera-->
   <arg name="DECOMP_CAMERA_INFO"
