@@ -3,6 +3,7 @@
   <arg name="IMAGE_DEPTH" />
   <arg name="IMAGE_COLOR" />
 
+  <!--
   <node name="kinfu"
         pkg="nodelet" type="nodelet"
         args="standalone jsk_pcl/Kinfu"
@@ -12,9 +13,25 @@
     <remap from="~input/color" to="$(arg IMAGE_COLOR)" />
     <rosparam subst_value="true">
       auto_reset: true
-      integrate_color: true 
+      integrate_color: true
       save_dir: $(optenv HOME)/.ros/eus_vive/kinfu
       volume_size: 6.0
     </rosparam>
   </node>
+  -->
+
+  <node name="tsdf_pointcloud_merger"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/TSDFPointcloudMerger"
+        output="screen" launch-prefix="gdb -ex run --args">
+    <remap from="~input/camera_info" to="$(arg CAMERA_INFO)" />
+    <remap from="~input/depth" to="$(arg IMAGE_DEPTH)" />
+    <remap from="~input/color" to="$(arg IMAGE_COLOR)" />
+    <rosparam subst_value="true">
+      integrate_color: true
+      volume_size: 6.0
+      frame_id: base_footprint
+    </rosparam>
+  </node>
+
 </launch>
