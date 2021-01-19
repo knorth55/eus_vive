@@ -10,6 +10,7 @@
   <arg name="launch_xdisplay" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
+  <arg name="spherical_stereo" default="true" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
 
@@ -32,6 +33,8 @@
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
   <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
@@ -88,17 +91,49 @@
     </include>
   </group>
 
-  <!-- launch kodak camera -->
+  <!-- launch spherical camera -->
   <group if="$(arg spherical_camera)">
-    <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
-          args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
-    <node name="kodak_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
-          args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
-    <node name="kodak_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
-          args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
-    <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
-      <arg name="camera_name" value="$(arg spherical_camera_ns)" />
-    </include>
+    <!-- launch elp camera -->
+    <group if="$(arg spherical_stereo)">
+      <!-- launch elp left camera on c1 -->
+      <node name="elp_left_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_left_camera_ns)_link 100" />
+      <node name="elp_left_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 0 0 1.57 $(arg spherical_left_camera_ns)_link $(arg spherical_left_camera_ns)_optical_frame 100" />
+      <node name="elp_left_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 3.14 0 0 $(arg spherical_left_camera_ns)_link $(arg spherical_left_camera_ns)_rviz_frame 100" />
+      <include file="$(find eus_vive)/launch/include/elp_usb.launch">
+        <arg name="camera_name" value="$(arg spherical_left_camera_ns)" />
+        <arg name="machine" value="baxter-c1" />
+        <arg name="load_machinepath" value="true" />
+        <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
+      </include>
+      <!-- launch elp left camera on c4 -->
+      <node name="elp_right_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_right_camera_ns)_link 100" />
+      <node name="elp_right_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 0 0 1.57 $(arg spherical_right_camera_ns)_link $(arg spherical_right_camera_ns)_optical_frame 100" />
+      <node name="elp_right_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 3.14 0 0 $(arg spherical_right_camera_ns)_link $(arg spherical_right_camera_ns)_rviz_frame 100" />
+      <include file="$(find eus_vive)/launch/include/elp_usb.launch">
+        <arg name="camera_name" value="$(arg spherical_right_camera_ns)" />
+        <arg name="machine" value="localhost" />
+        <arg name="load_machinepath" value="true" />
+        <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
+      </include>
+    </group>
+    <!-- launch kodak camera -->
+    <group unless="$(arg spherical_stereo)">
+      <node name="kodak_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_camera_ns)_link 100" />
+      <node name="kodak_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
+      <node name="kodak_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
+            args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
+      <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
+        <arg name="camera_name" value="$(arg spherical_camera_ns)" />
+      </include>
+    </group>
   </group>
 
   <!-- virtual camera -->

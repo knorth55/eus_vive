@@ -6,6 +6,7 @@
   <arg name="mirror" default="false" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
+  <arg name="spherical_stereo" default="true" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
   <arg name="button_toggle" default="true" />
@@ -24,6 +25,7 @@
     <arg name="launch_xdisplay" value="true" />
     <arg name="realsense_camera" value="$(arg realsense_camera)" />
     <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
     <arg name="republish" value="false" />
     <arg name="lgripper_type" value="$(arg lgripper_type)" />
     <arg name="rgripper_type" value="$(arg rgripper_type)" />

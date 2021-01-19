@@ -42,6 +42,7 @@
     <arg name="launch_xdisplay" value="false" />
     <arg name="realsense_camera" value="false" />
     <arg name="spherical_camera" value="false" />
+    <arg name="spherical_stereo" value="false" />
     <arg name="republish" value="false" />
     <arg name="lgripper_type" value="parallel" />
     <arg name="rgripper_type" value="parallel" />
