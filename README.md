@@ -69,7 +69,7 @@ sudo apt install nvidia-396
 
 Follow [here](https://github.com/knorth55/vive_ros)
 
-#### Install kodak 4k pro camera udev (for Baxter)
+#### Install kodak 4k pro camera and ELP usb camera udev (for Baxter)
 
 ```bash
 sudo cp udev/99-kodak.rules /etc/udev/rules.d/
