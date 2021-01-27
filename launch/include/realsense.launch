@@ -1,10 +1,8 @@
 <launch>
+  <arg name="camera_ns" default="realsense" />
+
   <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
-    <arg name="camera" value="realsense" />
-    <arg name="enable_pointcloud" value="true" />
-    <arg name="align_depth" value="false"/>
+    <arg name="camera" value="$(arg camera_ns)" />
+    <arg name="publish_tf" value="false" />
   </include>
-  <node name="realsense_static_tf_publisher"
-           pkg="tf" type="static_transform_publisher"
-           args="0.22 0.02 0.2 0 0.32 0 base realsense_link 20" />
 </launch>
