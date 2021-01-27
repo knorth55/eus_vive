@@ -35,6 +35,10 @@
   <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
+  <arg name="twitter_image_topic" value="/$(arg spherical_camera_ns)/image_raw"
+       unless="$(arg spherical_stereo)" />
+  <arg name="twitter_image_topic" value="/$(arg spherical_left_camera_ns)/image_raw"
+       if="$(arg spherical_stereo)" />
 
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
@@ -236,7 +240,11 @@
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
-    <arg name="twitter_image_topics" value="/$(arg spherical_camera_ns)/image_raw" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
+    <arg name="twitter_image_topics" value="$(arg twitter_image_topic)" />
     <arg name="home_dir" value="$(arg home_dir)" />
   </include>
 
