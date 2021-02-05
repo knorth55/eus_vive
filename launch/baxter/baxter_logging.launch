@@ -14,7 +14,7 @@
     <arg name="port" value="27017" />
     <arg name="repl_set_mode" value="false" />
   </include>
-  <include file="$(find eus_vive)/launch/include/db_client.launch">
+  <include file="$(find eus_vive)/launch/baxter/baxter_db_client.launch">
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
