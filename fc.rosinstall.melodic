@@ -1,0 +1,44 @@
+- git:
+    local-name: ros-drivers/audio_common
+    uri: https://github.com/ros-drivers/audio_common.git
+    version: master
+- git:
+    local-name: jsk-ros-pkg/jsk_robot
+    uri: https://github.com/jsk-ros-pkg/jsk_robot.git
+    version: master
+- git:
+    local-name: knorth55/baxter_interface
+    uri: https://github.com/knorth55/baxter_interface.git
+    version: baxter-vive-control
+- git:
+    local-name: knorth55/eus_vive
+    uri: https://github.com/knorth55/eus_vive.git
+    version: master
+- git:
+    local-name: knorth55/jsk_pr2eus
+    uri: https://github.com/knorth55/jsk_pr2eus.git
+    version: vive-control
+- git:
+    local-name: knorth55/rviz_camera_stream
+    uri: https://github.com/knorth55/rviz_camera_stream
+    version: master
+- git:
+    local-name: knorth55/softhand_ros
+    uri: https://github.com/knorth55/softhand_ros.git
+    version: master
+- git:
+    local-name: knorth55/vive_ros
+    uri: https://github.com/knorth55/vive_ros.git
+    version: use-camera
+- git:
+    local-name: tohirose/dynamixel_motor
+    uri: https://github.com/tohirose/dynamixel_motor.git
+    version: softhand-v2-devel
+- git:
+    local-name: strands-project/mongodb_store
+    uri: https://github.com/strands-project/mongodb_store.git
+    version: melodic-devel
+- git:
+    local-name: UTNuclearRoboticsPublic/rviz_textured_sphere
+    uri: https://github.com/UTNuclearRoboticsPublic/rviz_textured_sphere.git
+    version: master
