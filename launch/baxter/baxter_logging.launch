@@ -1,7 +1,9 @@
 <launch>
   <arg name="twitter" default="true" />
   <arg name="debug" default="false" />
-  <arg name="camera_ns" default="realsense" />
+  <arg name="camera" default="true" />
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="spherical_camera" default="true" />
   <arg name="spherical_stereo" default="true" />
   <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
@@ -9,153 +11,63 @@
   <arg name="twitter_image_topics" default="/$(arg camera_ns)/color/image_rect_color" />
   <arg name="home_dir" default="$(env HOME)" />
 
+  <!-- mongodb -->
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
     <arg name="use_daemon" value="false"/>
     <arg name="port" value="27017" />
     <arg name="repl_set_mode" value="false" />
   </include>
   <include file="$(find eus_vive)/launch/baxter/baxter_db_client.launch">
-    <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
+    <arg name="camera" value="$(arg camera)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
-    <arg name="twitter_image_topics" value="$(arg twitter_image_topics)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
 
-  <group if="$(arg spherical_stereo)">
-    <group ns="lifelog">
-      <node name="spherical_left_camera_throttle"
-            pkg="nodelet" type="nodelet"
-            args="standalone jsk_topic_tools/SynchronizedThrottle" >
-        <remap from="/$(arg spherical_left_camera_ns)/camera_info/throttled"
-               to="spherical_left_rgb/camera_info"/>
-        <remap from="/$(arg spherical_left_camera_ns)/image_raw/compressed/throttled"
-               to="spherical_left_rgb/image_raw/compressed"/>
-        <rosparam subst_value="true">
-          approximate_sync: true
-          update_rate: 1.0
-          topics:
-          - /$(arg spherical_left_camera_ns)/camera_info
-          - /$(arg spherical_left_camera_ns)/image_raw/compressed
-        </rosparam>
-      </node>
-      <node name="spherical_left_rgb_image_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_left_rgb/image_raw/compressed" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_left_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-      <node name="spherical_left_rgb_camera_info_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_left_rgb/camera_info" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_left_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-      <node name="spherical_right_camera_throttle"
-            pkg="nodelet" type="nodelet"
-            args="standalone jsk_topic_tools/SynchronizedThrottle" >
-        <remap from="/$(arg spherical_right_camera_ns)/camera_info/throttled"
-               to="spherical_right_rgb/camera_info"/>
-        <remap from="/$(arg spherical_right_camera_ns)/image_raw/compressed/throttled"
-               to="spherical_right_rgb/image_raw/compressed"/>
-        <rosparam subst_value="true">
-          approximate_sync: true
-          update_rate: 1.0
-          topics:
-          - /$(arg spherical_right_camera_ns)/camera_info
-          - /$(arg spherical_right_camera_ns)/image_raw/compressed
-        </rosparam>
-      </node>
-      <node name="spherical_right_rgb_image_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_right_rgb/image_raw/compressed" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_right_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-      <node name="spherical_right_rgb_camera_info_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_right_rgb/camera_info" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_right_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-    </group>
+  <!-- rosbag -->
+  <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
+        args="/eus_vive/status /tf /robot/joint_states
+              /lifelog/rgb/image_rect_color/compressed
+              /lifelog/rgb/camera_info
+              /lifelog/spherical_left_rgb/image_raw/compressed
+              /lifelog/spherical_left_rgb/camera_info
+              /lifelog/spherical_right_rgb/image_raw/compressed
+              /lifelog/spherical_right_rgb/camera_info
+              /lifelog/depth/image_rect_raw/compressedDepth
+              /lifelog/depth/camera_info
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
+        output="screen" if="$(arg spherical_stereo)" />
+  <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
+        args="/eus_vive/status /tf /robot/joint_states
+              /lifelog/rgb/image_rect_color/compressed
+              /lifelog/rgb/camera_info
+              /lifelog/spherical_rgb/image_raw/compressed
+              /lifelog/spherical_rgb/camera_info
+              /lifelog/depth/image_rect_raw/compressedDepth
+              /lifelog/depth/camera_info
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
+        output="screen" unless="$(arg spherical_stereo)" />
 
-    <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
-          args="/eus_vive/status /tf /robot/joint_states
-                /lifelog/rgb/image_rect_color/compressed
-                /lifelog/rgb/camera_info
-                /lifelog/spherical_left_rgb/image_raw/compressed
-                /lifelog/spherical_left_rgb/camera_info
-                /lifelog/spherical_right_rgb/image_raw/compressed
-                /lifelog/spherical_right_rgb/camera_info
-                /lifelog/depth/image_rect_raw/compressedDepth
-                /lifelog/depth/camera_info
-                --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
-          output="screen" />
-  </group>
-  <group unless="$(arg spherical_stereo)">
-    <group ns="lifelog">
-      <node name="spherical_camera_throttle"
-            pkg="nodelet" type="nodelet"
-            args="standalone jsk_topic_tools/SynchronizedThrottle" >
-        <remap from="/$(arg spherical_camera_ns)/camera_info/throttled"
-               to="spherical_rgb/camera_info"/>
-        <remap from="/$(arg spherical_camera_ns)/image_raw/compressed/throttled"
-               to="spherical_rgb/image_raw/compressed"/>
-        <rosparam subst_value="true">
-          approximate_sync: true
-          update_rate: 1.0
-          topics:
-          - /$(arg spherical_camera_ns)/camera_info
-          - /$(arg spherical_camera_ns)/image_raw/compressed
-        </rosparam>
-      </node>
-      <node name="spherical_rgb_image_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_rgb/image_raw/compressed" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-      <node name="spherical_rgb_camera_info_logger"
-            pkg="nodelet" type="nodelet"
-            args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
-        <remap from="~input" to="spherical_rgb/camera_info" />
-        <rosparam subst_value="true">
-          enable_monitor: false
-          monitor_topic: /$(arg spherical_camera_ns)/image_raw/compressed
-          vital_check: true
-        </rosparam>
-      </node>
-    </group>
-
-    <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
-          args="/eus_vive/status /tf /robot/joint_states
-                /lifelog/rgb/image_rect_color/compressed
-                /lifelog/rgb/camera_info
-                /lifelog/spherical_rgb/image_raw/compressed
-                /lifelog/spherical_rgb/camera_info
-                /lifelog/depth/image_rect_raw/compressedDepth
-                /lifelog/depth/camera_info
-                --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
-          output="screen" />
-  </group>
+  <!-- tweeting robot warning data and etc. -->
+  <include file="$(find jsk_robot_startup)/lifelog/tweet.launch" if="$(arg twitter)">
+    <arg name="robot_name" value="Baxter"/>
+    <arg name="worktime_enable" value="true"/>
+    <arg name="uptime_enable" value="false"/>
+    <arg name="tablet_enable" value="false"/>
+    <arg name="warning_enable" value="false"/>
+    <arg name="motor_subscribe" value="true"/>
+    <arg name="odom_subscribe" value="false"/>
+    <arg name="joint_state_subscribe" value="true"/>
+    <arg name="position_diff_threshold" default="0.01"/>
+    <arg name="remap_motor_state" value="/robot/servo_state"/>
+    <arg name="remap_joint_states" value="/robot/joint_states"/>
+    <arg name="image_topics" value="$(arg twitter_image_topics)"/>
+    <arg name="machine" value="localhost"/>
+    <arg name="output" value="screen"/>
+    <arg name="account_info" value="/var/lib/robot/twitter_account_baxter_jsk.yaml" />
+  </include>
 </launch>

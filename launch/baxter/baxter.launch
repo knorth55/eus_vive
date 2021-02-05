@@ -218,7 +218,9 @@
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="debug" value="$(arg debug)" />
+    <arg name="camera" value="$(arg realsense_camera)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
     <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
     <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
     <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
