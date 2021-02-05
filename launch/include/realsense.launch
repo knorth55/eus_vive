@@ -16,4 +16,17 @@
     <arg name="depth_width"  value="$(arg depth_width)" />
     <arg name="depth_height" value="$(arg depth_height)" />
   </include>
+
+  <!-- subscribing /$(arg camera_ns)/depth/image_rect_raw/compressedDepth causes serious frequency drop. -->
+  <node name="depth_compress_republish" pkg="image_transport"
+        type="republish" args="raw in:=$(arg camera_ns)/depth/image_rect_raw
+                               compressedDepth out:=$(arg camera_ns)/depth/compressed/image_rect_raw" />
+  <node name="depth_camera_info_relay" pkg="topic_tools"
+        type="relay $(arg camera_ns)/depth/camera_info $(arg camera_ns)/depth/compressed/camera_info" />
+  <!-- subscribing /$(arg camera_ns)/aligned_depth_to_color/image_rect_raw/compressedDepth causes serious frequency drop. -->
+  <node name="aligned_depth_to_color_compress_republish" pkg="image_transport"
+        type="republish" args="raw in:=$(arg camera_ns)/aligned_depth_to_color/image_raw
+                               compressedDepth out:=$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw" />
+  <node name="aligned_depth_to_color_camera_info_relay" pkg="topic_tools"
+        type="relay $(arg camera_ns)/aligned_depth_to_color/camera_info $(arg camera_ns)/aligned_depth_to_color/compressed/camera_info" />
 </launch>
