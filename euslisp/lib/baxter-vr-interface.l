@@ -124,6 +124,7 @@
 
 
 (unix:signal 2 'signal-hook)
+(unix:signal 9 'signal-hook)
 (unix:signal 15 'signal-hook)
 
 

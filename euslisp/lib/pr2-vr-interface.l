@@ -64,12 +64,13 @@
       (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
   (if (and (boundp '*ti*) (find-method *ti* :switch-joy-to-ps3joy))
     (progn
-      (ros::ros-info "switch joy form vive to ps3joy")
+      (ros::ros-info "switch joy from vive to ps3joy")
       (send *ti* :switch-joy-to-ps3joy)))
   (reset))
 
 
 (unix:signal 2 'signal-hook)
+(unix:signal 9 'signal-hook)
 (unix:signal 15 'signal-hook)
 
 
