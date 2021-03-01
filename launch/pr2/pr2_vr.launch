@@ -173,7 +173,7 @@
     <arg name="DECOMP_IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
     <arg name="DECOMP_POINTS" value="$(arg DECOMP_POINTS)" />
     <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
-    <arg name="RGB_CAMERA_INFO" value="(arg RGB_CAMERA_INFO)" />
+    <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
     <arg name="IMAGE_COLOR" value="$(arg IMAGE_COLOR)" />
     <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DEPTH)" />
   </include>
