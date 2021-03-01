@@ -96,8 +96,19 @@ catkin build
 - Connect Vive HMD and Lighthouse and power on the controller.
 - Place Lighthouse B in front of you.
 - Start one of launch files below.
-- Press `Calibrate` button (if you don't use HMD).
+- If you don't use HMD, press `Calibrate` button and do arm calibration.
 - Press `Enable` button in GUI to start teleoperation.
+
+### Arm calibration (Only for no HMD mode)
+
+The arm calibration is required for no HMD mode in order to measure your position and your arm length.
+
+- Press `Calibrate l/rarm` button in GUI
+- Listen to the voice instruction.
+- Stretch your left/right arm and Press Trigger after the first instruction.
+- Listen to the voice instruction again.
+- Fold your left/right arm and Press Trigger after the second instruction.
+- If calibration failed, please try again.
 
 ### PR2 + Vive
 
