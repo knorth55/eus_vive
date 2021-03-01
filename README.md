@@ -91,6 +91,14 @@ catkin build
 
 ## How to start
 
+### Start procedure
+
+- Connect Vive HMD and Lighthouse and power on the controller.
+- Place Lighthouse B in front of you.
+- Start one of launch files below.
+- Press `Calibrate` button (if you don't use HMD).
+- Press `Enable` button in GUI to start teleoperation.
+
 ### PR2 + Vive
 
 #### PR1040 in JSK 73B2
@@ -98,7 +106,10 @@ catkin build
 ```bash
 rossetip
 rossetmaster pr1040
+# HMD mode
 roslaunch eus_vive pr2_73b2_vive.launch
+# No HMD mode
+roslaunch eus_vive pr2_73b2_vive.launch head:=false
 ```
 
 #### PR1012 in JSK 610
@@ -106,7 +117,10 @@ roslaunch eus_vive pr2_73b2_vive.launch
 ```bash
 rossetip
 rossetmaster pr1012
+# HMD mode
 roslaunch eus_vive pr2_610_vive.launch
+# No HMD mode
+roslaunch eus_vive pr2_610_vive.launch head:=false
 ```
 
 #### Gazebo
@@ -122,7 +136,10 @@ roslaunch eus_vive pr2_gazebo_vive.launch
 ```bash
 rossetip
 rossetmaster baxter
+# HMD mode
 roslaunch eus_vive baxter_73b2_vive.launch
+# No HMD mode
+roslaunch eus_vive baxter_73b2_vive.launch head:=false
 ```
 
 #### Gazebo
@@ -216,6 +233,29 @@ You can enable arm mode of right and left arm separately.
 |:-:|:-:|
 | 7 / Trigger | Gripper toggle: open/close (Default: open) |
 | Controller pose | robot end effector's pose |
+
+## How to use GUI control
+
+### Teleoperation control buttons
+
+| Button | Usage |
+|:-:|:-:|
+| Reset | Diable and reset robot to initial posture |
+| Enable | Enable robot |
+| Disable | Disable robot |
+| Calibrate larm/rarm | Calibrate with left/right arm |
+
+### Arm & Gripper control buttons
+
+| Button | Usage |
+|:-:|:-:|
+| Reset larm/rarm | Reset only left/right arm |
+| Enable larm/rarm | Enable only left/right arm |
+| Disable larm/rarm | Disable only left/right arm |
+| Start grasp lgripper/rgripper | Start grasp only left/right gripper |
+| Stop grasp lgripper/rgripper | Stop grasp only left/right gripper |
+| Use toggle grasp method | Change to toggle grasp |
+| Use hold grasp method | Change to hold grasp |
 
 ## Demo
 
