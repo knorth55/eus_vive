@@ -78,7 +78,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ### ROS Workspace build
 
-#### Build `jsk_apc` workspace (Only For baxter users)
+#### Build `jsk_apc` workspace (Only for baxter users)
 
 ```bash
 source /opt/ros/$ROS_DISTRO/setup.bash
