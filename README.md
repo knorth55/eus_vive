@@ -230,7 +230,7 @@ roslaunch eus_vive baxter.launch
 
 | Button | Usage |
 |:-:|:-:|
-| 1 / Menu | Control toggle: base / arm (Default: base) |
+| 1 / Menu | Control toggle: base/arm (Default: base) |
 | 3 / Stream Menu | Steam Menu |
 | 8 / Grip | Not used |
 
@@ -240,7 +240,8 @@ You can enable arm mode of right and left arm separately.
 
 | Command | Usage |
 |:-:|:-:|
-| 7 / Trigger | Gripper toggle: open/close (Default: open) |
+| 7 / Trigger | Gripper toggle: open/close in Toggle grasp mode (Default: open) |
+| 7 / Trigger | Gripper toggle: open only when trigger is pressed in Hold grasp mode|
 | Controller pose | robot end effector's pose |
 
 #### Base mode
@@ -290,8 +291,8 @@ You can enable arm mode of right and left arm separately.
 | Disable larm/rarm | Disable only left/right arm |
 | Start grasp lgripper/rgripper | Start grasp only left/right gripper |
 | Stop grasp lgripper/rgripper | Stop grasp only left/right gripper |
-| Use toggle grasp method | Change to toggle grasp |
-| Use hold grasp method | Change to hold grasp |
+| Toggle grasp mode | Change to Toggle grasp mode |
+| Hold grasp mode | Change to Hold grasp mode |
 
 ## Demo
 
