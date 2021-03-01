@@ -16,21 +16,21 @@
 - name: 'Disable rarm'
   service: '/eus_vive/rarm/disable'
   column: 2
-- name: 'Start grasp larm'
+- name: 'Start grasp lgripper'
   service: '/eus_vive/larm/start_grasp'
   column: 3
-- name: 'Start grasp rarm'
+- name: 'Start grasp rgripper'
   service: '/eus_vive/rarm/start_grasp'
   column: 3
-- name: 'Stop grasp larm'
+- name: 'Stop grasp lgripper'
   service: '/eus_vive/larm/stop_grasp'
   column: 4
-- name: 'Stop grasp rarm'
+- name: 'Stop grasp rgripper'
   service: '/eus_vive/rarm/stop_grasp'
   column: 4
-- name: 'Toggle grasp'
+- name: 'Use toggle grasp'
   service: '/eus_vive/toggle_grasp'
   column: 5
-- name: 'Hold grasp'
+- name: 'Use hold grasp'
   service: '/eus_vive/hold_grasp'
   column: 5
