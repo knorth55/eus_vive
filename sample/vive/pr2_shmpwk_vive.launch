@@ -1,0 +1,24 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="head" default="true" />
+  <arg name="button_toggle" default="true" />
+  <arg name="kinfu" default="false" />
+
+  <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
+    <arg name="oculus" value="false" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="respeaker" value="true" />
+    <arg name="mirror" value="false" />
+    <arg name="logging" value="true" />
+    <arg name="kinfu" value="$(arg kinfu)" />
+    <arg name="display" value="true" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
+    <arg name="b_lighthouse_id" value="75FB8E1A" />
+    <arg name="c_lighthouse_id" value="3BE5D3B2" />
+    <arg name="l_controller_id" value="FF9D9FC4" />
+    <arg name="r_controller_id" value="FFCCFFC7" />
+  </include>
+</launch>
