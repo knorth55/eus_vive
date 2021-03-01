@@ -28,9 +28,9 @@
 - name: 'Stop grasp rgripper'
   service: '/eus_vive/rarm/stop_grasp'
   column: 4
-- name: 'Use toggle grasp'
+- name: 'Toggle grasp mode'
   service: '/eus_vive/toggle_grasp'
   column: 5
-- name: 'Use hold grasp'
+- name: 'Hold grasp mode'
   service: '/eus_vive/hold_grasp'
   column: 5
