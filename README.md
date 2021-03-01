@@ -78,15 +78,37 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ### ROS Workspace build
 
+#### Build `jsk_apc` workspace (Only For baxter users)
+
+```bash
+source /opt/ros/$ROS_DISTRO/setup.bash
+mkdir ~/jsk_apc_ws/src -p
+cd ~/jsk_apc_ws/src
+wstool init . https://raw.githubusercontent.com/start-jsk/jsk_apc/master/fc.rosinstall.${ROS_DISTRO}
+rosdep install -y -r --from-paths .
+
+cd ~/jsk_apc_ws 
+catkin config
+catkin build
+```
+
+#### Build `eus_vive` workspace
+
 ```bash
 mkdir ~/vive_ws/src -p
 cd ~/vive_ws/src
-wstool init
+wstool init .
 wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
+
 # Only for baxter users
-wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
+# wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
+
 wstool up
 rosdep install --ignore-src --from-path . -y -r -i
+
+# Only for baxter users
+# source ~/jsk_apc_ws/devel/setup.bash
+
 cd ~/vive_ws
 catkin config
 catkin build
