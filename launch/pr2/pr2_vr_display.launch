@@ -17,6 +17,7 @@
   <arg name="RGB_CAMERA_INFO" />
   <arg name="IMAGE_COLOR" />
   <arg name="IMAGE_DEPTH" />
+  <arg name="IMAGE_DEPTH_TYPE" />
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"
@@ -24,7 +25,7 @@
     <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
           args="$(arg RGB_CAMERA_INFO) $(arg DECOMP_RGB_CAMERA_INFO)" />
     <node name="depth_image_transport" pkg="image_transport" type="republish"
-          args="compressed in:=$(arg IMAGE_DEPTH) raw out:=$(arg DECOMP_IMAGE_DEPTH)" />
+          args="$(arg IMAGE_DEPTH_TYPE) in:=$(arg IMAGE_DEPTH) raw out:=$(arg DECOMP_IMAGE_DEPTH)" />
     <node name="rgb_image_transport" pkg="image_transport" type="republish"
           args="compressed in:=$(arg IMAGE_COLOR) raw out:=$(arg DECOMP_IMAGE_COLOR)" />
     <node name="point_cloud_xyzrgb" pkg="nodelet" type="nodelet"
