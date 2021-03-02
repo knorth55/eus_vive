@@ -46,6 +46,7 @@
   <arg name="RGB_CAMERA_INFO" />
   <arg name="IMAGE_COLOR" />
   <arg name="IMAGE_DEPTH" />
+  <arg name="IMAGE_DEPTH_TYPE" />
   <arg name="COMP_IMAGE_COLOR" />
   <arg name="COMP_IMAGE_DEPTH" />
 
@@ -176,6 +177,7 @@
     <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
     <arg name="IMAGE_COLOR" value="$(arg IMAGE_COLOR)" />
     <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DEPTH)" />
+    <arg name="IMAGE_DEPTH_TYPE" value="$(arg IMAGE_DEPTH_TYPE)" />
   </include>
 
   <!-- launch logging -->

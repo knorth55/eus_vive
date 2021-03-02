@@ -41,6 +41,7 @@
   <arg name="RGB_CAMERA_INFO" default="/head_mount_kinect/qhd/camera_info" />
   <arg name="IMAGE_COLOR" default="/head_mount_kinect/qhd/image_color_rect" />
   <arg name="IMAGE_DEPTH" default="/head_mount_kinect/qhd/image_depth_rect" />
+  <arg name="IMAGE_DEPTH_TYPE" default="compressed" />
   <arg name="COMP_IMAGE_COLOR" default="/head_mount_kinect/qhd/image_color_rect/compressed" />
   <arg name="COMP_IMAGE_DEPTH" default="/head_mount_kinect/qhd/image_depth_rect/compressed" />
 

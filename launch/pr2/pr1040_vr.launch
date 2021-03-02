@@ -42,6 +42,7 @@
   <arg name="RGB_CAMERA_INFO" default="/kinect_head/rgb/camera_info" />
   <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
   <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
+  <arg name="IMAGE_DEPTH_TYPE" default="compressedDepth" />
   <arg name="COMP_IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color/compressed" />
   <arg name="COMP_IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect/compressedDepth" />
 
