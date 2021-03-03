@@ -1,0 +1,22 @@
+<launch>
+  <arg name="realsense_camera" default="true" />
+  <arg name="spherical_camera" default="false" />
+  <arg name="logging" default="false" />
+  <arg name="arm_interpolation" default="minjerk" />
+  <arg name="arm_control_mode" default="position_w_id" />
+  <arg name="moveit" default="true" />
+  <arg name="gui" default="true" />
+
+  <include file="$(find eus_vive)/launch/baxter/baxter.launch">
+    <arg name="realsense_camera" value="$(arg realsense_camera)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
+    <arg name="moveit" value="$(arg moveit)" />
+  </include>
+
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg gui)"
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_moveit.rviz"/>
+
+</launch>
