@@ -16,6 +16,7 @@
 
   <!-- baxter control -->
   <arg name="arm_interpolation" default="bezier_with_velocity" />
+  <arg name="arm_control_mode" default="velocity" />
 
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
@@ -72,7 +73,7 @@
     <arg name="left_electric_gripper" value="true" />
     <arg name="right_electric_gripper" value="true" />
     <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
-    <arg name="arm_control_mode" value="velocity" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
   </include>
 
   <!-- launch softhands -->
