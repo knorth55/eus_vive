@@ -17,6 +17,7 @@
   <!-- baxter control -->
   <arg name="arm_interpolation" default="bezier_with_velocity" />
   <arg name="arm_control_mode" default="velocity" />
+  <arg name="moveit" default="false" />
 
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
@@ -65,7 +66,7 @@
     <arg name="load_robot_description" value="false" />
     <arg name="launch_robot_state_publisher" value="true" />
     <arg name="sanity_check_joint_trajectory" value="false" />
-    <arg name="launch_moveit" value="false" />
+    <arg name="launch_moveit" value="$(arg moveit)" />
     <arg name="launch_time_signal" value="false" />
     <arg name="launch_db" value="false"/>
     <arg name="launch_twitter" value="false"/>
