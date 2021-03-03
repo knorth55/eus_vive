@@ -131,7 +131,7 @@
 
 (defun eus_vive::baxter-init
   (&key (safe t) (type :default-controller) (moveit t)
-        (lgripper :parallel) (rgripper :parallel))
+        (lgripper :softhand) (rgripper :softhand))
   (let (mvit-env mvit-rb)
     (if moveit
       (progn
