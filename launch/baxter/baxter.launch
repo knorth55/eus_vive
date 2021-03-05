@@ -124,7 +124,7 @@
         <arg name="load_machinepath" value="true" />
         <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
       </include>
-      <!-- launch elp left camera on c4 -->
+      <!-- launch elp right camera on c4 -->
       <node name="elp_right_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_right_camera_ns)_link 100" />
       <node name="elp_right_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
