@@ -85,6 +85,7 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 mkdir ~/jsk_apc_ws/src -p
 cd ~/jsk_apc_ws/src
 wstool init . https://raw.githubusercontent.com/start-jsk/jsk_apc/master/fc.rosinstall.${ROS_DISTRO}
+wstool up
 rosdep install -y -r --from-paths .
 
 cd ~/jsk_apc_ws 
@@ -95,10 +96,10 @@ catkin build
 #### Build `eus_vive` workspace
 
 ```bash
+source /opt/ros/$ROS_DISTRO/setup.bash
 mkdir ~/vive_ws/src -p
 cd ~/vive_ws/src
-wstool init .
-wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
+wstool init . https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
 
 # Only for baxter users
 # wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
@@ -186,6 +187,16 @@ roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_gazebo_vive.launch
 ```
 
+### Baxter + MoveIt!
+
+#### Real Robot in JSK 73B2
+
+```bash
+rossetip
+rossetmaster baxter
+roslaunch eus_vive baxter_73b2_moveit.launch
+```
+
 ### Demo & Experiments
 
 #### Miraikan Demo 2019/08/23-24
@@ -202,7 +213,7 @@ roslaunch eus_vive baxter_miraikan_mirror_vive.launch
 
 ```bash
 rossetip
-rossetbaster
+rossetmaster baxter
 roslaunch eus_vive baxter_miraikan_remote_vive.launch
 ```
 
@@ -210,7 +221,7 @@ roslaunch eus_vive baxter_miraikan_remote_vive.launch
 
 ```bash
 rossetip
-rossetbaster
+rossetmaster baxter
 roslaunch eus_vive baxter_miraikan_remove_display.launch
 ```
 
@@ -218,7 +229,7 @@ roslaunch eus_vive baxter_miraikan_remove_display.launch
 
 ```bash
 rossetip
-rossetbaster
+rossetmaster baxter
 roslaunch eus_vive baxter.launch
 ```
 
@@ -294,7 +305,13 @@ You can enable arm mode of right and left arm separately.
 | Toggle grasp mode | Change to Toggle grasp mode |
 | Hold grasp mode | Change to Hold grasp mode |
 
-## Demo
+## Tips
+
+### Baxter network configuration
+
+Open [Field Service Menu](https://sdk.rethinkrobotics.com/wiki/Field_Service_Menu_(FSM)) and change network configuration
+
+## Demo Video
 
 ### PR2 Fridge demo
 
@@ -309,9 +326,3 @@ You can enable arm mode of right and left arm separately.
 - [Trial 3](https://drive.google.com/open?id=10XZ_5bBKgEk_QqtONCfnXYRLKTE6rpgE)
 - [Trial 4](https://drive.google.com/open?id=1IyVME3OggckIfDYCDwIjQmdNneWYdXWd)
 - [Trial 5](https://drive.google.com/open?id=1jwq_UdDzgDf-UfBpAS0G0KeykvZ-gLhW)
-
-## Tips
-
-### Baxter network configuration
-
-Open [Field Service Menu](https://sdk.rethinkrobotics.com/wiki/Field_Service_Menu_(FSM)) and change network configuration
