@@ -1,5 +1,5 @@
 frame_id: base
-initial_x: 0.277
-initial_y: 0.059
-initial_z: 0.472
-initial_orientation: [-0.646, 0.666, -0.235, 0.291]
+initial_x: 0.306
+initial_y: 0.024
+initial_z: 0.523
+initial_orientation: [0.639, -0.626, 0.295, -0.337]
