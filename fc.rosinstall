@@ -3,6 +3,10 @@
     uri: https://github.com/ros-drivers/audio_common.git
     version: master
 - git:
+    local-name: jsk-ros-pkg/jsk_pr2eus
+    uri: https://github.com/jsk-ros-pkg/jsk_pr2eus.git
+    version: master
+- git:
     local-name: jsk-ros-pkg/jsk_robot
     uri: https://github.com/jsk-ros-pkg/jsk_robot.git
     version: master
@@ -10,10 +14,6 @@
     local-name: knorth55/eus_vive
     uri: https://github.com/knorth55/eus_vive.git
     version: master
-- git:
-    local-name: knorth55/jsk_pr2eus
-    uri: https://github.com/knorth55/jsk_pr2eus.git
-    version: vive-control
 - git:
     local-name: knorth55/rviz_camera_stream
     uri: https://github.com/knorth55/rviz_camera_stream
