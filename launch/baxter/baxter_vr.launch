@@ -41,7 +41,8 @@
   <arg name="finger_tip" default="paddle_tip" />
 
   <!-- camera -->
-  <arg name="camera_ns" default="realsense_head" />
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="camera_type" default="l515" />
   <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
@@ -71,7 +72,10 @@
     <arg name="finger" value="$(arg finger)" />
     <arg name="finger_tip" value="$(arg finger_tip)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="camera_type" value="$(arg camera_type)" />
     <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
 
   <!-- launch vive-->
@@ -131,7 +135,8 @@
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="republish" value="$(arg republish)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
-    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
 
 </launch>

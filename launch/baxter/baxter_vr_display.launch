@@ -7,6 +7,8 @@
   <!-- camera -->
   <arg name="camera_ns" default="realsense_head" />
   <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
   <!-- launch rviz overlay -->
   <node name="rosconsole_overlay_text"
@@ -48,9 +50,15 @@
     <node name="realsense_depth_decompress" pkg="image_transport" type="republish"
           args="compressedDepth in:=/$(arg camera_ns)/depth/image_rect_raw
                                 out:=/$(arg camera_ns)_remote/depth/image_rect_raw" />
-    <node name="kodak_decompress" pkg="image_transport" type="republish"
+    <node name="spherical_decompress" pkg="image_transport" type="republish"
           args="compressed in:=/$(arg spherical_camera_ns)/image_raw
                            out:=/$(arg spherical_camera_ns)_remote/image_raw" />
+    <node name="spherical_left_decompress" pkg="image_transport" type="republish"
+          args="compressed in:=/$(arg spherical_left_camera_ns)/image_raw
+                           out:=/$(arg spherical_left_camera_ns)_remote/image_raw" />
+    <node name="spherical_right_decompress" pkg="image_transport" type="republish"
+          args="compressed in:=/$(arg spherical_right_camera_ns)/image_raw
+                           out:=/$(arg spherical_right_camera_ns)_remote/image_raw" />
   </group>
 
   <!-- launch rviz -->
