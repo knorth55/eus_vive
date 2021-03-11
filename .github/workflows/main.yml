@@ -13,19 +13,19 @@ jobs:
         env:
           - ROS_DISTRO: kinetic
             ROS_REPO: testing
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: kinetic
             ROS_REPO: main
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: melodic
             ROS_REPO: testing
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: melodic
             ROS_REPO: main
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
     runs-on: ubuntu-latest
     steps:
