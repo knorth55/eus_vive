@@ -3,6 +3,7 @@
   <arg name="respeaker" default="true" />
   <arg name="logging" default="true" />
   <arg name="twitter" default="true" />
+  <arg name="influxdb" default="true" />
   <arg name="debug" default="false" />
   <arg name="home_dir" default="$(env HOME)" />
   <arg name="mask_rcnn" default="false" />
@@ -222,6 +223,7 @@
   <!-- launch logging -->
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />
+    <arg name="influxdb" value="$(arg influxdb)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera" value="$(arg realsense_camera)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />

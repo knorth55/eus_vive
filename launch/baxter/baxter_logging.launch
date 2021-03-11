@@ -1,5 +1,6 @@
 <launch>
   <arg name="twitter" default="true" />
+  <arg name="influxdb" default="true" />
   <arg name="debug" default="false" />
   <arg name="camera" default="true" />
   <arg name="camera_ns" default="realsense_torso" />
@@ -70,4 +71,9 @@
     <arg name="output" value="screen"/>
     <arg name="account_info" value="/var/lib/robot/twitter_account_baxter_jsk.yaml" />
   </include>
+
+  <include file="$(find influxdb_store)/sample/baxter_influxdb_logger.launch" if="$(arg influxdb)">
+    <arg name="robot_name" value="baxter"/>
+  </include>
+
 </launch>
