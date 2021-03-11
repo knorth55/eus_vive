@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Camera1/ELPLeftSphere1
         - /TF1/Frames1
       Splitter Ratio: 0.4283154010772705
     Tree Height: 833
@@ -28,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: RealsensePointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -97,7 +96,7 @@ Visualization Manager:
           Size (Pixels): 2
           Size (m): 0.009999999776482582
           Style: Points
-          Topic: /realsense_head/depth_registered/points
+          Topic: /realsense_torso/depth_registered/points
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
