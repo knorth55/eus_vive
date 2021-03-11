@@ -3,13 +3,17 @@
     uri: https://github.com/knorth55/baxter_interface.git
     version: baxter-vive-control
 - git:
-    local-name: tohirose/dynamixel_motor
-    uri: https://github.com/tohirose/dynamixel_motor.git
-    version: softhand-v2-devel
+    local-name: knorth55/influxdb_store
+    uri: https://github.com/knorth55/influxdb_store.git
+    version: master
 - git:
     local-name: knorth55/softhand_ros
     uri: https://github.com/knorth55/softhand_ros.git
     version: master
+- git:
+    local-name: tohirose/dynamixel_motor
+    uri: https://github.com/tohirose/dynamixel_motor.git
+    version: softhand-v2-devel
 - git:
     local-name: strands-project/mongodb_store
     uri: https://github.com/strands-project/mongodb_store.git

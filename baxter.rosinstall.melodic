@@ -3,6 +3,10 @@
     uri: https://github.com/knorth55/baxter_interface.git
     version: baxter-vive-control
 - git:
+    local-name: knorth55/influxdb_store
+    uri: https://github.com/knorth55/influxdb_store.git
+    version: master
+- git:
     local-name: knorth55/softhand_ros
     uri: https://github.com/knorth55/softhand_ros.git
     version: master
