@@ -307,9 +307,24 @@ You can enable arm mode of right and left arm separately.
 
 ## Tips
 
-### Baxter network configuration
+### Baxter Network Configuration
 
 Open [Field Service Menu](https://sdk.rethinkrobotics.com/wiki/Field_Service_Menu_(FSM)) and change network configuration
+
+### VPNC Install
+
+```bash
+sudo apt install libgcrypt20-dev libgnutls28-dev
+git clone https://github.com/streambinder/vpnc.git
+cd vpnc
+git checkout 1cf24ed6aa4a04b4b01cc9ebfacbad723eed04f5
+make
+sudo make install
+cd ..
+git clone git://git.infradead.org/users/dwmw2/vpnc-scripts.git
+cd vpnc-scripts
+sudo cp vpnc-script /etc/vpnc
+```
 
 ## Demo Video
 
