@@ -326,6 +326,12 @@ cd vpnc-scripts
 sudo cp vpnc-script /etc/vpnc
 ```
 
+### VPNC Command for Fortigate
+
+```bash
+sudo vpnc --local-port 0 --gateway <gateway> --id ipsecvpn --username <username> --pfs dh5 --dh dh5 --auth-mode psk --no-detach --vendor fortigate --dh dh5
+```
+
 ## Demo Video
 
 ### PR2 Fridge demo
