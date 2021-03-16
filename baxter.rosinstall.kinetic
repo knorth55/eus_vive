@@ -18,3 +18,7 @@
     local-name: strands-project/mongodb_store
     uri: https://github.com/strands-project/mongodb_store.git
     version: kinetic-devel
+- git:
+    local-name: clearpathrobotics/x264_image_transport
+    uri: https://github.com/clearpathrobotics/x264_image_transport.git
+    version: master
