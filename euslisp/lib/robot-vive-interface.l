@@ -116,23 +116,9 @@
               (setq target-rot (send vrbase->controller-coords :worldrot))))))
       (if (and target-pos target-rot)
         (progn
-          (if mirror
-            (let* ((mirror-coords (make-coords :rot target-rot))
-                   (rpy-angle (car (send mirror-coords :rpy-angle))))
-              (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
-              (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
-              (setq mirror-coords (make-coords :rpy rpy-angle))
-              (setq target-rot (send mirror-coords :worldrot))
-              (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
           (setq target-coords
-                (make-coords :pos (float-vector
-                                    (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
-                                    (* scale (elt target-pos 1))
-                                    (if head
-                                      (+ robot-height (* scale (- (elt target-pos 2) robot-height)))
-                                      (+ (- robot-height head->shoulder-z-distance)
-                                         (* scale (elt target-pos 2)))))
-                             :rot target-rot))
+                (send self :get-target-coords-from-pos-rot target-pos target-rot :head head :mirror mirror))
+          ;; rotate pi/4 for vive controller
           (send target-coords :rotate (/ pi 4.0) :y)))
       target-coords))
   ;; :get-head-ypr-angle

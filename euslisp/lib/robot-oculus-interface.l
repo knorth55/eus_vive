@@ -60,11 +60,7 @@
                         (send hmd-coords :worldpos))))
           (setq target-rot (send controller-coords :worldrot))
           (setq target-coords
-                (make-coords :pos (float-vector
-                                    (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
-                                    (* scale (elt target-pos 1))
-                                    (- robot-height (* scale (- robot-height (elt target-pos 2)))))
-                             :rot target-rot))
+                (send self :get-target-coords-from-pos-rot target-pos target-rot :head head :mirror mirror))
           target-coords))))
   (:calib-controller ()
     ;; TODO (knorth55): update get-target-coords for oculus
