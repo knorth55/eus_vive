@@ -117,7 +117,8 @@
       (if (and target-pos target-rot)
         (progn
           (setq target-coords
-                (send self :get-target-coords-from-pos-rot target-pos target-rot :head head :mirror mirror))
+                (send self :get-target-coords-from-pos-rot
+                      target-pos target-rot :head head :mirror mirror))
           ;; rotate pi/4 for vive controller
           (send target-coords :rotate (/ pi 4.0) :y)))
       target-coords))
