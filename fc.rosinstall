@@ -24,5 +24,5 @@
     version: use-camera
 - git:
     local-name: UTNuclearRoboticsPublic/rviz_textured_sphere
-    uri: https://github.com/UTNuclearRoboticsPublic/rviz_textured_sphere.git
-    version: master
+    uri: https://github.com/knorth55/rviz_textured_sphere.git
+    version: add-padding 
