@@ -460,7 +460,9 @@
       (or (> (abs (- larm-current-z larm-target-z)) torso-z-thresh)
           (> (abs (- rarm-current-z rarm-target-z)) torso-z-thresh))))
   (:get-target-coords-from-pos-rot (target-pos target-rot &key (head t) (mirror nil))
-    (let (target-coords)
+    (let* ((head-coords (send self :get-head-end-coords))
+           (robot-height (elt (send head-coords :worldpos) 2))
+           target-coords)
       (if (and target-pos target-rot)
         (progn
           (if mirror

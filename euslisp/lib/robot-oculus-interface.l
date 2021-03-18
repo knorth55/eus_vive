@@ -47,11 +47,9 @@
       (progn
         (ros::ros-error "oculus is only available when mirror is nil.")
         (return-from :get-target-coords nil)))
-    (let* ((head-coords (send self :get-head-end-coords))
-           (robot-height (elt (send head-coords :worldpos) 2))
-           (controller-coords
-             (send (send self :get-arm-val arm :controller-coords) :copy-worldcoords))
-           target-pos target-rot target-coords)
+    (let ((controller-coords
+            (send (send self :get-arm-val arm :controller-coords) :copy-worldcoords))
+          target-pos target-rot target-coords)
       (if controller-coords
         (progn
           (setq target-pos

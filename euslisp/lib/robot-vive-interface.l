@@ -83,9 +83,7 @@
     (send self :set-arm-val arm :grip-count 0))
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
-    (let* ((head-coords (send self :get-head-end-coords))
-           (robot-height (elt (send head-coords :worldpos) 2))
-          target-pos target-rot target-coords)
+    (let (target-pos target-rot target-coords)
       (if head
         (let ((hmd->controller-coords
                 (send self :get-hmd->controller-coords
