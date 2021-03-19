@@ -6,7 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Camera1/KodakSphere1
+        - /Camera1
+        - /Camera1/ELPLeftSphere1
         - /TF1/Frames1
       Splitter Ratio: 0.4283154010772705
     Tree Height: 860
@@ -125,9 +126,25 @@ Visualization Manager:
           FOV rear: 0
           Front camera image: /kodak_head_remote/image_raw
           Name: KodakSphere
+          Padding: false
           Radius: 0.800000011920929
           Rear camera image: ""
           Reference frame: kodak_head_rviz_frame
+          Ring count: 64
+          Segment count: 64
+          Transport Hint: raw
+          Value: true
+        - Blend angle: 0
+          Class: rviz_textured_sphere/SphereDisplay
+          Enabled: true
+          FOV front: 170
+          FOV rear: 0
+          Front camera image: /elp_head_left_remote/image_raw
+          Name: ELPLeftSphere
+          Padding: true
+          Radius: 0.800000011920929
+          Rear camera image: ""
+          Reference frame: elp_head_left_rviz_frame
           Ring count: 64
           Segment count: 64
           Transport Hint: raw
@@ -168,6 +185,7 @@ Visualization Manager:
           auto color change: true
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 1
           foreground alpha 2: 1
           foreground color: 0; 255; 255
@@ -187,6 +205,7 @@ Visualization Manager:
           auto color change: true
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 1
           foreground alpha 2: 1
           foreground color: 0; 255; 50
@@ -272,11 +291,7 @@ Visualization Manager:
           Value: false
           Visibility:
             Camera:
-              KodakRGBImage: true
-              KodakSphere: true
-              RealsenseCameraInfo: true
-              RealsensePointCloud2: true
-              RealsenseRGBImage: true
+              "": true
               Value: true
             Grid: true
             RobotModel: true
@@ -305,11 +320,7 @@ Visualization Manager:
           Value: false
           Visibility:
             Camera:
-              KodakRGBImage: true
-              KodakSphere: true
-              RealsenseCameraInfo: true
-              RealsensePointCloud2: true
-              RealsenseRGBImage: true
+              "": true
               Value: true
             Grid: true
             RobotModel: true
@@ -394,7 +405,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.8134632110595703
+      Distance: 2.446303367614746
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -438,5 +449,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 960
-  X: 1920
+  X: 1946
   Y: 0
