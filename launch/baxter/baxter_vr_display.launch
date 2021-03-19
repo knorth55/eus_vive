@@ -54,10 +54,10 @@
           args="compressed in:=/$(arg spherical_camera_ns)/image_raw
                            out:=/$(arg spherical_camera_ns)_remote/image_raw" />
     <node name="spherical_left_decompress" pkg="image_transport" type="republish"
-          args="compressed in:=/$(arg spherical_left_camera_ns)/image_raw
+          args="x264 in:=/$(arg spherical_left_camera_ns)/image_raw
                            out:=/$(arg spherical_left_camera_ns)_remote/image_raw" />
     <node name="spherical_right_decompress" pkg="image_transport" type="republish"
-          args="compressed in:=/$(arg spherical_right_camera_ns)/image_raw
+          args="x264 in:=/$(arg spherical_right_camera_ns)/image_raw
                            out:=/$(arg spherical_right_camera_ns)_remote/image_raw" />
   </group>
 
