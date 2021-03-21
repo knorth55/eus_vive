@@ -2,6 +2,208 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update reset perspective
+* update rviz config
+* update rviz config
+* add image and depth type
+* update rvizconfig
+* use x264
+* update rviz config
+* use padding rviz_textured_sphere
+* rviz config update
+* fix robot-height in get-target-coords-from-pos-rot
+* euslint
+* add get-target-coords-from-pos-rot
+* add VPNC Command
+* update readme
+* update baxter.rosinstall
+* update rviz config
+* update rviz config
+* update baxter_vr.launch
+* update main workflows
+* update baxter.rosinstall
+* add influxdb
+* update rviz config
+* update baxter shoulder distance
+* update rviz config
+* update rviz config
+* update l515 pose
+* update fc.rosinstall
+* github markdown lint
+* update README.md
+* fix typo in comment
+* update baxter vr display rviz
+* update env.sh
+* add limit-in-front arg in baxter-init
+* change to default gripper type
+* add baxter_73b2_moveit.launch
+* add baxter_moveit.rviz
+* add moveit arg
+* add arm_control_mode
+* add arm_interpolation arg
+* update pr2 vr visualization
+* update virtual camera tf
+* add IMAGE_DEPTH_TYPE
+* update readme
+* change button name
+* fix typo
+* update readme
+* add baxter.rosinstall.kinetic/melodic
+* update readme
+* update readme
+* change the button name
+* add head arg
+* add pr2_shmpwk_vive.launch
+* add head argument in pr2_73b2_vive.launch
+* fix typo
+* update signal hook
+* refactor baxter logging launch
+* fix typo
+* update fc.rosinstall
+* fix typo
+* fix baxter logging
+* add compressedDepth republish
+* change the resolution for usb3.0
+* add realsense baxter launch
+* disable jscpd linter
+* update fc.rosinstall
+* suppot spherical stereo for baxter logging
+* add realsense torso
+* add comment to skip sc1090
+* add spherical stereo
+* add +x in scripts/env.sh
+* add env.sh
+* update readme
+* update fc.rosinstall
+* fix typo in baxter_vr_display
+* fix typo
+* move rqt_gui.launch
+* refactor baxter_vr_gazebo.launch
+* fix signal-hook for pr2
+* fix controller-button-p for other controller
+* typo: enable -> loop-enable in robot-vr-interface
+* add comment in robot-vive-interface.l
+* do not use pass_all_args in pr2_vr.launch
+* stop using pass_all_args in baxter launch
+* update elp_usb.launch
+* add libuvc_camera as exec_depend
+* Update 99-insta.rules
+* fix typo in pr2_vr_display.launch
+* fix typo
+* add audio_ns
+* add display
+* fix typo in pr2 launch
+* add toggle and hold grasp button
+* add loop-enable for each arms
+* rename to loop-enable-arm
+* check args in set-arm-val and get-arm-val
+* update perspective
+* not wait for grasping
+* add gripper button gui in baxter and pr2
+* add gripper button gui
+* update robot speech
+* add start/stop grasp service
+* add reset enable disable service for each arm
+* rename to elp_usb.launch
+* add insta360_air.launch
+* update elp_usb_4k.launch
+* refactor robot-vive-interface
+* add elp 4k camera launch
+* set debug arg false
+* add pr2-vr-interface
+* require robot-vr-interface
+* add baxter-vr-interface
+* use require
+* fix typo
+* use reset-arm-val
+* fix typo
+* move signal-hook in robot-vr-interface.l
+* refactor arm val slots
+* add clear-costmap
+* update reset-arm
+* add baxter_remote_hmd_visualization.rviz
+* add baxter_vr_remote_display_visualization.rviz
+* add pr2_logging and pr2_vr_display
+* fix service button
+* add remote sound play node
+* move rqt_gui in baxter_vr_display.launch
+* euslint
+* add euslint
+* flake8
+* markdown lint
+* add linter
+* Merge pull request `#18 <https://github.com/knorth55/eus_vive/issues/18>`_ from knorth55/softhand-v2-devel
+* update reset-teleop-pose
+* fix baxter-interface
+* add reset-pose
+* add softhand-v2 methods
+* fix arm-motion-cb
+* fix  typo in baxter-interface.l
+* Merge pull request `#20 <https://github.com/knorth55/eus_vive/issues/20>`_ from knorth55/use-4k
+* Merge branch 'use-4k' into softhand-v2-devel
+* use kodak pixpro as 4k
+* fix robot-vr-interface.l
+* add create-viewer
+* fix typo in baxter-oculus-interface.l
+* fix typo in baxter-interface.l
+* euslint
+* do not use dolist
+* use if instead of when, unless
+* fix arguments order
+* chmod -x
+* override e1 min angle limit
+* move limit in baxter-interface
+* add baxter-util.l
+* fix typo in baxter-vr-main
+* euslint
+* move controller-button-p in robot-vr-interface.l
+* rename methods
+* set default param
+* use args
+* add l/rgripper args in baxter-oculus
+* add thumb-rotate-cb for baxter+softhand-v2
+* add l/rgripper args
+* refactor robot-vr-interface.l
+* fix grasp variable set
+* add start-heater and stop-heater
+* add get-gripper-type and get-gripper-interface
+* fix typo in baxter-interface.l
+* update README
+* fix typo in .ci.rosinstall
+* update fc.rosinstall and .ci.rosinstall
+* Merge pull request `#16 <https://github.com/knorth55/eus_vive/issues/16>`_ from knorth55/softhand-v2-devel
+  support softhand v2
+* change launch arg: gripper_softhand -> gripper_type
+* add softhand-v2 in baxter-interface
+* Merge pull request `#15 <https://github.com/knorth55/eus_vive/issues/15>`_ from knorth55/update-gripper-control
+  add button toggle control
+* rename button-toggle-p -> gripper-button-toggle-p
+* fix button-toggle
+* add button_toggle rosparam in oculus
+* fix button-toggle-p
+* Merge remote-tracking branch 'origin/master' into update-gripper-control
+* Update README.md
+* fix readme
+* update readme
+* add button_toggle launch args
+* remove unused launch args
+* add button-toggle-p in robot-vive-interface.l
+* Merge pull request `#17 <https://github.com/knorth55/eus_vive/issues/17>`_ from knorth55/use-github-actions
+* update readme
+* update github actions config
+* skip vive_ros
+* add .ci.rosinstall
+* update fc.rosinstall
+* update README.md
+* add UPSTREAM_WORKSPACE
+* rename to fc.rosinstall
+* add github actions
+* fix package.xml
+* remove travis
+* Contributors: Shingo Kitagawa, Shmpei Wakabayashi, Shumpei Wakabayashi
+
 0.0.3 (2020-09-18)
 ------------------
 * Merge pull request `#14 <https://github.com/knorth55/eus_vive/issues/14>`_ from knorth55/update-calib
