@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.4 (2021-03-21)
+------------------
 * update reset perspective
 * update rviz config
 * update rviz config
