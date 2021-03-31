@@ -587,7 +587,8 @@
     (let ((controller-button-method
             (read-from-string (format nil ":controller-~A-button-p" (string-downcase button)))))
       (if (find-method self controller-button-method)
-        (send self controller-button-method arm :button-toggle button-toggle))))
+        (send self controller-button-method arm :button-toggle button-toggle)
+        (ros::ros-error (format nil "cannot find method: ~A" controller-button-method)))))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p
