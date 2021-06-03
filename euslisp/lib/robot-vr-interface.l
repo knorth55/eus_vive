@@ -220,11 +220,11 @@
     (if wait
       (send robot-interface :wait-interpolation
             (send self :get-arm-controller arm))))
-  (:reset-torso (&key (wait t))
+  (:reset-torso (&key (wait t) (reset-pose :reset-pose))
     (if (find-method robot-interface :torso-controller)
       (progn
         (send robot-interface :cancel-angle-vector :controller-type :torso-controller)
-        (send self :angle-vector (send robot :reset-pose) 5000 :torso-controller)
+        (send self :angle-vector (send robot reset-pose) 5000 :torso-controller)
         (if wait (send robot-interface :wait-interpolation :torso-controller)))))
   (:enable (&key (torso t))
     (send self :set-val 'loop-enable t)

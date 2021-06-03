@@ -5,6 +5,10 @@
 
 (if (not (assoc :init-org (send robot-vr-interface :methods)))
   (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
+(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
+(if (not (assoc :reset-torso-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-org))
 
 
 (defmethod robot-vr-interface
@@ -50,7 +54,11 @@
              :avoid-collision-distance 5 :revert-if-fail nil :stop ik-stop-step
              :debug-view nil args)))
   (:start-grasp (arm &key (wait t))
-    (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000))))
+    (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000)))
+  (:reset-arm (arm &key (wait t) (reset-pose :reset-manip-pose))
+    (send self :reset-arm-org arm :wait wait :reset-pose reset-pose))
+  (:reset-torso (&key (wait t) (reset-pose :reset-manip-pose))
+    (send self :reset-torso-org :wait wait :reset-pose reset-pose)))
 
 
 (defun signal-hook (sig code)
