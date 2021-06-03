@@ -4,6 +4,7 @@
   <arg name="head" default="true" />
   <arg name="button_toggle" default="true" />
   <arg name="kinfu" default="false" />
+  <arg name="display" default="true" />
 
   <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
     <arg name="main" value="$(arg main)" />
@@ -14,7 +15,7 @@
     <arg name="mirror" value="false" />
     <arg name="logging" value="true" />
     <arg name="kinfu" value="$(arg kinfu)" />
-    <arg name="display" value="true" />
+    <arg name="display" value="$(arg display)" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
     <arg name="b_lighthouse_id" value="8E924CC3" />
     <arg name="c_lighthouse_id" value="11CFA4E1" />

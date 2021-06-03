@@ -165,7 +165,7 @@
   </group>
 
   <!-- launch display -->
-  <include file="$(find eus_vive)/launch/pr2/pr2_vr_display.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_display.launch" if="$(arg display)">
     <arg name="respeaker" value="$(arg respeaker)" />
     <arg name="kinfu" value="$(arg kinfu)" />
     <arg name="DECOMP_CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
