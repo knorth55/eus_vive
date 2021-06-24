@@ -5,8 +5,9 @@
   <arg name="republish" default="false" />
 
   <!-- camera -->
-  <arg name="camera_ns" default="realsense_head" />
+  <arg name="camera_ns" default="realsense_torso" />
   <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_stereo" default="true" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
@@ -65,6 +66,80 @@
     <node name="spherical_right_decompress" pkg="image_transport" type="republish"
           args="$(arg SPHERICAL_STEREO_IMAGE_TYPE) in:=/$(arg spherical_right_camera_ns)/image_raw
                 raw out:=/$(arg spherical_right_camera_ns)_remote/image_raw" />
+  </group>
+
+  <!-- virtual camera -->
+  <group if="$(arg head)">
+    <group if="$(arg spherical_stereo)">
+      <group ns="virtual_camera">
+        <group ns="left">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0 0 0 0 0 0 /$(arg spherical_left_camera_ns)_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg spherical_left_camera_ns)/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_left_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+        </group>
+        <group ns="right">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0 0 0 0 0 0 /$(arg spherical_right_camera_ns)_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg spherical_right_camera_ns)/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_right_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+        </group>
+      </group>
+    </group>
+    <group unless="$(arg spherical_stereo)">
+      <group ns="virtual_camera">
+        <group ns="left">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="-0.0315 0 0 0 0 0 /$(arg camera_ns)_color_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_left_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+          <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+                args="standalone jsk_pcl/DepthImageCreator" output="screen">
+            <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+            <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+          </node>
+        </group>
+        <group ns="right">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0.0315 0 0 0 0 0 /$(arg camera_ns)_color_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_right_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+          <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+                args="standalone jsk_pcl/DepthImageCreator" output="screen">
+            <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+            <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+          </node>
+        </group>
+      </group>
+    </group>
   </group>
 
   <!-- launch rviz -->

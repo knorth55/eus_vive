@@ -123,6 +123,7 @@
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="republish" value="$(arg republish)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
     <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
     <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
