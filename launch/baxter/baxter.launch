@@ -114,7 +114,7 @@
     <group if="$(arg spherical_stereo)">
       <!-- launch elp left camera on c1 -->
       <node name="elp_left_transform_publisher" pkg="tf" type="static_transform_publisher"
-            args="0.0315 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_left_camera_ns)_link 100" />
+            args="0.032 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_left_camera_ns)_link 100" />
       <node name="elp_left_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0 0 0 -1.57 0 -1.57 $(arg spherical_left_camera_ns)_link $(arg spherical_left_camera_ns)_optical_frame 100" />
       <node name="elp_left_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
@@ -127,7 +127,7 @@
       </include>
       <!-- launch elp right camera on c4 -->
       <node name="elp_right_transform_publisher" pkg="tf" type="static_transform_publisher"
-            args="-0.0315 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_right_camera_ns)_link 100" />
+            args="-0.032 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_right_camera_ns)_link 100" />
       <node name="elp_right_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0 0 0 -1.57 0 -1.57 $(arg spherical_right_camera_ns)_link $(arg spherical_right_camera_ns)_optical_frame 100" />
       <node name="elp_right_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
