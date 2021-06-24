@@ -36,6 +36,11 @@
   <arg name="workspace_max_z" default="false" />
   <arg name="workspace_min_z" default="false" />
 
+  <!-- baxter control -->
+  <arg name="arm_interpolation" default="bezier_with_velocity" />
+  <arg name="arm_control_mode" default="velocity" />
+  <arg name="moveit" default="false" />
+
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
   <arg name="finger_tip" default="paddle_tip" />
@@ -69,6 +74,9 @@
     <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
     <arg name="lgripper_type" value="$(arg lgripper_type)" />
     <arg name="rgripper_type" value="$(arg rgripper_type)" />
+    <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
+    <arg name="moveit" value="$(arg moveit)" />
     <arg name="finger" value="$(arg finger)" />
     <arg name="finger_tip" value="$(arg finger_tip)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
