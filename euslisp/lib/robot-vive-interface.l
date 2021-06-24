@@ -88,6 +88,7 @@
         (let ((hmd->controller-coords
                 (send self :get-hmd->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm)))
+              (head-coords (send self :get-head-end-coords))
                controller-coords)
           (if hmd->controller-coords
             (progn

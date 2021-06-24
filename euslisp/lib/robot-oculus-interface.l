@@ -49,6 +49,7 @@
         (return-from :get-target-coords nil)))
     (let ((controller-coords
             (send (send self :get-arm-val arm :controller-coords) :copy-worldcoords))
+          (head-coords (send self :get-head-end-coords))
           target-pos target-rot target-coords)
       (if controller-coords
         (progn
