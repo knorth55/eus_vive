@@ -1,12 +1,12 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="vive_set" default="default" />
   <arg name="head" default="true" />
   <arg name="button_toggle" default="true" />
   <arg name="kinfu" default="false" />
-  <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr1012_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="oculus" value="false" />
@@ -15,11 +15,11 @@
     <arg name="mirror" value="false" />
     <arg name="logging" value="true" />
     <arg name="kinfu" value="$(arg kinfu)" />
-    <arg name="display" value="$(arg display)" />
+    <arg name="display" value="true" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
-    <arg name="b_lighthouse_id" value="8E924CC3" />
-    <arg name="c_lighthouse_id" value="11CFA4E1" />
-    <arg name="l_controller_id" value="FD35BD42" />
-    <arg name="r_controller_id" value="F7AFBF47" />
   </include>
+
+  <group ns="eus_vive" if="$(arg vive)">
+    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
+  </group>
 </launch>

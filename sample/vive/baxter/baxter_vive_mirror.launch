@@ -1,7 +1,9 @@
 <launch>
+  <arg name="vive_set" default="default" />
+
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="true" />
-    <arg name="vive" value="false" />
+    <arg name="vive" value="true" />
     <arg name="oculus" value="false" />
     <arg name="mirror" value="true" />
     <arg name="head" value="false" />
@@ -18,10 +20,6 @@
     <arg name="lgripper_type" value="parallel" />
     <arg name="rgripper_type" value="parallel" />
     <arg name="button_toggle" value="true" />
-    <arg name="b_lighthouse_id" value="8E924CC3" />
-    <arg name="c_lighthouse_id" value="11CFA4E1" />
-    <arg name="l_controller_id" value="FD35BD42" />
-    <arg name="r_controller_id" value="F7AFBF47" />
     <arg name="workspace_max_x" value="1300.0" />
     <arg name="workspace_min_x" value="300.0" />
     <arg name="workspace_max_y" value="750.0" />
@@ -29,4 +27,8 @@
     <arg name="workspace_max_z" value="1200.0" />
     <arg name="workspace_min_z" value="0.0" />
   </include>
+
+  <group ns="eus_vive">
+    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
+  </group>
 </launch>

@@ -145,9 +145,9 @@ The arm calibration is required for no HMD mode in order to measure your positio
 rossetip
 rossetmaster pr1040
 # HMD mode
-roslaunch eus_vive pr2_73b2_vive.launch
+roslaunch eus_vive pr1040_vive.launch
 # No HMD mode
-roslaunch eus_vive pr2_73b2_vive.launch head:=false
+roslaunch eus_vive pr1040_vive.launch head:=false
 ```
 
 #### PR1012 in JSK 610
@@ -156,15 +156,15 @@ roslaunch eus_vive pr2_73b2_vive.launch head:=false
 rossetip
 rossetmaster pr1012
 # HMD mode
-roslaunch eus_vive pr2_610_vive.launch
+roslaunch eus_vive pr1012_vive.launch
 # No HMD mode
-roslaunch eus_vive pr2_610_vive.launch head:=false
+roslaunch eus_vive pr1012_vive.launch head:=false
 ```
 
 #### Gazebo
 
 ```bash
-roslaunch eus_vive pr2_gazebo_vive.launch
+roslaunch eus_vive pr2_vive_gazebo.launch
 ```
 
 ### Baxter + Vive
@@ -175,9 +175,9 @@ roslaunch eus_vive pr2_gazebo_vive.launch
 rossetip
 rossetmaster baxter
 # HMD mode
-roslaunch eus_vive baxter_73b2_vive.launch
+roslaunch eus_vive baxter_vive.launch
 # No HMD mode
-roslaunch eus_vive baxter_73b2_vive.launch head:=false
+roslaunch eus_vive baxter_vive.launch head:=false
 ```
 
 #### Gazebo
@@ -185,7 +185,7 @@ roslaunch eus_vive baxter_73b2_vive.launch head:=false
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
 roslaunch eus_vive vive.launch
-roslaunch eus_vive baxter_gazebo_vive.launch
+roslaunch eus_vive baxter_vive_gazebo.launch
 ```
 
 ### Baxter + MoveIt!
@@ -195,7 +195,7 @@ roslaunch eus_vive baxter_gazebo_vive.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_73b2_moveit.launch
+roslaunch eus_vive baxter_moveit.launch
 ```
 
 ### Demo & Experiments
@@ -205,7 +205,7 @@ roslaunch eus_vive baxter_73b2_moveit.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_mirror_vive.launch
+roslaunch eus_vive baxter_vive_mirror.launch
 ```
 
 #### Miraikan Demo 2020/09/11-13
@@ -215,7 +215,7 @@ roslaunch eus_vive baxter_miraikan_mirror_vive.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_remote_vive.launch
+roslaunch eus_vive baxter_vive_remote.launch
 ```
 
 ##### Visualization, display and feedback PC (Pilot side)
@@ -223,7 +223,7 @@ roslaunch eus_vive baxter_miraikan_remote_vive.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_remote_display.launch
+roslaunch eus_vive baxter_display_remote.launch
 ```
 
 ##### Robot control PC (Robot side)
@@ -231,7 +231,7 @@ roslaunch eus_vive baxter_miraikan_remote_display.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_remote_robot.launch
+roslaunch eus_vive baxter_remote.launch
 ```
 
 ## How to use Vive controller

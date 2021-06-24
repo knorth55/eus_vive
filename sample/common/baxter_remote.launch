@@ -50,4 +50,3 @@
     <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
 </launch>
-
