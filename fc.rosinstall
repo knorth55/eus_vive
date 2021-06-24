@@ -5,6 +5,11 @@
     version: master
 # need latest version
 - git:
+    local-name: jsk-ros-pkg/jsk_common
+    uri: https://github.com/jsk-ros-pkg/jsk_common.git
+    version: master
+# need latest version
+- git:
     local-name: jsk-ros-pkg/jsk_pr2eus
     uri: https://github.com/jsk-ros-pkg/jsk_pr2eus.git
     version: master
@@ -30,4 +35,4 @@
 - git:
     local-name: UTNuclearRoboticsPublic/rviz_textured_sphere
     uri: https://github.com/knorth55/rviz_textured_sphere.git
-    version: add-padding
+    version: vive-control

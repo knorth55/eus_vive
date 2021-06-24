@@ -102,6 +102,7 @@ cd ~/vive_ws/src
 wstool init . https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
 
 # Only for baxter users
+# wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall
 # wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
 
 wstool up
