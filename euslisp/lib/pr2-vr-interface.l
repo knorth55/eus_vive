@@ -1,6 +1,6 @@
 ;; -*- mode: lisp;-*-
 (load "package://pr2eus/pr2-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
+(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
 (if (not (assoc :init-org (send robot-vr-interface :methods)))
@@ -72,7 +72,7 @@
       (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
   (if (and (boundp '*ti*) (find-method *ti* :switch-joy-to-ps3joy))
     (progn
-      (ros::ros-info "switch joy from vive to ps3joy")
+      (ros::ros-info "switch joy from vr device to ps3joy")
       (send *ti* :switch-joy-to-ps3joy)))
   (reset))
 
