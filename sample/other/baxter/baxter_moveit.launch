@@ -1,7 +1,7 @@
 <launch>
   <arg name="realsense_camera" default="true" />
   <arg name="spherical_camera" default="false" />
-  <arg name="logging" default="false" />
+  <arg name="logging" default="true" />
   <arg name="arm_interpolation" default="minjerk" />
   <arg name="arm_control_mode" default="position_w_id" />
   <arg name="moveit" default="true" />
