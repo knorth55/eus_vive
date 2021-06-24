@@ -231,7 +231,7 @@ roslaunch eus_vive baxter_miraikan_remote_display.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter.launch
+roslaunch eus_vive baxter_miraikan_remote_robot.launch
 ```
 
 ## How to use Vive controller
