@@ -222,7 +222,7 @@ roslaunch eus_vive baxter_miraikan_remote_vive.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_miraikan_remove_display.launch
+roslaunch eus_vive baxter_miraikan_remote_display.launch
 ```
 
 ##### Robot control PC (Robot side)
