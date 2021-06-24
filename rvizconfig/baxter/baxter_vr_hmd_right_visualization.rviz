@@ -6,7 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1/Links1
+        - /Camera1
+        - /Visualization1
         - /TF1/Frames1
       Splitter Ratio: 0.4283154010772705
     Tree Height: 726
@@ -59,7 +60,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: false
+        All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -189,7 +190,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: false
+          Value: true
         right_arm_itb:
           Alpha: 1
           Show Axes: false
@@ -351,12 +352,12 @@ Visualization Manager:
         - Blend angle: 0
           Class: rviz_textured_sphere/SphereDisplay
           Enabled: true
-          FOV front: 170
+          FOV front: 150
           FOV rear: 0
           Front camera image: /elp_head_right/image_raw
           Name: ELPRightSphere
           Padding: true
-          Radius: 5
+          Radius: 1.2999999523162842
           Rear camera image: ""
           Reference frame: elp_head_right_rviz_frame
           Ring count: 64
@@ -783,10 +784,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0297962427139282
+      Pitch: 1.2447962760925293
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.1035730838775635
+      Yaw: 2.083573818206787
     Saved: ~
 Window Geometry:
   Displays:
