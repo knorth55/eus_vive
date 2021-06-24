@@ -144,28 +144,50 @@
 
   <!-- launch rviz -->
   <group if="$(arg head)">
-    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg republish)"
-          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_hmd_visualization.rviz" />
-    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" unless="$(arg republish)"
-          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_visualization.rviz" />
+    <group if="$(arg spherical_stereo)">
+      <group if="$(arg republish)">
+        <node name="$(anon vr_left_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_hmd_left_visualization.rviz" />
+        <node name="$(anon vr_right_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_hmd_right_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon vr_left_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_left_visualization.rviz" />
+        <node name="$(anon vr_right_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_right_visualization.rviz" />
+      </group>
+    </group>
+    <group unless="$(arg spherical_stereo)">
+      <group if="$(arg republish)">
+        <node name="$(anon vr_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_hmd_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon vr_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_hmd_visualization.rviz" />
+      </group>
+    </group>
   </group>
   <group unless="$(arg head)">
-    <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg mirror)"
-          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_mirror_visualization.rviz" />
+    <group if="$(arg mirror)">
+      <node name="$(anon vr_rviz)" pkg="rviz" type="rviz"
+            args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_mirror_visualization.rviz" />
+    </group>
     <group unless="$(arg mirror)">
-      <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" if="$(arg republish)"
-            args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_display_visualization.rviz" />
-      <node name="$(anon vr_rviz)" pkg="rviz" type="rviz" unless="$(arg republish)"
-            args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_display_visualization.rviz" />
+      <group if="$(arg republish)">
+        <node name="$(anon vr_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_remote_display_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon vr_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_vive)/rvizconfig/baxter/baxter_vr_display_visualization.rviz" />
+      </group>
       <node name="$(anon vis_top_rviz)" pkg="rviz" type="rviz"
             args="-d $(find eus_vive)/rvizconfig/baxter/baxter_top_visualization.rviz" />
       <node name="$(anon vis_front_rviz)" pkg="rviz" type="rviz"
             args="-d $(find eus_vive)/rvizconfig/baxter/baxter_front_visualization.rviz" />
     </group>
-    <!--
-    <node name="$(anon vis_rviz)" pkg="rviz" type="rviz" unless="$(arg mirror)"
-          args="-d $(find eus_vive)/rvizconfig/baxter/baxter_visualization.rviz" />
-    -->
   </group>
 
   <!-- launch rqt_gui -->
