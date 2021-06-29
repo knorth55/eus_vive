@@ -11,6 +11,11 @@
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
   <arg name="twitter_image_topics" default="/$(arg camera_ns)/color/image_rect_color" />
   <arg name="home_dir" default="$(env HOME)" />
+  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+
+  <!-- compress flag-->
+  <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
+  <arg unless="$(arg compress)" name="compress_flag" value="" />
 
   <!-- mongodb -->
   <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
@@ -40,6 +45,7 @@
               /lifelog/spherical_right_rgb/camera_info
               /lifelog/depth/image_rect_raw/compressedDepth
               /lifelog/depth/camera_info
+              -q $(arg compress_flag) -b 0
               --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
         output="screen" if="$(arg spherical_stereo)" />
   <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
@@ -50,6 +56,7 @@
               /lifelog/spherical_rgb/camera_info
               /lifelog/depth/image_rect_raw/compressedDepth
               /lifelog/depth/camera_info
+              -q $(arg compress_flag) -b 0
               --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
         output="screen" unless="$(arg spherical_stereo)" />
 
