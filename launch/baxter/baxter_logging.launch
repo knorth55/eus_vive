@@ -36,7 +36,9 @@
 
   <!-- rosbag -->
   <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
-        args="/eus_vive/status /tf /robot/joint_states
+        args="/rosout /eus_vive/status /tf /robot/joint_states
+              /tf_static
+              /audio
               /$(arg camera_ns)/color/image_rect_color/compressed
               /$(arg camera_ns)/color/camera_info
               /$(arg camera_ns)/aligned_depth_to_color/compressed/compressedDepth
