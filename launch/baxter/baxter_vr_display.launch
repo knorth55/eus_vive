@@ -3,6 +3,7 @@
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="republish" default="false" />
+  <arg name="main_name" default="/baxter_vr_main" />
 
   <!-- camera -->
   <arg name="camera_ns" default="realsense_torso" />
@@ -20,9 +21,9 @@
   <!-- launch rviz overlay -->
   <node name="rosconsole_overlay_text"
         pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
-    <rosparam>
+    <rosparam subst_value="true" >
       nodes:
-        - /baxter_vr_main
+        - $(arg main_name)
       exclude_regexes:
         - .*follow_joint_trajectory.*
         - .*:joint-angle.*
