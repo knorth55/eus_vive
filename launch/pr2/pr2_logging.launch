@@ -10,14 +10,14 @@
   <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
   <arg unless="$(arg compress)" name="compress_flag" value="" />
 
-  <node name="pr2_vr_rosbag_record" pkg="rosbag" type="record"
+  <node name="pr2_rosbag_record" pkg="rosbag" type="record"
         args="/eus_vive/status /tf /joint_states
               $(arg CAMERA_INFO)
               $(arg RGB_CAMERA_INFO)
               $(arg COMP_IMAGE_COLOR)
               $(arg COMP_IMAGE_DEPTH)
               -q $(arg compress_flag) -b 0
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_vr"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_"
         output="screen" />
 
 </launch>
