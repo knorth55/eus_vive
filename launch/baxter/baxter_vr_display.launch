@@ -15,6 +15,8 @@
   <arg name="spherical_stereo" default="true" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
 
   <!-- camera parameters -->
   <arg name="REALSENSE_IMAGE_TYPE" default="x264" />
@@ -237,6 +239,8 @@
               /baxter_top_rviz/image/compressed
               /baxter_front_rviz/image/compressed
               /baxter_remote_rviz/image/compressed
+              $(arg hmd_left_image)/compressed
+              $(arg hmd_right_image)/compressed
               /$(arg camera_ns)/color/image_rect_color/$(arg REALSENSE_IMAGE_TYPE)
               /$(arg camera_ns)/color/camera_info
               /$(arg camera_ns)/depth/compressed/image_rect_raw/$(arg REALSENSE_DEPTH_TYPE)
