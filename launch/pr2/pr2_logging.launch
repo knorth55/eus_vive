@@ -17,7 +17,7 @@
               $(arg COMP_IMAGE_COLOR)
               $(arg COMP_IMAGE_DEPTH)
               -q $(arg compress_flag) -b 0
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2_"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/pr2"
         output="screen" />
 
 </launch>

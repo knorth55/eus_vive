@@ -52,7 +52,7 @@
               /$(arg spherical_right_camera_ns)/image_raw/compressed
               /$(arg spherical_right_camera_ns)/camera_info
               -q $(arg compress_flag) -b 0
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter"
         output="screen" />
 
   <!-- tweeting robot warning data and etc. -->
