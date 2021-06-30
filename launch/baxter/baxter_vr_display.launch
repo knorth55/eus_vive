@@ -6,7 +6,7 @@
   <arg name="logging" default="true" />
   <arg name="rqt_gui" default="true" />
   <arg name="home_dir" default="$(env HOME)" />
-  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+  <arg name="compress" default="true" doc="whether compress rosbag or not." />
 
   <arg name="main_name" default="/baxter_vr_main" />
 
