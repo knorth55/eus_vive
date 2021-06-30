@@ -210,6 +210,14 @@ roslaunch eus_vive baxter_vive_mirror.launch
 
 #### Miraikan Demo 2020/09/11-13
 
+##### Robot control PC (Robot side)
+
+```bash
+rossetip
+rossetmaster baxter
+roslaunch eus_vive baxter_remote.launch
+```
+
 ##### Vive control PC (Pilot side)
 
 ```bash
@@ -224,14 +232,6 @@ roslaunch eus_vive baxter_vive_remote.launch
 rossetip
 rossetmaster baxter
 roslaunch eus_vive baxter_display_remote.launch
-```
-
-##### Robot control PC (Robot side)
-
-```bash
-rossetip
-rossetmaster baxter
-roslaunch eus_vive baxter_remote.launch
 ```
 
 ## How to use Vive controller
