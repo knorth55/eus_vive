@@ -234,6 +234,9 @@
         args="/rosout /eus_vive/status /tf /robot/joint_states
               /tf_static
               /audio
+              /baxter_top_rviz/image/compressed
+              /baxter_front_rviz/image/compressed
+              /baxter_remote_rviz/image/compressed
               /$(arg camera_ns)/color/image_rect_color/$(arg REALSENSE_IMAGE_TYPE)
               /$(arg camera_ns)/color/camera_info
               /$(arg camera_ns)/depth/compressed/image_rect_raw/$(arg REALSENSE_DEPTH_TYPE)
