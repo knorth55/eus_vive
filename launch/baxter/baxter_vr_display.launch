@@ -4,6 +4,7 @@
   <arg name="mirror" default="false" />
   <arg name="republish" default="false" />
   <arg name="logging" default="true" />
+  <arg name="rqt_gui" default="true" />
   <arg name="home_dir" default="$(env HOME)" />
   <arg name="compress" default="false" doc="whether compress rosbag or not." />
 
@@ -229,7 +230,7 @@
   </group>
 
   <!-- launch rqt_gui -->
-  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" if="$(arg rqt_gui)" />
 
   <!-- rosbag -->
   <node name="baxter_display_rosbag_record" pkg="rosbag" type="record" if="$(arg logging)"
