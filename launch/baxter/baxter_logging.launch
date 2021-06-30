@@ -11,7 +11,7 @@
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
   <arg name="twitter_image_topics" default="/$(arg camera_ns)/color/image_rect_color" />
   <arg name="home_dir" default="$(env HOME)" />
-  <arg name="compress" default="true" doc="whether compress rosbag or not." />
+  <arg name="compress" default="false" doc="whether compress rosbag or not." />
 
   <!-- compress flag-->
   <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
