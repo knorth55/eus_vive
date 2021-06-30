@@ -52,21 +52,48 @@
 
   <!-- launch camera republish-->
   <group if="$(arg republish)">
+    <!-- realsense rgb -->
     <node name="realsense_rgb_decompress" pkg="image_transport" type="republish"
           args="$(arg REALSENSE_IMAGE_TYPE) in:=/$(arg camera_ns)/color/image_raw
                 raw out:=/$(arg camera_ns)_remote/color/image_raw" />
+    <node name="realsense_rgb_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/color/camera_info
+                /$(arg camera_ns)_remote/color/camera_info" />
+    <!-- realsense depth -->
     <node name="realsense_depth_decompress" pkg="image_transport" type="republish"
-          args="$(arg REALSENSE_DEPTH_TYPE) in:=/$(arg camera_ns)/depth/image_rect_raw
-                raw out:=/$(arg camera_ns)_remote/depth/image_rect_raw" />
+          args="$(arg REALSENSE_DEPTH_TYPE) in:=/$(arg camera_ns)/depth/compressed/image_rect_raw
+                raw out:=/$(arg camera_ns)_remote/depth/compressed/image_rect_raw" />
+    <node name="realsense_depth_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/depth/compressed/camera_info
+                /$(arg camera_ns)_remote/depth/compressed/camera_info" />
+    <!-- realsense aligned_depth_to_color -->
+    <node name="realsense_aligned_depth_to_color_decompress" pkg="image_transport" type="republish"
+          args="$(arg REALSENSE_DEPTH_TYPE) in:=/$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw
+                raw out:=/$(arg camera_ns)_remote/aligned_depth_to_color/compressed/image_raw" />
+    <node name="realsense_aligned_depth_to_color_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
+                /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/camera_info" />
+    <!-- spherical camera -->
     <node name="spherical_decompress" pkg="image_transport" type="republish"
           args="$(arg SPHERICAL_IMAGE_TYPE) in:=/$(arg spherical_camera_ns)/image_raw
                 raw out:=/$(arg spherical_camera_ns)_remote/image_raw" />
+    <node name="spherical_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_camera_ns)/camera_info
+                /$(arg spherical_camera_ns)_remote/camera_info" />
+    <!-- spherical left camera -->
     <node name="spherical_left_decompress" pkg="image_transport" type="republish"
           args="$(arg SPHERICAL_STEREO_IMAGE_TYPE) in:=/$(arg spherical_left_camera_ns)/image_raw
                 raw out:=/$(arg spherical_left_camera_ns)_remote/image_raw" />
+    <node name="spherical_left_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_left_camera_ns)/camera_info
+                /$(arg spherical_left_camera_ns)_remote/camera_info" />
+    <!-- spherical right camera -->
     <node name="spherical_right_decompress" pkg="image_transport" type="republish"
           args="$(arg SPHERICAL_STEREO_IMAGE_TYPE) in:=/$(arg spherical_right_camera_ns)/image_raw
                 raw out:=/$(arg spherical_right_camera_ns)_remote/image_raw" />
+    <node name="spherical_right_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_right_camera_ns)/camera_info
+                /$(arg spherical_right_camera_ns)_remote/camera_info" />
   </group>
 
   <!-- virtual camera -->
