@@ -17,9 +17,9 @@
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
   <!-- camera parameters -->
-  <arg name="REALSENSE_IMAGE_TYPE" default="compressed" />
+  <arg name="REALSENSE_IMAGE_TYPE" default="x264" />
   <arg name="REALSENSE_DEPTH_TYPE" default="compressedDepth" />
-  <arg name="SPHERICAL_IMAGE_TYPE" default="compressed" />
+  <arg name="SPHERICAL_IMAGE_TYPE" default="x264" />
   <arg name="SPHERICAL_STEREO_IMAGE_TYPE" default="x264" />
 
   <!-- compress flag-->
@@ -234,18 +234,18 @@
         args="/rosout /eus_vive/status /tf /robot/joint_states
               /tf_static
               /audio
-              /$(arg camera_ns)_remote/color/image_rect_color/compressed
-              /$(arg camera_ns)_remote/color/camera_info
-              /$(arg camera_ns)_remote/depth/compressed/image_rect_raw/compressedDepth
-              /$(arg camera_ns)_remote/depth/compressed/camera_info
-              /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/image_raw/compressedDepth
-              /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/camera_info
-              /$(arg spherical_camera_ns)_remote/image_raw/compressed
-              /$(arg spherical_camera_ns)_remote/camera_info
-              /$(arg spherical_left_camera_ns)_remote/image_raw/compressed
-              /$(arg spherical_left_camera_ns)_remote/camera_info
-              /$(arg spherical_right_camera_ns)_remote/image_raw/compressed
-              /$(arg spherical_right_camera_ns)_remote/camera_info
+              /$(arg camera_ns)/color/image_rect_color/$(arg REALSENSE_IMAGE_TYPE)
+              /$(arg camera_ns)/color/camera_info
+              /$(arg camera_ns)/depth/compressed/image_rect_raw/$(arg REALSENSE_DEPTH_TYPE)
+              /$(arg camera_ns)/depth/compressed/camera_info
+              /$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw/$(arg REALSENSE_DEPTH_TYPE)
+              /$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
+              /$(arg spherical_camera_ns)/image_raw/$(arg SPHERICAL_IMAGE_TYPE)
+              /$(arg spherical_camera_ns)/camera_info
+              /$(arg spherical_left_camera_ns)/image_raw/$(arg SPHERICAL_STEREO_IMAGE_TYPE)
+              /$(arg spherical_left_camera_ns)/camera_info
+              /$(arg spherical_right_camera_ns)/image_raw/$(arg SPHERICAL_STEREO_IMAGE_TYPE)
+              /$(arg spherical_right_camera_ns)/camera_info
               -q $(arg compress_flag) -b 0
               --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_display"
         output="screen" />
