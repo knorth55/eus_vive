@@ -35,7 +35,7 @@
   </include>
 
   <!-- rosbag -->
-  <node name="baxter_vr_rosbag_record" pkg="rosbag" type="record"
+  <node name="baxter_rosbag_record" pkg="rosbag" type="record"
         args="/rosout /eus_vive/status /tf /robot/joint_states
               /tf_static
               /audio
@@ -50,7 +50,7 @@
               /$(arg spherical_right_camera_ns)/image_raw/compressed
               /$(arg spherical_right_camera_ns)/camera_info
               -q $(arg compress_flag) -b 0
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_vr"
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_"
         output="screen" />
 
   <!-- tweeting robot warning data and etc. -->
