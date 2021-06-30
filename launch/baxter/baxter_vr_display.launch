@@ -3,6 +3,7 @@
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
   <arg name="republish" default="false" />
+  <arg name="logging" default="true" />
   <arg name="main_name" default="/baxter_vr_main" />
 
   <!-- camera -->
@@ -220,5 +221,26 @@
 
   <!-- launch rqt_gui -->
   <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+
+  <!-- rosbag -->
+  <node name="baxter_display_rosbag_record" pkg="rosbag" type="record" if="$(arg logging)"
+        args="/rosout /eus_vive/status /tf /robot/joint_states
+              /tf_static
+              /audio
+              /$(arg camera_ns)_remote/color/image_rect_color/compressed
+              /$(arg camera_ns)_remote/color/camera_info
+              /$(arg camera_ns)_remote/depth/compressed/image_rect_raw/compressedDepth
+              /$(arg camera_ns)_remote/depth/compressed/camera_info
+              /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/image_raw/compressedDepth
+              /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/camera_info
+              /$(arg spherical_camera_ns)_remote/image_raw/compressed
+              /$(arg spherical_camera_ns)_remote/camera_info
+              /$(arg spherical_left_camera_ns)_remote/image_raw/compressed
+              /$(arg spherical_left_camera_ns)_remote/camera_info
+              /$(arg spherical_right_camera_ns)_remote/image_raw/compressed
+              /$(arg spherical_right_camera_ns)_remote/camera_info
+              -q $(arg compress_flag) -b 0
+              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter_display"
+        output="screen" />
 
 </launch>
