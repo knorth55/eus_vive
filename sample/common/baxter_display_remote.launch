@@ -1,11 +1,27 @@
 <launch>
-  <arg name="main" default="true" />
-  <arg name="vive" default="true" />
+  <arg name="head" default="false" />
+  <arg name="respeaker" default="true" />
+  <arg name="mirror" default="false" />
+  <arg name="republish" default="true" />
+  <arg name="logging" default="true" />
+
+  <!-- camera -->
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_stereo" default="true" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch">
-    <arg name="head" value="false" />
-    <arg name="respeaker" value="true" />
-    <arg name="mirror" value="false" />
-    <arg name="republish" value="true" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="republish" value="$(arg republish)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
   </include>
 </launch>
