@@ -47,8 +47,8 @@
   <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
 
   <!-- device -->
   <arg name="device" value=":oculus" if="$(arg oculus)" />
@@ -84,8 +84,8 @@
 
   <!-- launch vive-->
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)" >
-    <arg name="image_left" value="$(arg image_left)" />
-    <arg name="image_right" value="$(arg image_right)" />
+    <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
+    <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
   </include>
 
   <!-- launch eus_vive-->

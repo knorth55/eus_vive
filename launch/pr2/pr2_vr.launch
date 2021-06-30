@@ -22,8 +22,8 @@
   <arg name="workspace_min_z" default="false" />
 
   <!-- camera-->
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
   <arg name="DECOMP_CAMERA_INFO"
        default="/kinect_head_decompressed/depth_registered/camera_info" />
   <arg name="DECOMP_RGB_CAMERA_INFO"
@@ -113,8 +113,8 @@
   </include>
 
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)">
-    <arg name="image_left" value="$(arg image_left)" />
-    <arg name="image_right" value="$(arg image_right)" />
+    <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
+    <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
   </include>
 
   <group ns="eus_vive">

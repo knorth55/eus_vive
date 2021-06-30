@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="image_left" default="/kinect_head/rgb/image_rect_color" />
-  <arg name="image_right" default="/kinect_head/rgb/image_rect_color" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
 
   <rosparam param="/vive/world_offset">[0, 0, 0.0]</rosparam>
   <rosparam param="/vive/world_yaw">0.0</rosparam>
 
   <node name="vive_node" pkg="vive_ros" type="vive_node"
         launch-prefix="$(env HOME)/.steam/steam/ubuntu12_32/steam-runtime/run.sh" output="screen" required="true">
-    <remap from="~image_left" to="$(arg image_left)" />
-    <remap from="~image_right" to="$(arg image_right)" />
+    <remap from="~image_left" to="$(arg hmd_left_image)" />
+    <remap from="~image_right" to="$(arg hmd_right_image)" />
   </node>
 </launch>

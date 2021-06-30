@@ -22,8 +22,8 @@
   <arg name="workspace_min_z" default="false" />
 
   <!-- camera-->
-  <arg name="image_left" default="/virtual_camera/left/rviz_image" />
-  <arg name="image_right" default="/virtual_camera/right/rviz_image" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
   <arg name="DECOMP_CAMERA_INFO"
        default="/kinect_head_decompressed/depth_registered/camera_info" />
   <arg name="DECOMP_RGB_CAMERA_INFO"
