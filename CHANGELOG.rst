@@ -2,6 +2,64 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update rviz config
+* update rviz config
+* updat erviz
+* use tabbed buttons for gui
+* update rviz config
+* Revert "set compress default true"
+  This reverts commit 0f35d946439183911c41425d0df2aa641184862c.
+* set compress default true
+* add rqt_gui arg
+* add hmd in rosbag
+* change arg name
+* record rviz images
+* update baxter_vr_display logging
+* fix typo in baxter_vr_display.launch
+* fix rosbag file prefix
+* add more args in baxter_display_remote launch
+* add logging in baxter_vr_display.launch
+* refactor republish and add camera info relay
+* add more topics
+* update readme
+* update rosbag name in pr2_logging.launch
+* update baxter_logging rosbag name
+* update fc.rosinstall
+* update baxter rosbag topic
+* update baxter logging rosbag
+* add pr2 compress flag
+* update baxter logging launch
+* update rviz config
+* add main name in baxter_vr_display.launch
+* update rvizconfig
+* fix typo
+* fix typo in head
+* update rviz config
+* update ipd
+* add spherical stereo head rviz
+* add republish arg in baxter_vive.launch
+* fix spherical camera tf
+* update baxter_moveit.rviz
+* set logging true
+* update baxter_moveit_remote.launch
+* refactor sample launches
+* update readme
+* update rosinstall
+* add control arg in baxter_vr.launch
+* add baxter_miraikan_remote_robot.launch
+* fix typo in readme
+* update pr2 reset pose
+* fix missing arg
+* update readme
+* update fc.rosinstall
+* Merge pull request `#22 <https://github.com/knorth55/eus_vive/issues/22>`_ from knorth55/add-spacenav
+* implement spacenav interface
+* show error when button method not found
+* add spacenav interfaces
+* Contributors: Shingo Kitagawa
+
 0.0.4 (2021-03-21)
 ------------------
 * update reset perspective
