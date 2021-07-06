@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.5 (2021-07-06)
+------------------
 * update rviz config
 * update rviz config
 * updat erviz
