@@ -1,0 +1,15 @@
+- name: 'Reset'
+  service: '/eus_telemanip/reset'
+  column: 0
+- name: 'Enable'
+  service: '/eus_telemanip/enable'
+  column: 1
+- name: 'Disable'
+  service: '/eus_telemanip/disable'
+  column: 2
+- name: 'Calibrate larm'
+  service: '/eus_telemanip/larm/calibrate'
+  column: 3
+- name: 'Calibrate rarm'
+  service: '/eus_telemanip/rarm/calibrate'
+  column: 4

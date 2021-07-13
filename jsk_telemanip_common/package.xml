@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>jsk_telemanip_common</name>
+  <version>0.0.5</version>
+  <description>The jsk_telemanip_common package</description>
+
+  <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
+  <author email="shingogo.5511@gmail.com">Shingo Kitagawa</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>influxdb_store</exec_depend>
+  <exec_depend>jsk_interactive_marker</exec_depend>
+  <exec_depend>jsk_rqt_plugins</exec_depend>
+  <exec_depend>jsk_telemanip_msgs</exec_depend>
+  <exec_depend>jsk_topic_tools</exec_depend>
+  <exec_depend>libuvc_camera</exec_depend>
+  <exec_depend>softhand_ros</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+  <exec_depend>video_stream_opencv</exec_depend>
+  <exec_depend>vive_ros</exec_depend>
+
+  <export>
+  </export>
+
+</package>

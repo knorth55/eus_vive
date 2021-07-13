@@ -1,7 +1,0 @@
-<launch>
-  <!-- launch rqt_tabbed_buttons -->
-  <node name="$(anon reset_button)"
-        pkg="jsk_rqt_plugins" type="rqt_tabbed_buttons" output="screen" clear_params="true">
-    <rosparam command="load" file="$(find eus_vive)/resource/remote_tabbed_layout.yaml" />
-  </node>
-</launch>
