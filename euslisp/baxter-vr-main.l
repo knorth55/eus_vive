@@ -1,6 +1,8 @@
 #!/usr/bin/env roseus
 
 (load "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
+(load "package://eus_vive/euslisp/lib/baxter-oculus-interface.l")
+(load "package://eus_vive/euslisp/lib/baxter-spacenav-interface.l")
 
 
 (defun vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
