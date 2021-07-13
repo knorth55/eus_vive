@@ -19,11 +19,23 @@
   (send *ri* :wait-interpolation))
 
 
+(defun spacenav-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
+  (baxter-spacenav-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
+  (send *ti* :reset-arm :larm :wait nil)
+  (send *ti* :reset-arm :rarm :wait nil)
+  (send *ri* :wait-interpolation))
+
+
 (defun init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
   (ros::roseus "baxter_vr_main" :anonymous nil)
-  (if (eq device-type :oculus)
-    (oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
-    (vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
+  (cond
+    ((eq device-type :vive)
+     (vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
+    ((eq device-type :oculus)
+     (oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
+    ((eq device-type :spacenav)
+     (spacenav-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
+    (t nil))
   (send *irtviewer* :draw-objects)
   (x::window-main-one))
 
@@ -36,6 +48,14 @@
   ;     (ros::spin-once)))
   (send *ri* :nod)
   (if (not loop-enable) (send *ti* :disable))
-  (send *ti* :main-loop :head head :torso nil
-        :safe-arm safe-arm :mirror mirror
-        :enable-button :menu :gripper-button :trigger :visualize visualize))
+  (cond
+    ((eq device-type :vive)
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
+           :enable-button :menu :gripper-button :trigger :visualize visualize))
+    ((eq device-type :oculus)
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
+           :enable-button :menu :gripper-button :trigger :visualize visualize))
+    ((eq device-type :spacenav)
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
+           :enable-button :right :gripper-button :left :visualize visualize))
+    (t nil)))
