@@ -3,7 +3,7 @@
 (load "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
 
 
-(defun vive-init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t))
+(defun vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
   (baxter-vive-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
   (send *ti* :reset-arm :larm :wait nil)
   (send *ti* :reset-arm :rarm :wait nil)
@@ -12,7 +12,7 @@
   (send *ti* :send-joy-feedback :rarm))
 
 
-(defun oculus-init (&key (lgripper :parallel) (rgripper parallel) (loop-enable t))
+(defun oculus-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
   (baxter-oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
   (send *ti* :reset-arm :larm :wait nil)
   (send *ti* :reset-arm :rarm :wait nil)
