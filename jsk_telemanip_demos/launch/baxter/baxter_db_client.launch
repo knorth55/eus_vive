@@ -1,0 +1,205 @@
+<launch>
+  <param name="robot/database" value="jsk_robot_lifelog"/>
+  <param name="robot/type" value="baxter"/>
+  <param name="robot/name" value="baxter"/>
+
+  <arg name="camera" default="true" />
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="spherical_camera" default="true" />
+  <arg name="spherical_stereo" default="true" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
+
+  <arg name="output" default="screen" />
+  <arg name="log_rate" default="5.0" />
+  <arg name="respawn" default="true" />
+  <arg name="enable_monitor" default="false" />
+  <arg name="vital_check" default="true" />
+  <arg name="debug" default="false" />
+
+  <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch">
+    <arg name="save_rgb" value="$(arg camera)" />
+    <arg name="save_depth" value="$(arg camera)" />
+    <arg name="save_tf" value="true" />
+    <arg name="save_joint_states" value="true" />
+    <arg name="save_smach" value="false" />
+    <arg name="save_speech" value="false" />
+    <arg name="save_base_trajectory" value="false" />
+    <arg name="save_object_detection" value="false" />
+    <arg name="save_action" value="true" />
+    <arg name="save_app" value="false" />
+
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="rgb_ns" value="color" />
+    <arg name="rgb_suffix" value="/compressed"/>
+    <arg name="depth_ns" value="aligned_depth_to_color/compressed" />
+    <arg name="depth_suffix" value="/compressedDepth"/>
+    <arg name="camera_info_topic" value="camera_info" />
+    <arg name="rgb_topic" value="image_rect_color" />
+    <arg name="depth_topic" value="image_raw" />
+    <arg name="joint_states_topic" value="robot/joint_states" />
+
+    <arg name="enable_monitor" value="$(arg enable_monitor)" />
+    <arg name="log_rate" value="$(arg log_rate)" />
+    <arg name="launch_manager" value="true" />
+    <arg name="respawn" value="$(arg respawn)" />
+    <arg name="approximate_sync" value="true"/>
+    <arg name="vital_check" value="$(arg vital_check)" />
+    <arg name="debug" value="$(arg debug)" />
+  </include>
+
+  <group ns="lifelog">
+    <rosparam ns="joint_states_throttle">
+      periodic: false
+      threshold: 0.01
+    </rosparam>
+    <rosparam ns="action_logger">
+      white_list:
+        type:
+        - control_msgs/FollowJointTrajectoryActionFeedback
+        - control_msgs/FollowJointTrajectoryActionGoal
+        - control_msgs/FollowJointTrajectoryActionResult
+        - control_msgs/GripperCommandActionFeedback
+        - control_msgs/GripperCommandActionGoal
+        - control_msgs/GripperCommandActionResult
+        - control_msgs/SingleJointPositionActionResult
+        - control_msgs/SingleJointPositionActionGoal
+        - sound_play/SoundRequestActionResult
+        - sound_play/SoundRequestActionGoal
+    </rosparam>
+    <!-- eus vive status -->
+    <node name="eus_telemanip_status_throttle"
+          pkg="jsk_topic_tools" type="lightweight_throttle"
+          respawn="$(arg respawn)">
+      <remap from="~input" to="/eus_telemanip/status" />
+      <rosparam subst_value="true">
+        update_rate: $(arg log_rate)
+      </rosparam>
+    </node>
+    <node name="eus_telemanip_status_logger"
+          pkg="jsk_robot_startup" type="lightweight_logger"
+          respawn="$(arg respawn)">
+      <remap from="~input" to="eus_telemanip_status_throttle/output" />
+      <rosparam subst_value="true">
+        enable_monitor: $(arg enable_monitor)
+        monitor_topic: /eus_telemanip/status
+        vital_check: $(arg vital_check)
+      </rosparam>
+    </node>
+    <!-- spherical camera -->
+    <group if="$(arg spherical_camera)">
+      <!-- spherical stereo camera -->
+      <group if="$(arg spherical_stereo)">
+        <node name="spherical_left_camera_throttle"
+              pkg="nodelet" type="nodelet"
+              args="standalone jsk_topic_tools/SynchronizedThrottle" >
+          <remap from="/$(arg spherical_left_camera_ns)/camera_info/throttled"
+                 to="spherical_left_rgb/camera_info"/>
+          <remap from="/$(arg spherical_left_camera_ns)/image_raw/compressed/throttled"
+                 to="spherical_left_rgb/image_raw/compressed"/>
+          <rosparam subst_value="true">
+            approximate_sync: true
+            update_rate: 1.0
+            topics:
+            - /$(arg spherical_left_camera_ns)/camera_info
+            - /$(arg spherical_left_camera_ns)/image_raw/compressed
+          </rosparam>
+        </node>
+        <node name="spherical_left_rgb_image_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_left_rgb/image_raw/compressed" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_left_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+        <node name="spherical_left_rgb_camera_info_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_left_rgb/camera_info" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_left_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+        <node name="spherical_right_camera_throttle"
+              pkg="nodelet" type="nodelet"
+              args="standalone jsk_topic_tools/SynchronizedThrottle" >
+          <remap from="/$(arg spherical_right_camera_ns)/camera_info/throttled"
+                 to="spherical_right_rgb/camera_info"/>
+          <remap from="/$(arg spherical_right_camera_ns)/image_raw/compressed/throttled"
+                 to="spherical_right_rgb/image_raw/compressed"/>
+          <rosparam subst_value="true">
+            approximate_sync: true
+            update_rate: 1.0
+            topics:
+            - /$(arg spherical_right_camera_ns)/camera_info
+            - /$(arg spherical_right_camera_ns)/image_raw/compressed
+          </rosparam>
+        </node>
+        <node name="spherical_right_rgb_image_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_right_rgb/image_raw/compressed" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_right_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+        <node name="spherical_right_rgb_camera_info_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_right_rgb/camera_info" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_right_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+      </group>
+      <!-- spherical single camera -->
+      <group unless="$(arg spherical_stereo)">
+        <node name="spherical_camera_throttle"
+              pkg="nodelet" type="nodelet"
+              args="standalone jsk_topic_tools/SynchronizedThrottle" >
+          <remap from="/$(arg spherical_camera_ns)/camera_info/throttled"
+                 to="spherical_rgb/camera_info"/>
+          <remap from="/$(arg spherical_camera_ns)/image_raw/compressed/throttled"
+                 to="spherical_rgb/image_raw/compressed"/>
+          <rosparam subst_value="true">
+            approximate_sync: true
+            update_rate: 1.0
+            topics:
+            - /$(arg spherical_camera_ns)/camera_info
+            - /$(arg spherical_camera_ns)/image_raw/compressed
+          </rosparam>
+        </node>
+        <node name="spherical_rgb_image_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_rgb/image_raw/compressed" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+        <node name="spherical_rgb_camera_info_logger"
+              pkg="nodelet" type="nodelet"
+              args="load jsk_robot_lifelog/LightweightLogger /mongodb_record_nodelet_manager" >
+          <remap from="~input" to="spherical_rgb/camera_info" />
+          <rosparam subst_value="true">
+            enable_monitor: false
+            monitor_topic: /$(arg spherical_camera_ns)/image_raw/compressed
+            vital_check: true
+          </rosparam>
+        </node>
+      </group>
+    </group>
+  </group>
+</launch>

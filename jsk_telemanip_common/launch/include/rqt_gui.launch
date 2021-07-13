@@ -1,0 +1,7 @@
+<launch>
+  <!-- launch rqt_tabbed_buttons -->
+  <node name="$(anon reset_button)"
+        pkg="jsk_rqt_plugins" type="rqt_tabbed_buttons" output="screen" clear_params="true">
+    <rosparam command="load" file="$(find jsk_telemanip_common)/resource/remote_tabbed_layout.yaml" />
+  </node>
+</launch>
