@@ -45,9 +45,6 @@
 (defun main (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
                   (visualize t) (loop-enable t) (device-type :vive))
   (init :loop-enable t :device-type device-type)
-  ; (if (not head)
-  ;   (while (not (send *ti* :calibrate))
-  ;     (ros::spin-once)))
   (if (not loop-enable) (send *ti* :disable))
   (cond
     ((eq device-type :vive)
