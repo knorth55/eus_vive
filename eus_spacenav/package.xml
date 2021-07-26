@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>eus_spacenav</name>
+  <version>0.0.4</version>
+  <description>The eus_spacenav package</description>
+
+  <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
+  <author email="shingogo.5511@gmail.com">Shingo Kitagawa</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>eus_telemanip</exec_depend>
+  <exec_depend>baxtereus</exec_depend>
+  <exec_depend>baxter_core_msgs</exec_depend>
+  <exec_depend>pr2eus</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+
+  <export>
+  </export>
+
+</package>

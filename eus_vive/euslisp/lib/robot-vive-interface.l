@@ -3,13 +3,13 @@
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-telemanip-interface "package://eus_telemanip/euslisp/lib/robot-telemanip-interface.l")
 
 
 (defclass robot-vive-interface
-  :super robot-vr-interface
+  :super robot-telemanip-interface
   :slots (hmd-frame-id
-          vrbase-frame-id
+          telemanipbase-frame-id
           larm-controller-frame-id
           rarm-controller-frame-id
           feedback-topic-name
@@ -41,24 +41,24 @@
           rarm-grip
           rarm-prev-grip
           rarm-grip-count
-          vrbase->shoulder-x
-          vrbase->shoulder-z
+          telemanipbase->shoulder-x
+          telemanipbase->shoulder-z
           ))
 
 
 (defmethod robot-vive-interface
   (:init (&rest args)
     ;; for calibration
-    (send self :set-val 'vrbase->shoulder-x nil)
-    (send self :set-val 'vrbase->shoulder-z nil)
+    (send self :set-val 'telemanipbase->shoulder-x nil)
+    (send self :set-val 'telemanipbase->shoulder-z nil)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'vrbase-frame-id
-          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
+    (send self :set-val 'telemanipbase-frame-id
+          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_telemanip/b_lighthouse_id")))
     (send self :set-val 'larm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
+          (format nil "controller_LHR_~A" (ros::get-param "/eus_telemanip/l_controller_id")))
     (send self :set-val 'rarm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
+          (format nil "controller_LHR_~A" (ros::get-param "/eus_telemanip/r_controller_id")))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
     (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :larm :controller-frame-id))
                           sensor_msgs::Joy #'send self :controller-button-cb :larm)
@@ -95,24 +95,25 @@
               (setq controller-coords (send head-coords :transform hmd->controller-coords))
               (setq target-pos (send controller-coords :worldpos))
               (setq target-rot (send controller-coords :worldrot)))))
-        (let ((vrbase->controller-coords
-                (send self :get-vrbase->controller-coords
+        (let ((telemanipbase->controller-coords
+                (send self :get-telemanipbase->controller-coords
                       (if mirror (send self :get-opposite-arm arm) arm) :wait-trigger nil))
-              vrbase->controller-pos)
-          (if vrbase->controller-coords
+              telemanipbase->controller-pos)
+          (if telemanipbase->controller-coords
             (progn
-              (send vrbase->controller-coords
+              (send telemanipbase->controller-coords
                     :transform (make-coords :rpy (float-vector pi/2 0 pi/2)) :world)
-              (send vrbase->controller-coords :transform
+              (send telemanipbase->controller-coords :transform
                     (make-coords :rpy (float-vector 0 pi/2 0)))
-              (send vrbase->controller-coords :transform
+              (send telemanipbase->controller-coords :transform
                     (make-coords :rpy (float-vector 0 0 -pi/2)))
-              (setq vrbase->controller-pos (send vrbase->controller-coords :worldpos))
+              (setq telemanipbase->controller-pos (send telemanipbase->controller-coords :worldpos))
               (setq target-pos
-                    (float-vector (- (elt vrbase->controller-pos 0) vrbase->shoulder-x)
-                                  (elt vrbase->controller-pos 1)
-                                  (- (elt vrbase->controller-pos 2) vrbase->shoulder-z)))
-              (setq target-rot (send vrbase->controller-coords :worldrot))))))
+                    (float-vector
+                      (- (elt telemanipbase->controller-pos 0) telemanipbase->shoulder-x)
+                      (elt telemanipbase->controller-pos 1)
+                      (- (elt telemanipbase->controller-pos 2) telemanipbase->shoulder-z)))
+              (setq target-rot (send telemanipbase->controller-coords :worldrot))))))
       (if (and target-pos target-rot)
         (progn
           (setq target-coords
@@ -123,7 +124,7 @@
       target-coords))
   ;; :get-head-ypr-angle
   (:get-head-ypr-angle ()
-    (let ((coords (send self :get-vrbase->hmd-coords)) rpy-angle)
+    (let ((coords (send self :get-telemanipbase->hmd-coords)) rpy-angle)
       (if coords
         (progn
           (setq rpy-angle
@@ -149,7 +150,7 @@
           (send coords :transform (make-coords :rpy (float-vector pi/2 0 0)))))
       coords))
   ;; coordinate function for vive
-  (:get-vrbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
+  (:get-telemanipbase->controller-coords (arm &key (wait-trigger nil) (wait-time 0.1))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-button-p)
@@ -161,14 +162,15 @@
                   (send self :controller-trigger-button-p arm :button-toggle t))
             (ros::spin-once)
             (ros::sleep))))
-      (send tfl :wait-for-transform vrbase-frame-id controller-frame-id start-time wait-time)
-      (setq coords (send tfl :lookup-transform vrbase-frame-id controller-frame-id start-time))
+      (send tfl :wait-for-transform telemanipbase-frame-id controller-frame-id start-time wait-time)
+      (setq coords
+            (send tfl :lookup-transform telemanipbase-frame-id controller-frame-id start-time))
       coords))
   ;; coordinate function for vive
-  (:get-vrbase->hmd-coords ()
+  (:get-telemanipbase->hmd-coords ()
     (let (coords)
-      (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
-      (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
+      (send tfl :wait-for-transform telemanipbase-frame-id hmd-frame-id (ros::time 0) 0.1)
+      (setq coords (send tfl :lookup-transform telemanipbase-frame-id hmd-frame-id (ros::time 0)))
       (if coords
         (send coords :transform (make-coords :rpy (float-vector 0 pi 0)) :world))))
   ;; :calib-controller
@@ -182,14 +184,14 @@
             (format nil "Please stretch your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right"))
             :wait nil :volume 0.6)
-      (setq first-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
+      (setq first-coords (send self :get-telemanipbase->controller-coords arm :wait-trigger t))
       (ros::sleep)
       (send robot-interface :speak
             (format nil "Please fold your ~A arm and press trigger."
                     (if (eq arm :larm) "left" "right"))
             :wait nil :volume 0.6)
       (ros::ros-info "Fold your ~A arm and press trigger.~%" (string-downcase arm))
-      (setq second-coords (send self :get-vrbase->controller-coords arm :wait-trigger t))
+      (setq second-coords (send self :get-telemanipbase->controller-coords arm :wait-trigger t))
       (if (and (and first-coords second-coords)
                (> (elt (send first-coords :worldpos) 2)
                   (elt (send second-coords :worldpos) 2)))
@@ -198,9 +200,9 @@
                 (/ (send self :get-val 'arm-length)
                    (norm (v- (send second-coords :worldpos) (send first-coords :worldpos)))))
           (ros::ros-info "Calibrate scale: ~A~%" (send self :get-val 'scale))
-          (send self :set-val 'vrbase->shoulder-x
+          (send self :set-val 'telemanipbase->shoulder-x
                 (- (elt (send second-coords :worldpos) 2) head->shoulder-x-distance))
-          (send self :set-val 'vrbase->shoulder-z (elt (send second-coords :worldpos) 1))
+          (send self :set-val 'telemanipbase->shoulder-z (elt (send second-coords :worldpos) 1))
           (ros::ros-info "Calibration end: ~A~%" (string-downcase arm))
           (send robot-interface :speak "Calibration succeeded." :wait nil :volume 0.6)
           (ros::ros-info "1st coords: ~A" (send first-coords :worldpos))

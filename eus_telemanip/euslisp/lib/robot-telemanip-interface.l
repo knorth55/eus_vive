@@ -1,7 +1,7 @@
 ;; -*- mode: lisp;-*-
 
 (ros::load-ros-manifest "actionlib_msgs")
-(ros::load-ros-manifest "eus_vive")
+(ros::load-ros-manifest "eus_telemanip")
 (ros::load-ros-manifest "moveit_msgs")
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "std_msgs")
@@ -10,7 +10,7 @@
 (load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 
 
-(defclass robot-vr-interface
+(defclass robot-telemanip-interface
   :super propertied-object
   :slots (robot
           robot-interface
@@ -21,25 +21,25 @@
           collision-status-topic-type
           robot-state-visualize-topic-name
           irtviewer-visualize-topic-name
-          eus-vive-status-topic-name
-          eus-vive-reset-service-name
-          eus-vive-reset-larm-service-name
-          eus-vive-reset-rarm-service-name
-          eus-vive-enable-service-name
-          eus-vive-enable-larm-service-name
-          eus-vive-enable-rarm-service-name
-          eus-vive-disable-service-name
-          eus-vive-disable-larm-service-name
-          eus-vive-disable-rarm-service-name
-          eus-vive-calib-service-name
-          eus-vive-calib-larm-service-name
-          eus-vive-calib-rarm-service-name
-          eus-vive-start-grasp-larm-service-name
-          eus-vive-start-grasp-rarm-service-name
-          eus-vive-stop-grasp-larm-service-name
-          eus-vive-stop-grasp-rarm-service-name
-          eus-vive-toggle-grasp-service-name
-          eus-vive-hold-grasp-service-name
+          eus-telemanip-status-topic-name
+          eus-telemanip-reset-service-name
+          eus-telemanip-reset-larm-service-name
+          eus-telemanip-reset-rarm-service-name
+          eus-telemanip-enable-service-name
+          eus-telemanip-enable-larm-service-name
+          eus-telemanip-enable-rarm-service-name
+          eus-telemanip-disable-service-name
+          eus-telemanip-disable-larm-service-name
+          eus-telemanip-disable-rarm-service-name
+          eus-telemanip-calib-service-name
+          eus-telemanip-calib-larm-service-name
+          eus-telemanip-calib-rarm-service-name
+          eus-telemanip-start-grasp-larm-service-name
+          eus-telemanip-start-grasp-rarm-service-name
+          eus-telemanip-stop-grasp-larm-service-name
+          eus-telemanip-stop-grasp-rarm-service-name
+          eus-telemanip-toggle-grasp-service-name
+          eus-telemanip-hold-grasp-service-name
           loop-enable
           draw-object-list
           gripper-button-toggle-p
@@ -96,41 +96,41 @@
           ))
 
 
-(defmethod robot-vr-interface
+(defmethod robot-telemanip-interface
   (:init (&key (loop-enable t) (lgripper nil) (rgripper nil))
     (send self :reset :loop-enable loop-enable)
     (send self :set-val 'larm-gripper-type lgripper)
     (send self :set-val 'rarm-gripper-type rgripper)
     ;; for workspace
-    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_vive/workspace/max_x" nil))
-    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_vive/workspace/max_y" nil))
-    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_vive/workspace/max_z" nil))
-    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_vive/workspace/min_x" nil))
-    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_vive/workspace/min_y" nil))
-    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_vive/workspace/min_z" nil))
-    ;; for eus_vive
+    (send self :set-val 'target-coords-max-x (ros::get-param "/eus_telemanip/workspace/max_x" nil))
+    (send self :set-val 'target-coords-max-y (ros::get-param "/eus_telemanip/workspace/max_y" nil))
+    (send self :set-val 'target-coords-max-z (ros::get-param "/eus_telemanip/workspace/max_z" nil))
+    (send self :set-val 'target-coords-min-x (ros::get-param "/eus_telemanip/workspace/min_x" nil))
+    (send self :set-val 'target-coords-min-y (ros::get-param "/eus_telemanip/workspace/min_y" nil))
+    (send self :set-val 'target-coords-min-z (ros::get-param "/eus_telemanip/workspace/min_z" nil))
+    ;; for eus_telemanip
     (send self :set-val 'robot-state-visualize-topic-name "/display_robot_state")
-    (send self :set-val 'irtviewer-visualize-topic-name "/eus_vive/irtviewer/image")
-    (send self :set-val 'eus-vive-status-topic-name "/eus_vive/status")
-    (send self :set-val 'eus-vive-reset-service-name "/eus_vive/reset")
-    (send self :set-val 'eus-vive-reset-larm-service-name "/eus_vive/larm/reset")
-    (send self :set-val 'eus-vive-reset-rarm-service-name "/eus_vive/rarm/reset")
-    (send self :set-val 'eus-vive-enable-service-name "/eus_vive/enable")
-    (send self :set-val 'eus-vive-enable-larm-service-name "/eus_vive/larm/enable")
-    (send self :set-val 'eus-vive-enable-rarm-service-name "/eus_vive/rarm/enable")
-    (send self :set-val 'eus-vive-disable-service-name "/eus_vive/disable")
-    (send self :set-val 'eus-vive-disable-larm-service-name "/eus_vive/larm/disable")
-    (send self :set-val 'eus-vive-disable-rarm-service-name "/eus_vive/rarm/disable")
-    (send self :set-val 'eus-vive-calib-service-name "/eus_vive/calibrate")
-    (send self :set-val 'eus-vive-calib-larm-service-name "/eus_vive/larm/calibrate")
-    (send self :set-val 'eus-vive-calib-rarm-service-name "/eus_vive/rarm/calibrate")
-    (send self :set-val 'eus-vive-start-grasp-larm-service-name "/eus_vive/larm/start_grasp")
-    (send self :set-val 'eus-vive-start-grasp-rarm-service-name "/eus_vive/rarm/start_grasp")
-    (send self :set-val 'eus-vive-stop-grasp-larm-service-name "/eus_vive/larm/stop_grasp")
-    (send self :set-val 'eus-vive-stop-grasp-rarm-service-name "/eus_vive/rarm/stop_grasp")
-    (send self :set-val 'eus-vive-toggle-grasp-service-name "/eus_vive/toggle_grasp")
-    (send self :set-val 'eus-vive-hold-grasp-service-name "/eus_vive/hold_grasp")
-    (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
+    (send self :set-val 'irtviewer-visualize-topic-name "/eus_telemanip/irtviewer/image")
+    (send self :set-val 'eus-telemanip-status-topic-name "/eus_telemanip/status")
+    (send self :set-val 'eus-telemanip-reset-service-name "/eus_telemanip/reset")
+    (send self :set-val 'eus-telemanip-reset-larm-service-name "/eus_telemanip/larm/reset")
+    (send self :set-val 'eus-telemanip-reset-rarm-service-name "/eus_telemanip/rarm/reset")
+    (send self :set-val 'eus-telemanip-enable-service-name "/eus_telemanip/enable")
+    (send self :set-val 'eus-telemanip-enable-larm-service-name "/eus_telemanip/larm/enable")
+    (send self :set-val 'eus-telemanip-enable-rarm-service-name "/eus_telemanip/rarm/enable")
+    (send self :set-val 'eus-telemanip-disable-service-name "/eus_telemanip/disable")
+    (send self :set-val 'eus-telemanip-disable-larm-service-name "/eus_telemanip/larm/disable")
+    (send self :set-val 'eus-telemanip-disable-rarm-service-name "/eus_telemanip/rarm/disable")
+    (send self :set-val 'eus-telemanip-calib-service-name "/eus_telemanip/calibrate")
+    (send self :set-val 'eus-telemanip-calib-larm-service-name "/eus_telemanip/larm/calibrate")
+    (send self :set-val 'eus-telemanip-calib-rarm-service-name "/eus_telemanip/rarm/calibrate")
+    (send self :set-val 'eus-telemanip-start-grasp-larm-service-name "/eus_telemanip/larm/start_grasp")
+    (send self :set-val 'eus-telemanip-start-grasp-rarm-service-name "/eus_telemanip/rarm/start_grasp")
+    (send self :set-val 'eus-telemanip-stop-grasp-larm-service-name "/eus_telemanip/larm/stop_grasp")
+    (send self :set-val 'eus-telemanip-stop-grasp-rarm-service-name "/eus_telemanip/rarm/stop_grasp")
+    (send self :set-val 'eus-telemanip-toggle-grasp-service-name "/eus_telemanip/toggle_grasp")
+    (send self :set-val 'eus-telemanip-hold-grasp-service-name "/eus_telemanip/hold_grasp")
+    (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_telemanip/button_toggle" t))
 
     (ros::subscribe larm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :larm)
@@ -144,52 +144,52 @@
                         collision-status-topic-type #'send self :collision-status-cb :larm)
         (ros::subscribe rarm-collision-status-topic-name
                         collision-status-topic-type #'send self :collision-status-cb :rarm)))
-    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
-    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
-    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")
-    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_vive/right/hand_open_rate")
+    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_telemanip/left/target_pose_stamped")
+    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_telemanip/right/target_pose_stamped")
+    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_telemanip/left/hand_open_rate")
+    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_telemanip/right/hand_open_rate")
     (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise larm-grasp-visualize-topic-name std_msgs::Float32 1)
     (ros::advertise rarm-grasp-visualize-topic-name std_msgs::Float32 1)
     (ros::advertise robot-state-visualize-topic-name moveit_msgs::DisplayRobotState 1)
-    (ros::advertise eus-vive-status-topic-name eus_vive::EusViveStatusArray 1)
-    (ros::advertise-service eus-vive-reset-service-name std_srvs::Empty
+    (ros::advertise eus-telemanip-status-topic-name eus_telemanip::EusTelemanipStatusArray 1)
+    (ros::advertise-service eus-telemanip-reset-service-name std_srvs::Empty
                             #'send self :reset-service)
-    (ros::advertise-service eus-vive-reset-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-reset-larm-service-name std_srvs::Empty
                             #'send self :reset-larm-service)
-    (ros::advertise-service eus-vive-reset-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-reset-rarm-service-name std_srvs::Empty
                             #'send self :reset-rarm-service)
-    (ros::advertise-service eus-vive-enable-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-enable-service-name std_srvs::Empty
                             #'send self :enable-service)
-    (ros::advertise-service eus-vive-enable-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-enable-larm-service-name std_srvs::Empty
                             #'send self :enable-larm-service)
-    (ros::advertise-service eus-vive-enable-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-enable-rarm-service-name std_srvs::Empty
                             #'send self :enable-rarm-service)
-    (ros::advertise-service eus-vive-disable-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-disable-service-name std_srvs::Empty
                             #'send self :disable-service)
-    (ros::advertise-service eus-vive-disable-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-disable-larm-service-name std_srvs::Empty
                             #'send self :disable-larm-service)
-    (ros::advertise-service eus-vive-disable-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-disable-rarm-service-name std_srvs::Empty
                             #'send self :disable-rarm-service)
-    (ros::advertise-service eus-vive-calib-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-calib-service-name std_srvs::Empty
                             #'send self :calib-service)
-    (ros::advertise-service eus-vive-calib-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-calib-larm-service-name std_srvs::Empty
                             #'send self :calib-larm-service)
-    (ros::advertise-service eus-vive-calib-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-calib-rarm-service-name std_srvs::Empty
                             #'send self :calib-rarm-service)
-    (ros::advertise-service eus-vive-start-grasp-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-start-grasp-larm-service-name std_srvs::Empty
                             #'send self :start-grasp-larm-service)
-    (ros::advertise-service eus-vive-start-grasp-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-start-grasp-rarm-service-name std_srvs::Empty
                             #'send self :start-grasp-rarm-service)
-    (ros::advertise-service eus-vive-stop-grasp-larm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-stop-grasp-larm-service-name std_srvs::Empty
                             #'send self :stop-grasp-larm-service)
-    (ros::advertise-service eus-vive-stop-grasp-rarm-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-stop-grasp-rarm-service-name std_srvs::Empty
                             #'send self :stop-grasp-rarm-service)
-    (ros::advertise-service eus-vive-toggle-grasp-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-toggle-grasp-service-name std_srvs::Empty
                             #'send self :toggle-grasp-service)
-    (ros::advertise-service eus-vive-hold-grasp-service-name std_srvs::Empty
+    (ros::advertise-service eus-telemanip-hold-grasp-service-name std_srvs::Empty
                             #'send self :hold-grasp-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
   ;; fundamental methods
@@ -637,12 +637,12 @@
       (send msg :pose :position (ros::pos->tf-translation pos))
       (send msg :pose :orientation (ros::rot->tf-quaternion rot))
       msg))
-  (:generate-eus-vive-status-msg ()
-    (let ((eus-vive-status-msg (instance eus_vive::EusViveStatusArray :init))
+  (:generate-eus-telemanip-status-msg ()
+    (let ((eus-telemanip-status-msg (instance eus_telemanip::EusTelemanipStatusArray :init))
           (now (ros::time-now))
-          (larm-status-msg (instance eus_vive::EusViveStatus :init))
-          (rarm-status-msg (instance eus_vive::EusViveStatus :init)))
-      (send eus-vive-status-msg :header :stamp now)
+          (larm-status-msg (instance eus_telemanip::EusTelemanipStatus :init))
+          (rarm-status-msg (instance eus_telemanip::EusTelemanipStatus :init)))
+      (send eus-telemanip-status-msg :header :stamp now)
       (send larm-status-msg :header :stamp now)
       (send larm-status-msg :part_name (string-downcase :larm))
       (send larm-status-msg :enable (send self :get-arm-val :larm :enable))
@@ -655,11 +655,11 @@
       (send rarm-status-msg :collision (send self :get-arm-val :rarm :collision-p))
       (send rarm-status-msg :track_error (send self :get-arm-val :rarm :track-error-p))
       (send rarm-status-msg :hand_close (send self :get-arm-val :rarm :grasp))
-      (send eus-vive-status-msg :status (list larm-status-msg rarm-status-msg))
-      eus-vive-status-msg))
+      (send eus-telemanip-status-msg :status (list larm-status-msg rarm-status-msg))
+      eus-telemanip-status-msg))
   (:visualize (arm-coords)
     (let ((camera-draw-object-list draw-object-list)
-          (eus-vive-status-msg (send self :generate-eus-vive-status-msg))
+          (eus-telemanip-status-msg (send self :generate-eus-telemanip-status-msg))
           larm-cube larm-coords rarm-cube rarm-coords)
       (setq larm-coords (car arm-coords))
       (if larm-coords
@@ -690,7 +690,7 @@
       (ros::publish robot-state-visualize-topic-name
                     (angle-vector-to-display-robot-state
                       robot (send (send robot :link base-frame-id) :copy-worldcoords)))
-      (ros::publish eus-vive-status-topic-name eus-vive-status-msg)
+      (ros::publish eus-telemanip-status-topic-name eus-telemanip-status-msg)
       (ros::publish larm-grasp-visualize-topic-name
                     (instance std_msgs::Float32 :init :data
                               (if (send self :get-arm-val :larm :grasp) 0.0 1.0)))
@@ -819,4 +819,4 @@
     (return-from :get-head-ypr-angle nil)))
 
 
-(provide :robot-vr-interface)
+(provide :robot-telemanip-interface)

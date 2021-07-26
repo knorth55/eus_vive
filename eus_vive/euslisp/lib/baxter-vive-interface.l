@@ -1,9 +1,9 @@
 ;; -*- mode: lisp;-*-
 (ros::load-ros-manifest "baxter_core_msgs")
 
-(require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :baxter-vr-interface "package://eus_vive/euslisp/lib/baxter-vr-interface.l")
+(require :baxter-interface "package://eus_telemanip/euslisp/lib/baxter-interface.l")
+(require :robot-telemanip-interface "package://eus_telemanip/euslisp/lib/robot-telemanip-interface.l")
+(require :baxter-telemanip-interface "package://eus_telemanip/euslisp/lib/baxter-telemanip-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 
@@ -35,7 +35,7 @@
 
 
 (defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
+  (eus_telemanip::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
   (objects (list *baxter*))
   (setq *camera-model*
         (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5

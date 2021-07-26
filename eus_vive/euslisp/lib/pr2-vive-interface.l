@@ -1,7 +1,7 @@
 ;; -*- mode: lisp;-*-
 (load "package://pr2eus/pr2-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
+(require :robot-telemanip-interface "package://eus_telemanip/euslisp/lib/robot-telemanip-interface.l")
+(require :pr2-telemanip-interface "package://eus_telemanip/euslisp/lib/pr2-telemanip-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 

@@ -1,17 +1,17 @@
 ;; -*- mode: lisp;-*-
 (load "package://pr2eus/pr2-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-telemanip-interface "package://eus_telemanip/euslisp/lib/robot-telemanip-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :reset-torso-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-org))
+(if (not (assoc :init-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :init (send robot-telemanip-interface :methods)) :init-org))
+(if (not (assoc :reset-arm-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-telemanip-interface :methods)) :reset-arm-org))
+(if (not (assoc :reset-torso-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :reset-torso (send robot-telemanip-interface :methods)) :reset-torso-org))
 
 
-(defmethod robot-vr-interface
+(defmethod robot-telemanip-interface
   (:init (&rest args)
     (send self :set-val 'robot *pr2*)
     (send self :set-val 'robot-interface *ri*)
@@ -72,7 +72,7 @@
       (send *ri* :cancel-angle-vector :controller-type :torso-controller)))
   (if (and (boundp '*ti*) (find-method *ti* :switch-joy-to-ps3joy))
     (progn
-      (ros::ros-info "switch joy from vr device to ps3joy")
+      (ros::ros-info "switch joy from telemanip to ps3joy")
       (send *ti* :switch-joy-to-ps3joy)))
   (reset))
 
@@ -82,4 +82,4 @@
 (unix:signal 15 'signal-hook)
 
 
-(provide :pr2-vr-interface)
+(provide :pr2-telemanip-interface)

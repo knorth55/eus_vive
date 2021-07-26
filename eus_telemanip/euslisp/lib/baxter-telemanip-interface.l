@@ -1,25 +1,25 @@
 ;; -*- mode: lisp;-*-
 (ros::load-ros-manifest "baxter_core_msgs")
 
-(require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :baxter-interface "package://eus_telemanip/euslisp/lib/baxter-interface.l")
+(require :robot-telemanip-interface "package://eus_telemanip/euslisp/lib/robot-telemanip-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :disable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :disable (send robot-vr-interface :methods)) :disable-org))
-(if (not (assoc :enable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :enable (send robot-vr-interface :methods)) :enable-org))
-(if (not (assoc :arm-motion-cb-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :arm-motion-cb (send robot-vr-interface :methods)) :arm-motion-cb-org))
+(if (not (assoc :init-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :init (send robot-telemanip-interface :methods)) :init-org))
+(if (not (assoc :reset-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :reset (send robot-telemanip-interface :methods)) :reset-org))
+(if (not (assoc :reset-arm-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-telemanip-interface :methods)) :reset-arm-org))
+(if (not (assoc :disable-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :disable (send robot-telemanip-interface :methods)) :disable-org))
+(if (not (assoc :enable-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :enable (send robot-telemanip-interface :methods)) :enable-org))
+(if (not (assoc :arm-motion-cb-org (send robot-telemanip-interface :methods)))
+  (rplaca (assoc :arm-motion-cb (send robot-telemanip-interface :methods)) :arm-motion-cb-org))
 
 
-(defmethod robot-vr-interface
+(defmethod robot-telemanip-interface
   (:init (&rest args)
     (send self :set-val 'robot *baxter*)
     (send self :set-val 'robot-interface *ri*)
@@ -128,4 +128,4 @@
 (unix:signal 15 'signal-hook)
 
 
-(provide :baxter-vr-interface)
+(provide :baxter-telemanip-interface)

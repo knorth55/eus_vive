@@ -1,14 +1,13 @@
-(require :baxter "package://eus_vive/euslisp/lib/baxter-util.l")
+(require :baxter "package://eus_telemanip/euslisp/lib/baxter-util.l")
 (load "package://baxtereus/baxter-interface.l")
 (load "package://softhand_ros/euslisp/softhand-interface.l")
 (load "package://softhand_ros/euslisp/softhand-v2-interface.l")
 
 
-(if (not (find-package "EUS_VIVE"))
-  (make-package "EUS_VIVE"))
+(if (not (find-package "EUS_TELEMANIP")) (make-package "EUS_TELEMANIP"))
 
 
-(defclass eus_vive::baxter-interface
+(defclass eus_telemanip::baxter-interface
   :super baxter-interface
   :slots (lgripper-type
           lgripper-interface
@@ -16,7 +15,7 @@
           rgripper-interface))
 
 
-(defmethod eus_vive::baxter-interface
+(defmethod eus_telemanip::baxter-interface
   (:init (&rest args &key (lgripper :parallel) (rgripper :parallel) &allow-other-keys)
     (send-super* :init args)
     (setq lgripper-type lgripper)
@@ -129,7 +128,7 @@
        nil))))
 
 
-(defun eus_vive::baxter-init
+(defun eus_telemanip::baxter-init
   (&key (safe t) (type :default-controller) (moveit t)
         (lgripper :softhand) (rgripper :softhand) (limit-in-front nil))
   (let (mvit-env mvit-rb)
@@ -138,7 +137,7 @@
         (setq mvit-env (instance baxter-moveit-environment))
         (setq mvit-rb (instance baxter-robot :init))))
     (if (not (boundp '*ri*))
-      (setq *ri* (instance eus_vive::baxter-interface :init :type type
+      (setq *ri* (instance eus_telemanip::baxter-interface :init :type type
                            :moveit-environment mvit-env
                            :moveit-robot mvit-rb
                            :controller-timeout 10
