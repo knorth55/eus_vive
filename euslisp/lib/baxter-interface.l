@@ -127,13 +127,13 @@
       (t
        (ros::ros-warn ":stop-heater is invalid for this gripper type")
        nil)))
-  (:thumb-rotate (arm angle))
+  (:thumb-rotate (arm angle)
     (cond
       ((equal arm :arms)
        (let ((larm-thumb-rotate-p (send self :thumb-rotate-step :larm angle))
              (rarm-thumb-rotate-p (send self :thumb-rotate-step :rarm angle)))
          (and larm-thumb-rotate-p rarm-thumb-rotate-p)))
-      (t (send self :thumb-rotate-step arm angle)))
+      (t (send self :thumb-rotate-step arm angle))))
   (:thumb-rotate-step (arm angle)
     (cond
       ((equal (send self :get-gripper-type arm) :softhand-v2)
