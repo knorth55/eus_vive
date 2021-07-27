@@ -140,6 +140,20 @@
        (send (send self :get-gripper-interface arm) :thumb-rotate angle))
       (t
        (ros::ros-warn ":thumb-rotate is invalid for this gripper type")
+       nil)))
+  (:set-torque-limit (arm torque)
+    (cond
+      ((equal arm :arms)
+       (let ((larm-set-torque-limit-p (send self :set-torque-limit-step :larm torque))
+             (rarm-set-torque-limit-p (send self :set-torque-limit-step :rarm torque)))
+         (and larm-set-torque-limit-p rarm-set-torque-limit-p)))
+      (t (send self :set-torque-limit-step arm torque))))
+  (:set-torque-limit-step (arm torque)
+    (cond
+      ((equal (send self :get-gripper-type arm) :softhand-v2)
+       (send (send self :get-gripper-interface arm) :set-torque-limit torque))
+      (t
+       (ros::ros-warn ":set-torque-limit is invalid for this gripper type")
        nil))))
 
 
