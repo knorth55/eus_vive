@@ -150,7 +150,8 @@
       (t (send self :set-torque-limit-step arm torque))))
   (:set-torque-limit-step (arm torque)
     (cond
-      ((equal (send self :get-gripper-type arm) :softhand-v2)
+      ((or (equal (send self :get-gripper-type arm) :softhand)
+           (equal (send self :get-gripper-type arm) :softhand-v2))
        (send (send self :get-gripper-interface arm) :set-torque-limit-all torque))
       (t
        (ros::ros-warn ":set-torque-limit is invalid for this gripper type")
