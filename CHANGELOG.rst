@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.6 (2021-08-07)
+------------------
 * use :set-torque-limit-step for softhand v1 and v2
 * Merge pull request `#31 <https://github.com/knorth55/eus_vive/issues/31>`_ from knorth55/set-torque-limit
   add set-torque-limit methods in baxter-interface.l
