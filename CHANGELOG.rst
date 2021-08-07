@@ -2,6 +2,21 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use :set-torque-limit-step for softhand v1 and v2
+* Merge pull request `#31 <https://github.com/knorth55/eus_vive/issues/31>`_ from knorth55/set-torque-limit
+  add set-torque-limit methods in baxter-interface.l
+* fix typo
+* add set-torque-limit methods in baxter-interface.l
+* fix typo
+* add thumb-rotate
+* remove commentout
+* fix typo
+* support spacenav for baxter
+* fix typo
+* Contributors: Shingo Kitagawa
+
 0.0.5 (2021-07-06)
 ------------------
 * update rviz config
