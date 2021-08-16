@@ -27,6 +27,6 @@
     uri: https://github.com/ros-drivers/libuvc_ros.git
     version: 0.0.11
 - git:
-    local-name: tohirose/dynamixel_motor
-    uri: https://github.com/tohirose/dynamixel_motor.git
-    version: softhand-v2-devel
+    local-name: pazeshun/dynamixel_motor
+    uri: https://github.com/pazeshun/dynamixel_motor.git
+    version: gripper-v6-devel
