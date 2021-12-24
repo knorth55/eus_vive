@@ -14,10 +14,10 @@
     uri: https://github.com/jsk-ros-pkg/jsk_pr2eus.git
     version: master
 # need latest version
-- git:
-    local-name: jsk-ros-pkg/jsk_robot
-    uri: https://github.com/jsk-ros-pkg/jsk_robot.git
-    version: master
+# - git:
+#     local-name: jsk-ros-pkg/jsk_robot
+#     uri: https://github.com/jsk-ros-pkg/jsk_robot.git
+#     version: master
 # need latest version
 - git:
     local-name: jsk-ros-pkg/jsk_visualization

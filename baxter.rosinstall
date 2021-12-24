@@ -1,4 +1,8 @@
 - git:
+    local-name: jsk-ros-pkg/jsk_robot
+    uri: https://github.com/knorth55/jsk_robot.git
+    version: baxter
+- git:
     local-name: clearpathrobotics/x264_image_transport
     uri: https://github.com/clearpathrobotics/x264_image_transport.git
     version: master
