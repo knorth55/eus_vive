@@ -33,8 +33,9 @@
     </node>
 
     <!-- attention_clipper -->
+    <!-- pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)" -->
     <node name="bbox_attention_clipper"
-          pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper camera/$(arg manager)"
+          pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)"
           output="screen" >
       <remap from="~input/points" to="$(arg input_cloud)" />
       <remap from="~input/box" to="bboxes_to_bbox/output" />
@@ -45,8 +46,9 @@
     </node>
 
     <!-- extract indices -->
+    <!-- pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)" -->
     <node name="bbox_cloud_extract"
-          pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices camera/$(arg manager)"
+          pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)"
           output="screen" >
       <remap from="~input" to="$(arg input_cloud)" />
       <remap from="~indices" to="bbox_attention_clipper/output/point_indices" />
@@ -61,7 +63,7 @@
   <!-- tabletop object detector -->
   <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
     <!-- arg name="input" value="$(arg input_cloud)" / -->
-    <arg name="manager" value="camera/$(arg manager)" />
+    <arg name="manager" value="$(arg manager)" />
     <arg name="input" value="$(arg CLOUD)" />
     <arg name="sensor_frame" value="/$(arg camera_frame_id)" />
     <arg name="launch_manager" value="false" />

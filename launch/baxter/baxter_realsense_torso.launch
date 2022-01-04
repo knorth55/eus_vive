@@ -24,7 +24,6 @@
     <rosparam command="load" file="$(find eus_vive)/config/baxter/$(arg camera_type)_torso_pose.yaml" />
     <rosparam subst_value="true" >
       object_type: cube
-      frame_id: base
       publish_tf: true
       tf_frame: $(arg camera_frame_id)
       object_x: 0.1
@@ -42,10 +41,9 @@
   <include file="$(find eus_vive)/launch/baxter/baxter_tabletop_object_detector.launch"
            if="$(arg launch_tabletop_detector)">
     <arg name="input_cloud" value="$(arg input_cloud)" />
-    <arg name="launch_transformable_server" value="$(arg launch_transformable_server)" />
-    <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="camera_frame_id" value="$(arg camera_frame_id)" />
-    <arg name="manager" value="$(arg manager)" />
+    <arg name="manager" value="$(arg camera_ns)/$(arg manager)" />
+    <arg name="launch_transformable_server" value="$(arg launch_transformable_server)" />
     <arg name="clip" value="true" />
   </include>
 
