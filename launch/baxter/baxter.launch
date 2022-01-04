@@ -183,10 +183,11 @@
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="influxdb" value="$(arg influxdb)" />
     <arg name="debug" value="$(arg debug)" />
-    <arg name="camera" value="$(arg realsense_camera)" />
+    <!-- disable camera logging to mongodb -->
+    <arg name="camera" value="false" />
+    <arg name="spherical_camera" value="false" />
+    <arg name="spherical_stereo" value="false" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
-    <arg name="spherical_camera" value="$(arg spherical_camera)" />
-    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
     <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
     <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
     <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
