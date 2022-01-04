@@ -1,0 +1,97 @@
+<launch>
+  <arg name="input_cloud" />
+  <arg name="camera_frame_id"  />
+  <arg name="manager" />
+
+  <arg name="launch_transformable_server" default="true" />
+  <arg name="clip" default="true" />
+
+  <arg name="CLOUD" value="bbox_cloud_extract/output" if="$(arg clip)" />
+  <arg name="CLOUD" value="$(arg input_cloud)" unless="$(arg clip)" />
+
+  <group if="$(arg clip)">
+    <node name="transformable_markers_client"
+          pkg="jsk_interactive_marker" type="transformable_markers_client.py"
+          if="$(arg launch_transformable_server)"
+          output="screen">
+      <remap from="~server" to="transformable_interactive_server" />
+      <rosparam subst_value="true">
+        config_file: $(find eus_vive)/config/baxter/transformable_markers_client.yaml
+        config_auto_save: true
+        interactive_mode: 2  # BUTTON
+      </rosparam>
+    </node>
+
+    <!-- bboxes -> bbox -->
+    <node name="bboxes_to_bbox"
+          pkg="jsk_pcl_ros_utils" type="bounding_box_array_to_bounding_box"
+          output="screen" >
+      <remap from="~input" to="transformable_markers_client/output/boxes" />
+      <rosparam>
+        index: 0
+      </rosparam>
+    </node>
+
+    <!-- attention_clipper -->
+    <node name="bbox_attention_clipper"
+          pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper camera/$(arg manager)"
+          output="screen" >
+      <remap from="~input/points" to="$(arg input_cloud)" />
+      <remap from="~input/box" to="bboxes_to_bbox/output" />
+      <rosparam>
+        frame_id: base
+        use_multiple_attention: false
+      </rosparam>
+    </node>
+
+    <!-- extract indices -->
+    <node name="bbox_cloud_extract"
+          pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices camera/$(arg manager)"
+          output="screen" >
+      <remap from="~input" to="$(arg input_cloud)" />
+      <remap from="~indices" to="bbox_attention_clipper/output/point_indices" />
+      <rosparam>
+        keep_organized: true
+        approximate_sync: true
+        max_queue_size: 100
+      </rosparam>
+    </node>
+  </group>
+
+  <!-- tabletop object detector -->
+  <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
+    <!-- arg name="input" value="$(arg input_cloud)" / -->
+    <arg name="manager" value="camera/$(arg manager)" />
+    <arg name="input" value="$(arg CLOUD)" />
+    <arg name="sensor_frame" value="/$(arg camera_frame_id)" />
+    <arg name="launch_manager" value="false" />
+    <arg name="launch_openni" value="false" />
+    <arg name="launch_tracking" value="false" />
+    <arg name="launch_rviz" value="false" />
+  </include>
+  <group ns="plane_extraction">
+    <rosparam subst_value="true">
+      min_height: 0.01
+      use_async: true
+      max_queue_size: 300
+    </rosparam>
+  </group>
+  <group ns="euclidean_clustering">
+    <rosparam subst_value="true">
+      downsample_enable: true
+      leaf_size: 0.01
+    </rosparam>
+  </group>
+  <group ns="segmentation_decomposer">
+    <rosparam subst_value="true">
+      align_boxes: true
+      align_boxes_with_plane: false
+      target_frame_id: base
+      use_pca: true
+      sort_by: cloud_size
+      approximate_sync: true
+      queue_size: 300
+    </rosparam>
+  </group>
+
+</launch>

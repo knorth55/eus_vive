@@ -6,6 +6,7 @@
   <arg name="arm_control_mode" default="position_w_id" />
   <arg name="moveit" default="true" />
   <arg name="gui" default="true" />
+  <arg name="launch_tabletop_detector" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter.launch">
     <arg name="realsense_camera" value="$(arg realsense_camera)" />
@@ -14,6 +15,7 @@
     <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
     <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
     <arg name="moveit" value="$(arg moveit)" />
+    <arg name="launch_tabletop_detector" value="$(arg launch_tabletop_detector)" />
   </include>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg gui)"

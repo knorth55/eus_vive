@@ -1,0 +1,16 @@
+boxes:
+- dimensions:
+  - 0.5
+  - 1.0
+  - 0.5
+  frame_id: base
+  name: workspace
+  orientation:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  position:
+  - 0.6497243642807007
+  - 0.047924354672431946
+  - -0.22003498673439026
