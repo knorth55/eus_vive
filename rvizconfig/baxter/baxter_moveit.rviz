@@ -968,9 +968,9 @@ Visualization Manager:
       alpha: 0.800000011920929
       color: 25; 255; 0
       coloring: Auto
-      line width: 0.004999999888241291
-      only edge: false
-      show coords: false
+      line width: 0.009999999776482582
+      only edge: true
+      show coords: true
     - Alpha: 1
       Class: jsk_rviz_plugin/PolygonArray
       Color: 25; 255; 0
