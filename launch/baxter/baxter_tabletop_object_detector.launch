@@ -33,7 +33,6 @@
     </node>
 
     <!-- attention_clipper -->
-    <!-- pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)" -->
     <node name="bbox_attention_clipper"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)"
           output="screen" >
@@ -46,7 +45,6 @@
     </node>
 
     <!-- extract indices -->
-    <!-- pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)" -->
     <node name="bbox_cloud_extract"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)"
           output="screen" >
@@ -95,5 +93,67 @@
       queue_size: 300
     </rosparam>
   </group>
+
+  <node name="tabletop_cpi_to_pi"
+        pkg="nodelet" type="nodelet" args="load jsk_pcl_utils/ClusterPointIndicesToPointIndices $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="segmentation_decomposer/cluster_indices" />
+    <rosparam>
+      index: 0
+    </rosparam>
+  </node>
+  <node name="tabletop_cloud_extract"
+        pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~indices" to="tabletop_cpi_to_pi/output" />
+    <rosparam>
+      keep_organized: true
+      approximate_sync: true
+      max_queue_size: 100
+    </rosparam>
+  </node>
+  <node name="tabletop_outlier_removal"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedStatisticalOutlierRemoval $(arg manager)">
+    <remap from="~input" to="tabletop_cloud_extract/output" />
+    <rosparam>
+      mean_k: 30
+      stddev: 0.4
+      keep_organized: true
+    </rosparam>
+  </node>
+  <node name="tabletop_resize_points_publisher"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ResizePointsPublisher $(arg manager)">
+    <remap from="~input" to="tabletop_outlier_removal/output" />
+    <rosparam>
+      step_x: 2
+      step_y: 2
+    </rosparam>
+  </node>
+  <node name="tabletop_cloud_to_cpi"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl_utils/PointCloudToClusterPointIndices $(arg manager)">
+    <remap from="~input" to="tabletop_resize_points_publisher/output" />
+    <rosparam>
+      skip_nan: true
+    </rosparam>
+  </node>
+  <node name="tabletop_cpi_decomposer"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg manager)">
+    <remap from="~input" to="tabletop_resize_points_publisher/output" />
+    <remap from="~target" to="tabletop_cloud_to_cpi/output" />
+    <rosparam>
+      align_boxes: true
+      align_boxes_with_plane: false
+      target_frame_id: base
+      use_pca: true
+      sort_by: -cloud_size
+      approximate_sync: true
+      queue_size: 300
+    </rosparam>
+  </node>
 
 </launch>
