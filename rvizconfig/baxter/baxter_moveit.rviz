@@ -879,7 +879,7 @@ Visualization Manager:
       Size (Pixels): 2
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /realsense_torso/depth_registered/points
+      Topic: /tabletop_resize_points_publisher/output
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
