@@ -9,6 +9,16 @@
   <arg name="CLOUD" value="bbox_cloud_extract/output" if="$(arg clip)" />
   <arg name="CLOUD" value="$(arg input_cloud)" unless="$(arg clip)" />
 
+  <node name="tabletop_resize_points_publisher"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ResizePointsPublisher $(arg manager)">
+    <remap from="~input" to="$(arg input_cloud)" />
+    <rosparam>
+      step_x: 2
+      step_y: 2
+    </rosparam>
+  </node>
+
   <group if="$(arg clip)">
     <node name="transformable_markers_client"
           pkg="jsk_interactive_marker" type="transformable_markers_client.py"
@@ -36,7 +46,7 @@
     <node name="bbox_attention_clipper"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)"
           output="screen" >
-      <remap from="~input/points" to="$(arg input_cloud)" />
+      <remap from="~input/points" to="tabletop_resize_points_publisher/output" />
       <remap from="~input/box" to="bboxes_to_bbox/output" />
       <rosparam>
         frame_id: base
@@ -48,7 +58,7 @@
     <node name="bbox_cloud_extract"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)"
           output="screen" >
-      <remap from="~input" to="$(arg input_cloud)" />
+      <remap from="~input" to="tabletop_resize_points_publisher/output" />
       <remap from="~indices" to="bbox_attention_clipper/output/point_indices" />
       <rosparam>
         keep_organized: true
@@ -60,7 +70,6 @@
 
   <!-- tabletop object detector -->
   <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
-    <!-- arg name="input" value="$(arg input_cloud)" / -->
     <arg name="manager" value="$(arg manager)" />
     <arg name="input" value="$(arg CLOUD)" />
     <arg name="sensor_frame" value="/$(arg camera_frame_id)" />
@@ -71,7 +80,7 @@
   </include>
   <group ns="multi_plane_estimate">
     <rosparam subst_value="true">
-      min_size: 50000
+      min_size: 10000
     </rosparam>
   </group>
   <group ns="plane_extraction">
@@ -128,19 +137,10 @@
       keep_organized: true
     </rosparam>
   </node>
-  <node name="tabletop_resize_points_publisher"
-        pkg="nodelet" type="nodelet"
-        args="load jsk_pcl/ResizePointsPublisher $(arg manager)">
-    <remap from="~input" to="tabletop_outlier_removal/output" />
-    <rosparam>
-      step_x: 2
-      step_y: 2
-    </rosparam>
-  </node>
   <node name="tabletop_cloud_to_cpi"
         pkg="nodelet" type="nodelet"
         args="load jsk_pcl_utils/PointCloudToClusterPointIndices $(arg manager)">
-    <remap from="~input" to="tabletop_resize_points_publisher/output" />
+    <remap from="~input" to="tabletop_outlier_removal/output" />
     <rosparam>
       skip_nan: true
     </rosparam>
@@ -148,7 +148,7 @@
   <node name="tabletop_cpi_decomposer"
         pkg="nodelet" type="nodelet"
         args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg manager)">
-    <remap from="~input" to="tabletop_resize_points_publisher/output" />
+    <remap from="~input" to="tabletop_outlier_removal/output" />
     <remap from="~target" to="tabletop_cloud_to_cpi/output" />
     <rosparam>
       align_boxes: true
