@@ -15,15 +15,16 @@
   <node name="baxter_rosbag_record" pkg="rosbag" type="record"
         args="/rosout
               /robot/joint_states
-              /eus_vive/status
+              /diagnostics_agg
               /tf
               /tf_static
               /audio
+              /eus_vive/status
               /$(arg camera_ns)/color/image_rect_color/compressed
               /$(arg camera_ns)/color/camera_info
               /$(arg camera_ns)/depth/compressed/image_rect_raw/compressedDepth
               /$(arg camera_ns)/depth/compressed/camera_info
-              /$(arg camera_ns)/aligned_depth_to_color/compressed/compressedDepth
+              /$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw/compressedDepth
               /$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
               /$(arg spherical_camera_ns)/image_raw/compressed
               /$(arg spherical_camera_ns)/camera_info
