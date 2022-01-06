@@ -906,10 +906,10 @@ Visualization Manager:
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
-      Size (Pixels): 1
+      Size (Pixels): 2
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /bbox_cloud_extract/output
+      Topic: /plane_extraction/output
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -961,8 +961,8 @@ Visualization Manager:
       Value: false
     - Class: jsk_rviz_plugin/BoundingBoxArray
       Enabled: true
-      Name: ObjectBbox
-      Topic: /segmentation_decomposer/boxes
+      Name: TargetBbox
+      Topic: /tabletop_cpi_decomposer/boxes
       Unreliable: false
       Value: true
       alpha: 0.800000011920929
@@ -971,14 +971,26 @@ Visualization Manager:
       line width: 0.009999999776482582
       only edge: true
       show coords: true
+    - Class: jsk_rviz_plugin/BoundingBoxArray
+      Enabled: true
+      Name: ObjectBbox
+      Topic: /segmentation_decomposer/boxes
+      Unreliable: false
+      Value: true
+      alpha: 0.800000011920929
+      color: 25; 255; 0
+      coloring: Auto
+      line width: 0.004999999888241291
+      only edge: true
+      show coords: false
     - Alpha: 1
       Class: jsk_rviz_plugin/PolygonArray
       Color: 25; 255; 0
-      Enabled: false
+      Enabled: true
       Name: TablePolygon
       Topic: /polygon_magnifier/output
       Unreliable: false
-      Value: false
+      Value: true
       coloring: Auto
       enable lighting: true
       normal length: 0.10000000149011612
@@ -1037,7 +1049,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.444179058074951
+      Distance: 2.6907622814178467
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1052,10 +1064,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6447963118553162
+      Pitch: 0.5247963666915894
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.000398874282837
+      Yaw: 0.6403990983963013
     Saved: ~
 Window Geometry:
   Displays:
