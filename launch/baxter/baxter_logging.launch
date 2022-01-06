@@ -35,25 +35,14 @@
   </include>
 
   <!-- rosbag -->
-  <node name="baxter_rosbag_record" pkg="rosbag" type="record"
-        args="/rosout /eus_vive/status /tf /robot/joint_states
-              /tf_static
-              /audio
-              /$(arg camera_ns)/color/image_rect_color/compressed
-              /$(arg camera_ns)/color/camera_info
-              /$(arg camera_ns)/depth/compressed/image_rect_raw/compressedDepth
-              /$(arg camera_ns)/depth/compressed/camera_info
-              /$(arg camera_ns)/aligned_depth_to_color/compressed/compressedDepth
-              /$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
-              /$(arg spherical_camera_ns)/image_raw/compressed
-              /$(arg spherical_camera_ns)/camera_info
-              /$(arg spherical_left_camera_ns)/image_raw/compressed
-              /$(arg spherical_left_camera_ns)/camera_info
-              /$(arg spherical_right_camera_ns)/image_raw/compressed
-              /$(arg spherical_right_camera_ns)/camera_info
-              -q $(arg compress_flag) -b 0
-              --output-prefix $(arg home_dir)/.ros/eus_vive/rosbag/baxter"
-        output="screen" />
+  <include file="$(find eus_vive)/launch/baxter/baxter_rosbag_record.launch">
+    <arg name="output_prefix" value="$(arg home_dir)/.ros/eus_vive/rosbag/baxter" />
+    <arg name="compress" value="$(arg compress)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
+  </include>
 
   <!-- tweeting robot warning data and etc. -->
   <include file="$(find jsk_robot_startup)/lifelog/tweet.launch" if="$(arg twitter)">
