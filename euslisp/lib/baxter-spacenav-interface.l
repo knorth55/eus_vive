@@ -25,8 +25,13 @@
   (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper)
   (objects (list *baxter*))
   (setq *camera-model*
-        (make-camera-from-param :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
-                                :name "camera" :create-viewer t))
+        (if (string>= (car lisp-implementation-version) "9.28")
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t :no-window t)
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t)))
   (send *camera-model* :translate #f(1500 0 600))
   (send *camera-model* :rotate -pi/2 :y :world)
   (send *camera-model* :rotate -pi/2 :x :world)
