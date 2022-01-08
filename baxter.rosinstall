@@ -34,3 +34,7 @@
     local-name: pazeshun/dynamixel_motor
     uri: https://github.com/pazeshun/dynamixel_motor.git
     version: gripper-v6-devel
+- git:
+    local-name: start-jsk/jsk_apc
+    uri: https://github.com/start-jsk/jsk_apc.git
+    version: master
