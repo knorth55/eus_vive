@@ -15,6 +15,7 @@
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
   <arg name="launch_tabletop_detector" default="false" />
+  <arg name="launch_grasp_mask_rcnn" default="false" />
 
   <!-- baxter control -->
   <arg name="arm_interpolation" default="bezier_with_velocity" />
@@ -107,6 +108,7 @@
       <arg name="camera_type" value="$(arg camera_type)" />
       <arg name="launch_transformable_server" value="true" />
       <arg name="launch_tabletop_detector" value="$(arg launch_tabletop_detector)" />
+      <arg name="launch_grasp_mask_rcnn" value="$(arg launch_grasp_mask_rcnn)" />
     </include>
   </group>
 

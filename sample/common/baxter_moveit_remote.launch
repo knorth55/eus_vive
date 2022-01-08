@@ -26,6 +26,7 @@
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
   <arg name="gui" default="false" />
   <arg name="launch_tabletop_detector" default="true" />
+  <arg name="launch_grasp_mask_rcnn" default="false" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter.launch">
     <arg name="head" value="$(arg head)" />
@@ -51,6 +52,7 @@
     <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
     <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
     <arg name="launch_tabletop_detector" value="$(arg launch_tabletop_detector)" />
+    <arg name="launch_grasp_mask_rcnn" value="$(arg launch_grasp_mask_rcnn)" />
   </include>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg gui)"
