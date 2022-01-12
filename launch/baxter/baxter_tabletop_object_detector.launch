@@ -68,23 +68,86 @@
     </node>
   </group>
 
-  <!-- tabletop object detector -->
-  <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
-    <arg name="manager" value="$(arg manager)" />
-    <arg name="input" value="$(arg CLOUD)" />
-    <arg name="sensor_frame" value="/$(arg camera_frame_id)" />
-    <arg name="launch_manager" value="false" />
-    <arg name="launch_openni" value="false" />
-    <arg name="launch_tracking" value="false" />
-    <arg name="launch_rviz" value="false" />
-  </include>
-  <group ns="multi_plane_estimate">
+  <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="$(arg CLOUD)" />
+    <rosparam>
+      max_curvature: 0.01
+      estimate_normal: true
+      min_size: 10000
+    </rosparam>
+  </node>
+  <node name="polygon_magnifier" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl_utils/PolygonMagnifier $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="multi_plane_estimate/output_refined_polygon" />
+  </node>
+  <node name="plane_extraction" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/MultiPlaneExtraction $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="$(arg CLOUD)" />
+    <remap from="~indices" to="multi_plane_estimate/output_refined" />
+    <remap from="~input_polygons" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~input_coefficients" to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      use_indices: true 
+      use_sensor_frame: true
+      sensor_frame: /$(arg camera_frame_id) 
+      min_height: 0.01
+      max_height: 1000.0
+      use_async: true
+      max_queue_size: 300
+    </rosparam>
+  </node>
+  <node name="euclidean_clustering" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/EuclideanClustering $(arg manager)"
+        output="screen">
+    <remap from="~input" to="plane_extraction/output_nonplane_cloud" />
+    <rosparam>
+      tolerance: 0.02
+      min_size: 100
+      downsample_enable: true
+      leaf_size: 0.01
+    </rosparam>
+  </node>
+  <node name="throttle_segmentation" pkg="nodelet" type="nodelet"
+        args="load jsk_topic_tools/LightweightThrottle $(arg manager)"
+        output="screen">
+    <remap from="~input" to="euclidean_clustering/output" />
+    <remap from="~output" to="euclidean_clustering/output_throttle" />
+  </node>
+  <node name="segmentation_decomposer" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg manager)"
+        output="screen" >
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~target" to="euclidean_clustering/output_throttle" />
+    <remap from="~align_planes" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~align_planes_coefficients"
+           to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      align_boxes: true
+      use_pca: true
+      publish_clouds: false
+      publish_tf: true 
+      align_boxes: true
+      align_boxes_with_plane: false
+      target_frame_id: base
+      sort_by: cloud_size
+      approximate_sync: true
+      queue_size: 300
+    </rosparam>
+  </node>
+
+  <!--group ns="multi_plane_estimate">
     <rosparam subst_value="true">
       min_size: 10000
     </rosparam>
   </group>
   <group ns="plane_extraction">
     <rosparam subst_value="true">
+      use_indices: true 
+      max_height: 1000.0
       min_height: 0.01
       use_async: true
       max_queue_size: 300
@@ -106,7 +169,8 @@
       approximate_sync: true
       queue_size: 300
     </rosparam>
-  </group>
+  </group-->
+
   <node name="tabletop_outlier_removal"
         pkg="nodelet" type="nodelet"
         args="load jsk_pcl/OrganizedStatisticalOutlierRemoval $(arg manager)">
