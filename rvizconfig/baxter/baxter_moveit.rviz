@@ -909,7 +909,7 @@ Visualization Manager:
       Size (Pixels): 2
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /plane_extraction/output
+      Topic: /plane_extraction/output_nonplane_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -1064,10 +1064,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5247963666915894
+      Pitch: 1.1247965097427368
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.6403990983963013
+      Yaw: 0.9653988480567932
     Saved: ~
 Window Geometry:
   Displays:
