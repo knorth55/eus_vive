@@ -91,9 +91,9 @@
     <remap from="~input_polygons" to="multi_plane_estimate/output_refined_polygon" />
     <remap from="~input_coefficients" to="multi_plane_estimate/output_refined_coefficients" />
     <rosparam subst_value="true">
-      use_indices: true 
+      use_indices: true
       use_sensor_frame: true
-      sensor_frame: /$(arg camera_frame_id) 
+      sensor_frame: /$(arg camera_frame_id)
       min_height: 0.01
       max_height: 1000.0
       use_async: true
@@ -127,26 +127,35 @@
            to="multi_plane_estimate/output_refined_coefficients" />
     <rosparam subst_value="true">
       align_boxes: true
-      use_pca: true
-      publish_clouds: false
-      publish_tf: true 
-      align_boxes: true
       align_boxes_with_plane: false
       target_frame_id: base
+      use_pca: true
       sort_by: cloud_size
+      publish_clouds: false
+      publish_tf: true
       approximate_sync: true
       queue_size: 300
     </rosparam>
   </node>
 
-  <!--group ns="multi_plane_estimate">
+  <!--
+  <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="input" value="$(arg CLOUD)" />
+    <arg name="sensor_frame" value="/$(arg camera_frame_id)" />
+    <arg name="launch_manager" value="false" />
+    <arg name="launch_openni" value="false" />
+    <arg name="launch_tracking" value="false" />
+    <arg name="launch_rviz" value="false" />
+  </include>
+  <group ns="multi_plane_estimate">
     <rosparam subst_value="true">
       min_size: 10000
     </rosparam>
   </group>
   <group ns="plane_extraction">
     <rosparam subst_value="true">
-      use_indices: true 
+      use_indices: true
       max_height: 1000.0
       min_height: 0.01
       use_async: true
@@ -169,7 +178,8 @@
       approximate_sync: true
       queue_size: 300
     </rosparam>
-  </group-->
+  </group>
+  -->
 
   <node name="tabletop_outlier_removal"
         pkg="nodelet" type="nodelet"
@@ -195,6 +205,8 @@
       target_frame_id: base
       use_pca: true
       sort_by: cloud_size
+      publish_clouds: false
+      publish_tf: true
       approximate_sync: true
       queue_size: 300
     </rosparam>
