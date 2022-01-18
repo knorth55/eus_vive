@@ -24,7 +24,7 @@
   <arg name="spherical_camera_ns" default="kodak_head" />
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
-  <arg name="gui" default="false" />
+  <arg name="gui" default="true" />
   <arg name="launch_tabletop_detector" default="true" />
   <arg name="launch_grasp_mask_rcnn" default="false" />
 
