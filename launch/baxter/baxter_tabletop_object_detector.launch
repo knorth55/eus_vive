@@ -1,5 +1,6 @@
 <launch>
   <arg name="input_cloud" />
+  <arg name="input_image" />
   <arg name="camera_frame_id"  />
   <arg name="manager" />
 
@@ -8,16 +9,6 @@
 
   <arg name="CLOUD" value="bbox_cloud_extract/output" if="$(arg clip)" />
   <arg name="CLOUD" value="$(arg input_cloud)" unless="$(arg clip)" />
-
-  <node name="tabletop_resize_points_publisher"
-        pkg="nodelet" type="nodelet"
-        args="load jsk_pcl/ResizePointsPublisher $(arg manager)">
-    <remap from="~input" to="$(arg input_cloud)" />
-    <rosparam>
-      step_x: 2
-      step_y: 2
-    </rosparam>
-  </node>
 
   <group if="$(arg clip)">
     <node name="transformable_markers_client"
@@ -46,7 +37,7 @@
     <node name="bbox_attention_clipper"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/AttentionClipper $(arg manager)"
           output="screen" >
-      <remap from="~input/points" to="tabletop_resize_points_publisher/output" />
+      <remap from="~input/points" to="$(arg input_cloud)" />
       <remap from="~input/box" to="bboxes_to_bbox/output" />
       <rosparam>
         frame_id: base
@@ -54,11 +45,23 @@
       </rosparam>
     </node>
 
+    <!-- indices_to_mask -->
+    <node name="indices_to_mask"
+          pkg="nodelet" type="nodelet"
+          args="load jsk_pcl_utils/PointIndicesToMaskImage $(arg manager)" >
+        <remap from="~input" to="bbox_attention_clipper/output/point_indices" />
+        <remap from="~input/image" to="$(arg input_image)" />
+        <rosparam>
+          approximate_sync: true
+          queue_size: 100
+        </rosparam>
+    </node>
+
     <!-- extract indices -->
     <node name="bbox_cloud_extract"
           pkg="nodelet" type="nodelet" args="load jsk_pcl/ExtractIndices $(arg manager)"
           output="screen" >
-      <remap from="~input" to="tabletop_resize_points_publisher/output" />
+      <remap from="~input" to="$(arg input_cloud)" />
       <remap from="~indices" to="bbox_attention_clipper/output/point_indices" />
       <rosparam>
         keep_organized: true

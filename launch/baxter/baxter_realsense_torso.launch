@@ -7,8 +7,8 @@
 
   <arg name="camera_frame_id" default="$(arg camera_ns)_color_optical_frame" />
   <arg name="manager" default="$(arg camera_ns)_camera_manager" />
-  <arg name="input_cloud" default="/$(arg camera_ns)/depth_registered/points" />
-  <arg name="input_image" default="/$(arg camera_ns)/color/image_rect_color" />
+  <arg name="input_cloud" default="/$(arg camera_ns)/depth_registered/quarter/points" />
+  <arg name="input_image" default="/$(arg camera_ns)/depth_registered/quarter/image" />
 
   <!-- interactive marker -->
   <node name="transformable_interactive_server"
@@ -40,10 +40,25 @@
     <arg name="publish_tf" value="false" />
   </include>
 
+  <node name="realsense_resize_points_publisher"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ResizePointsPublisher $(arg camera_ns)/$(arg manager)">
+    <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+    <remap from="~output" to="$(arg input_cloud)" />
+    <rosparam>
+      step_x: 2
+      step_y: 2
+    </rosparam>
+  </node>
+
+  <node name="pointcloud_to_image" pkg="pcl_ros" type="convert_pointcloud_to_image"
+        args="input:=$(arg input_cloud) output:=$(arg input_image)" />
+
   <include file="$(find eus_vive)/launch/baxter/baxter_tabletop_object_detector.launch"
            if="$(arg launch_tabletop_detector)">
+    <arg name="input_image" value="$(arg input_image)" />
     <arg name="input_cloud" value="$(arg input_cloud)" />
-    <arg name="manager" value="$(arg camera_ns)/$(arg manager)" />
+    <arg name="manager" value="/$(arg camera_ns)/$(arg manager)" />
     <arg name="camera_frame_id" value="$(arg camera_frame_id)" />
     <arg name="launch_transformable_server" value="$(arg launch_transformable_server)" />
     <arg name="clip" value="true" />
@@ -53,7 +68,7 @@
            if="$(arg launch_grasp_mask_rcnn)">
     <arg name="input_image" value="$(arg input_image)" />
     <arg name="input_cloud" value="$(arg input_cloud)" />
-    <arg name="manager" value="$(arg camera_ns)/$(arg manager)" />
+    <arg name="manager" value="/$(arg camera_ns)/$(arg manager)" />
   </include>
 
 </launch>

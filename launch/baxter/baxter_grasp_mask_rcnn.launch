@@ -12,25 +12,35 @@
   <arg name="config_yaml"
        default="$(find dualarm_grasping)/models/dualarm_occluded_grasp/self_anno/20181227_params.yaml" />
   <arg name="target_yaml"
-       default="$(find dualarm_grasping)/yaml/dualarm_occluded_grasping_target_names.yaml"  />
+       default="$(find eus_vive)/config/baxter/grasp_mask_rcnn_target_names.yaml"  />
   <arg name="label_yaml"
        default="$(find dualarm_grasping)/yaml/dualarm_occluded_grasping_label_names.yaml" />
 
-  <include file="$(find dualarm_grasping)/launch/setup/include/common/dualarm_occluded_grasp_instance_segmentation.launch">
-    <arg name="INPUT_CLOUD" value="$(arg input_cloud)" />
-    <arg name="INPUT_IMAGE" value="$(arg input_image)" />
-    <arg name="LABEL_YAML" value="$(arg label_yaml)" />
-    <arg name="TARGET_YAML" value="$(arg target_yaml)" />
-    <arg name="MODEL_FILE" value="$(arg model_file)" />
-    <arg name="CONFIG_YAML" value="$(arg config_yaml)" />
-    <arg name="USE_MASK" value="false" />
-    <arg name="INPUT_MASK" value="" />
-    <arg name="SAMPLING" value="$(arg sampling)" />
-    <arg name="DATA_COLLECTION" value="$(arg data_collection)" />
-    <arg name="FIXED_FRAME" value="base"/>
-    <arg name="CAMERA_NAMESPACE" value=""/>
-    <arg name="TARGET_GRASP" value="$(arg target_grasp)" />
-    <arg name="NODELET_MANAGER" value="$(arg manager)" />
-  </include>
+
+  <group ns="grasp_mask_rcnn">
+    <include file="$(find dualarm_grasping)/launch/setup/include/common/dualarm_occluded_grasp_instance_segmentation.launch">
+      <arg name="INPUT_CLOUD" value="$(arg input_cloud)" />
+      <arg name="INPUT_IMAGE" value="$(arg input_image)" />
+      <arg name="LABEL_YAML" value="$(arg label_yaml)" />
+      <arg name="TARGET_YAML" value="$(arg target_yaml)" />
+      <arg name="MODEL_FILE" value="$(arg model_file)" />
+      <arg name="CONFIG_YAML" value="$(arg config_yaml)" />
+      <arg name="USE_MASK" value="true" />
+      <arg name="INPUT_MASK" value="/indices_to_mask/output" />
+      <arg name="SAMPLING" value="$(arg sampling)" />
+      <arg name="DATA_COLLECTION" value="$(arg data_collection)" />
+      <arg name="FIXED_FRAME" value="base"/>
+      <arg name="CAMERA_NAMESPACE" value=""/>
+      <arg name="TARGET_GRASP" value="$(arg target_grasp)" />
+      <arg name="NODELET_MANAGER" value="$(arg manager)" />
+    </include>
+    <group ns="dualarm_grasp_segmentation">
+       <rosparam command="load" file="$(find eus_vive)/config/baxter/grasp_mask_rcnn_tote_contents.yaml" />
+       <rosparam>
+         score_thresh: 0.5
+         grasp_thresh: 0.1
+       </rosparam>
+    </group>
+  </group>
 </launch>
 
