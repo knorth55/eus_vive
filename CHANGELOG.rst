@@ -2,6 +2,57 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add new config
+* refactor for grasp mask rcnn
+* update rvizconfig
+* update workspace marker
+* update rviz config
+* enable rviz
+* update rviz config
+* refactor baxter_tabletop_object_detector.launch
+* update workspace config
+* update rviz config
+* update tabletop detector launch
+* Merge pull request `#33 <https://github.com/knorth55/eus_vive/issues/33>`_ from tohirose/cylinder-experiment
+  change l515_torso_pose.yaml
+* change l515_torso_pose.yaml
+* add grasp mask rcnn launch
+* update baxter.rosinstall
+* Merge pull request `#19 <https://github.com/knorth55/eus_vive/issues/19>`_ from knorth55/no-window
+* add no-window version
+* use outlier removal with cluster indices
+* update rosbag rviz
+* update baxter_rosbag_play.launch
+* update rosbag_record.launch
+* add baxter_rosbag_record.launch
+* updte rviz config
+* update l515
+* update rviz config
+* use resized pointcloud
+* tube parameters
+* update tabletop detector
+* update rviz config
+* update workspace
+* launch tabletop
+* update rviz config
+* update camera pose
+* fix manager name
+* update yaml path
+* update l515 pose
+* add tabletop_object_detector for baxter
+* disable camera logging to mongodb
+* support :arms in baxter-interface
+* udpate rosinstall
+* Merge pull request `#32 <https://github.com/knorth55/eus_vive/issues/32>`_ from knorth55/knorth55-patch-1
+* disable textlint
+* Update linter.yaml
+* Update README.md
+* Update README.md
+* use pazeshun dynamixel_motor branch
+* Contributors: Shingo Kitagawa
+
 0.0.6 (2021-08-07)
 ------------------
 * use :set-torque-limit-step for softhand v1 and v2
