@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.7 (2022-02-08)
+------------------
 * add new config
 * refactor for grasp mask rcnn
 * update rvizconfig
