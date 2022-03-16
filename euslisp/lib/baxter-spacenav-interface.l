@@ -9,7 +9,8 @@
 
 (defclass baxter-spacenav-interface
   :super robot-spacenav-interface
-  :slots ())
+  :slots (larm-thumb-open
+          rarm-thumb-open))
 
 
 (defmethod baxter-spacenav-interface
