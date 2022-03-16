@@ -9,7 +9,8 @@
 
 (defclass baxter-spacenav-interface
   :super robot-spacenav-interface
-  :slots ())
+  :slots (larm-thumb-open
+          rarm-thumb-open))
 
 
 (defmethod baxter-spacenav-interface
@@ -18,7 +19,11 @@
     (send self :set-val 'left-button-wait-count 10)
     (send self :set-val 'right-button-wait-count 10)
     (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
-    (send-super* :init args)))
+    (send-super* :init args)
+    ;; override to control rarm
+    (send self :set-val 'control-arm :rarm))
+  (:arm-motion-cb (&rest args &key (mirror nil) (thumb-rotate-button nil) &allow-other-keys)
+    (send-super* :arm-motion-cb :mirror mirror :thumb-rotate-button thumb-rotate-button args)))
 
 
 (defun baxter-spacenav-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))

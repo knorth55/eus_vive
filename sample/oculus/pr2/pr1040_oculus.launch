@@ -6,7 +6,7 @@
   <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
-    <arg name="oculus" value="true" />
+    <arg name="device" value="oculus" />
     <arg name="head" value="true" />
     <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />

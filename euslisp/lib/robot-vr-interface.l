@@ -588,7 +588,9 @@
             (read-from-string (format nil ":controller-~A-button-p" (string-downcase button)))))
       (if (find-method self controller-button-method)
         (send self controller-button-method arm :button-toggle button-toggle)
-        (ros::ros-error (format nil "cannot find method: ~A" controller-button-method)))))
+        (progn
+          (ros::ros-error (format nil "cannot find method: ~A" controller-button-method))
+          nil))))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p
@@ -750,7 +752,9 @@
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
   ;; arm motion cb
-  (:arm-motion-cb (&key (head t) (torso t) (safe t) (mirror nil) (gripper-button :trigger))
+  (:arm-motion-cb
+    (&key (head t) (torso t) (safe t) (mirror nil)
+          (gripper-button :trigger) &allow-other-keys)
     (let ((visualize-arm-coords (list nil nil)))
       (if (and torso (not (or (send self :grasping-p :larm) (send self :grasping-p :rarm))))
         (cond

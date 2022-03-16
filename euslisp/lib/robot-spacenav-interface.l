@@ -41,10 +41,7 @@
     (ros::subscribe spacenav-joy-topic-name
                     sensor_msgs::Joy #'send self :spacenav-joy-cb)
     (send-super* :init args))
-  (:enable ()
-    (send self :set-arm-val :larm :enable t)
-    (send self :set-arm-val :rarm :enable t))
-  ;; spsacenav joy callbacks
+  ;; spacenav joy callbacks
   (:spacenav-joy-cb (msg)
     (send self :spacenav-joy-axes-cb (send msg :axes))
     (send self :spacenav-joy-buttons-cb (send msg :buttons)))
@@ -65,33 +62,37 @@
         (send self :set-val 'left-button (> (elt buttons 0) 0.0))
         (send self :set-val 'right-button (> (elt buttons 1) 0.0)))))
   (:controller-left-button-p (arm &key (button-toggle t))
-    (let* ((controller-left-button-p (and (not (eq left-button prev-left-button))
-                                          (if button-toggle left-button t))))
-      (if button-toggle
-        (if (> left-button-count 0)
-          (progn
-            (send self :set-val 'left-button-count (- left-button-count 1))
-            nil)
-          (progn
-            (if controller-left-button-p
-              (progn
-                (send self :set-val 'left-button-count left-button-wait-count)
-                (cons controller-left-button-p left-button)))))
-        (if controller-left-button-p (cons controller-left-button-p left-button)))))
+    (if (eq arm control-arm)
+      (let* ((controller-left-button-p
+           (and (not (eq left-button prev-left-button))
+                (if button-toggle left-button t))))
+        (if button-toggle
+          (if (> left-button-count 0)
+            (progn
+              (send self :set-val 'left-button-count (- left-button-count 1))
+              nil)
+            (progn
+              (if controller-left-button-p
+                (progn
+                  (send self :set-val 'left-button-count left-button-wait-count)
+                  (cons controller-left-button-p left-button)))))
+        (if controller-left-button-p (cons controller-left-button-p left-button))))))
   (:controller-right-button-p (arm &key (button-toggle t))
-    (let* ((controller-right-button-p (and (not (eq right-button prev-right-button))
-                                          (if button-toggle right-button t))))
-      (if button-toggle
-        (if (> right-button-count 0)
-          (progn
-            (send self :set-val 'right-button-count (- right-button-count 1))
-            nil)
-          (progn
-            (if controller-right-button-p
-              (progn
-                (send self :set-val 'right-button-count right-button-wait-count)
-                (cons controller-right-button-p right-button)))))
-        (if controller-right-button-p (cons controller-right-button-p right-button)))))
+    (if (eq arm control-arm)
+      (let* ((controller-right-button-p
+             (and (not (eq right-button prev-right-button))
+                  (if button-toggle right-button t))))
+        (if button-toggle
+          (if (> right-button-count 0)
+            (progn
+              (send self :set-val 'right-button-count (- right-button-count 1))
+              nil)
+            (progn
+              (if controller-right-button-p
+                (progn
+                  (send self :set-val 'right-button-count right-button-wait-count)
+                  (cons controller-right-button-p right-button)))))
+          (if controller-right-button-p (cons controller-right-button-p right-button))))))
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let ((target-coords nil))

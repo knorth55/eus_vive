@@ -9,7 +9,8 @@
 
 (defclass baxter-oculus-interface
   :super robot-oculus-interface
-  :slots ())
+  :slots (larm-thumb-open
+          rarm-thumb-open))
 
 
 (defmethod baxter-oculus-interface

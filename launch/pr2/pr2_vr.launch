@@ -1,7 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
-  <arg name="oculus" default="false" />
+  <arg name="device" default="vive" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
@@ -32,10 +32,6 @@
        default="/kinect_head_decompressed/depth_registered/image_rect" />
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
-
-  <!-- device -->
-  <arg name="device" value=":oculus" if="$(arg oculus)" />
-  <arg name="device" value=":vive" unless="$(arg oculus)" />
 
   <!-- pr1012 and pr1040 parameters -->
   <arg name="CAMERA_INFO" />
@@ -132,15 +128,15 @@
   <group if="$(arg main)">
     <group if="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head t :mirror t :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head t :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head nil :mirror t :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head t :mirror nil :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head t :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="pr2-vr-main.l" name="pr2_vr_main"
-            args="&quot;(main :head nil :mirror nil :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
     </group>
   </group>
 

@@ -1,46 +1,39 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="true" />
-  <arg name="vive_set" default="default" />
-  <arg name="head" default="true" />
+  <arg name="head" default="false" />
   <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
+  <arg name="logging" default="false" />
+  <arg name="display" default="true" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />
   <arg name="spherical_stereo" default="true" />
-  <arg name="republish" default="false" />
   <arg name="lgripper_type" default="softhand" />
-  <arg name="rgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand-v2" />
   <arg name="button_toggle" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="$(arg vive)" />
-    <arg name="device" value="vive" />
+    <arg name="vive" value="false" />
+    <arg name="spacenav" value="true" />
+    <arg name="device" value="spacenav" />
     <arg name="head" value="$(arg head)" />
-    <arg name="respeaker" value="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="display" value="$(arg display)" />
     <arg name="twitter" value="true" />
     <arg name="debug" value="false" />
     <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="true" />
     <arg name="launch_xdisplay" value="true" />
+    <arg name="arm_interpolation" value="minjerk" />
+    <arg name="arm_control_mode" value="position_w_id" />
     <arg name="realsense_camera" value="$(arg realsense_camera)" />
     <arg name="spherical_camera" value="$(arg spherical_camera)" />
     <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
-    <arg name="republish" value="$(arg republish)" />
+    <arg name="republish" value="false" />
     <arg name="lgripper_type" value="$(arg lgripper_type)" />
     <arg name="rgripper_type" value="$(arg rgripper_type)" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
-    <arg name="workspace_max_x" value="1300.0" />
-    <arg name="workspace_min_x" value="300.0" />
-    <arg name="workspace_max_y" value="750.0" />
-    <arg name="workspace_min_y" value="-750.0" />
-    <arg name="workspace_max_z" value="1200.0" />
-    <arg name="workspace_min_z" value="-150.0" />
   </include>
-
-  <group ns="eus_vive" if="$(arg vive)">
-    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
-  </group>
 </launch>

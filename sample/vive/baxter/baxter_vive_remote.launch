@@ -9,7 +9,7 @@
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
-    <arg name="oculus" value="false" />
+    <arg name="device" value="vive" />
     <arg name="head" value="false" />
     <arg name="mirror" value="false" />
     <arg name="launch_baxter" value="false" />
