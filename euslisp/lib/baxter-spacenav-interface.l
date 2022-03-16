@@ -19,7 +19,10 @@
     (send self :set-val 'left-button-wait-count 10)
     (send self :set-val 'right-button-wait-count 10)
     (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
-    (send-super* :init args)))
+    (send-super* :init args)
+    ;; override to control rarm
+    (send self :set-val 'control-arm :rarm)
+    ))
 
 
 (defun baxter-spacenav-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
