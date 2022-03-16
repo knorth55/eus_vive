@@ -41,9 +41,6 @@
     (ros::subscribe spacenav-joy-topic-name
                     sensor_msgs::Joy #'send self :spacenav-joy-cb)
     (send-super* :init args))
-  (:enable ()
-    (send self :set-arm-val :larm :enable t)
-    (send self :set-arm-val :rarm :enable t))
   ;; spsacenav joy callbacks
   (:spacenav-joy-cb (msg)
     (send self :spacenav-joy-axes-cb (send msg :axes))
