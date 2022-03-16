@@ -21,8 +21,9 @@
     (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
     (send-super* :init args)
     ;; override to control rarm
-    (send self :set-val 'control-arm :rarm)
-    ))
+    (send self :set-val 'control-arm :rarm))
+  (:arm-motion-cb (&rest args &key (mirror nil) (thumb-rotate-button nil) &allow-other-keys)
+    (send-super* :arm-motion-cb :mirror mirror :thumb-rotate-button thumb-rotate-button args)))
 
 
 (defun baxter-spacenav-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))

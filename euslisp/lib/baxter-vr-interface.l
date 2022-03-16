@@ -90,9 +90,10 @@
   (:thumb-rotate-cb (arm &key (mirror nil) (button :trackpad))
     (if (equal (send self :get-arm-val arm :gripper-type) :softhand-v2)
       (let ((thumb-rotate-button-p
-              (send self :controller-button-p
-                    (if mirror (send self :get-opposite-arm arm) arm) button
-                    :button-toggle t))
+              (if button
+                (send self :controller-button-p
+                      (if mirror (send self :get-opposite-arm arm) arm) button
+                      :button-toggle t)))
             (thumb-open-p (send self :get-arm-val arm :thumb-open)))
         (if thumb-rotate-button-p
           (progn
