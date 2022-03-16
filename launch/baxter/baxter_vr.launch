@@ -1,7 +1,8 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
-  <arg name="oculus" default="false" />
+  <arg name="spacenav" default="false" />
+  <arg name="device" default="vive" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
   <arg name="mirror" default="false" />
@@ -50,10 +51,6 @@
   <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
   <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
 
-  <!-- device -->
-  <arg name="device" value=":oculus" if="$(arg oculus)" />
-  <arg name="device" value=":vive" unless="$(arg oculus)" />
-
   <!-- launch baxter -->
   <include file="$(find eus_vive)/launch/baxter/baxter.launch" if="$(arg launch_baxter)">
     <arg name="head" value="$(arg head)" />
@@ -88,6 +85,9 @@
     <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
   </include>
 
+  <!-- launch spacenav -->
+  <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
   <!-- launch eus_vive-->
   <group ns="eus_vive">
     <rosparam subst_value="true">
@@ -104,15 +104,15 @@
   <group if="$(arg main)">
     <group if="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head t :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head t :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head nil :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
     </group>
     <group unless="$(arg mirror)">
       <node if="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head t :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head t :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
       <node unless="$(arg head)" pkg="eus_vive" type="baxter-vr-main.l" name="baxter_vr_main"
-            args="&quot;(main :head nil :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type $(arg device))&quot;" output="screen" />
+            args="&quot;(main :head nil :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
     </group>
   </group>
 

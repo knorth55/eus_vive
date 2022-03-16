@@ -1,7 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
-  <arg name="oculus" default="false" />
+  <arg name="device" default="vive" />
   <arg name="head" default="true" />
   <arg name="mirror" default="false" />
   <arg name="kinfu" default="false" />
@@ -11,7 +11,7 @@
     <arg name="hmd_right_image" value="/wide_stereo/right/image_rect_color" />
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
-    <arg name="oculus" value="$(arg oculus)" />
+    <arg name="device" value="$(arg device)" />
     <arg name="head" value="$(arg head)" />
     <arg name="mirror" value="$(arg mirror)" />
     <arg name="kinfu" value="$(arg kinfu)" />
