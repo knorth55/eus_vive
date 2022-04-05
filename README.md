@@ -189,6 +189,23 @@ roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_vive_gazebo.launch
 ```
 
+### Baxter + SpaceNav
+
+#### Gazebo
+
+```bash
+roslaunch baxter_gazebo baxter_world.launch
+roslaunch eus_vive baxter_spacenav_gazebo.launch
+```
+
+#### Real Robot in JSK 73B2
+
+```bash
+rossetip
+rossetmaster baxter
+roslaunch eus_vive baxter_spacenav.launch
+```
+
 ### Baxter + MoveIt!
 
 #### Real Robot in JSK 73B2
