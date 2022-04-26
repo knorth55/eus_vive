@@ -38,3 +38,7 @@
     local-name: start-jsk/jsk_apc
     uri: https://github.com/start-jsk/jsk_apc.git
     version: master
+- git:
+    local-name: PR2/app_manager
+    uri: https://github.com/knorth55/app_manager.git
+    version: baxter
