@@ -217,9 +217,11 @@
                            :lgripper lgripper
                            :rgripper rgripper)))
     (if (not (boundp '*baxter*))
-      (if safe
-        (setq *baxter* (instance baxter-robot-safe :init))
-        (setq *baxter* (instance baxter-robot :init))))
+      (progn
+        (if safe
+          (setq *baxter* (instance baxter-robot-safe :init))
+          (setq *baxter* (instance baxter-robot :init)))
+        (send *baxter* :angle-vector (send *ri* :state :potentio-vector))))
     ;; overwrite s0, e0, e1 joint limit
     ;; do not rotate s0, e0, e1 joint and stay arm in front of the robot
     (if limit-in-front
