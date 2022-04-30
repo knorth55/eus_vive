@@ -47,13 +47,13 @@
           ((equal arm :arms)
            (list lgripper-interface rgripper-interface))
           (t nil)))
-  (:start-grasp (&optional (arm :arms) &key (rotate-angle nil) &rest args)
+  (:start-grasp (&optional (arm :arms) &key (rotate-angle nil) &rest args &allow-other-keys)
     (cond
       ((equal arm :arms)
        (and (send* self :start-grasp-step :larm :rotate-angle rotate-angle args)
             (send* self :start-grasp-step :rarm :rotate-angle rotate-angle args)))
       (t (send* self :start-grasp-step arm :rotate-angle rotate-angle args))))
-  (:start-grasp-step (arm &key (rotate-angle nil) &rest args)
+  (:start-grasp-step (arm &key (rotate-angle nil) &rest args &allow-other-keys)
     (cond
       ((equal (send self :get-gripper-type arm) :parallel)
        (send-super* :start-grasp arm args))
@@ -61,13 +61,13 @@
            (equal (send self :get-gripper-type arm) :softhand-v2))
        (send (send self :get-gripper-interface arm) :start-grasp :rotate-angle rotate-angle))
       (t nil)))
-  (:stop-grasp (&optional (arm :arms) &key (rotate-angle nil) &rest args)
+  (:stop-grasp (&optional (arm :arms) &key (rotate-angle nil) &rest args &allow-other-keys)
     (cond
       ((equal arm :arms)
        (and (send* self :stop-grasp-step :larm :rotate-angle rotate-angle args)
             (send* self :stop-grasp-step :rarm :rotate-angle rotate-angle args)))
       (t (send* self :stop-grasp-step arm args))))
-  (:stop-grasp-step (arm &key (rotate-angle nil) &rest args)
+  (:stop-grasp-step (arm &key (rotate-angle nil) &rest args &allow-other-keys)
     (cond
       ((equal (send self :get-gripper-type arm) :parallel)
        (send-super* :stop-grasp arm args))
