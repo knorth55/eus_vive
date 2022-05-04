@@ -8,7 +8,7 @@ Panels:
         - /MotionPlanning1
         - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.39913231134414673
-    Tree Height: 272
+    Tree Height: 303
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -35,7 +35,7 @@ Panels:
       Expanded:
         - /LeftArmCoords1
       Splitter Ratio: 0.5
-    Tree Height: 70
+    Tree Height: 340
   - Class: rviz_visual_tools/RvizVisualToolsGui
     Name: RvizVisualToolsGui
 Preferences:
@@ -1235,7 +1235,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.1787548065185547
+      Distance: 3.7159838676452637
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1277,5 +1277,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 944
-  X: 2896
-  Y: 0
+  X: 976
+  Y: 27
