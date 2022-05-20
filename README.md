@@ -53,7 +53,7 @@ This package depends on these branches below:
 #### Install dependencies (for Vive)
 
 ```bash
-sudo apt-get install --reinstall xserver-xorg-video-intel libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
+sudo apt-get install --reinstall xserver-xorg-video-intel-hwe-18.04 libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
 sudo dpkg-reconfigure xserver-xorg
 ```
 
