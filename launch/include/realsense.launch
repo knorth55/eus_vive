@@ -7,6 +7,11 @@
   <arg name="depth_width" />
   <arg name="depth_height" />
 
+  <group ns="$(arg camera_ns)">
+    <param name="rgb_camera/global_time_enabled" value="true"/>
+    <param name="l500_depth_sensor/global_time_enabled" value="true"/>
+  </group>
+
   <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
     <arg name="camera" value="$(arg camera_ns)" />
     <arg name="manager" value="$(arg manager)" />
