@@ -29,6 +29,7 @@
   <exec_depend>topic_tools</exec_depend>
   <exec_depend>video_stream_opencv</exec_depend>
   <exec_depend>vive_ros</exec_depend>
+  <exec_depend>pr2_moveit_config</exec_depend>
 
   <export>
   </export>
