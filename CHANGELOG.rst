@@ -2,6 +2,49 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#43 <https://github.com/knorth55/eus_vive/issues/43>`_ from Kanazawanaoaki/add-moveit-to-depend
+* Merge pull request `#42 <https://github.com/knorth55/eus_vive/issues/42>`_ from Kanazawanaoaki/add-eus_vive-to-rosinstall
+* Add pr2_moveit_config to depend in package.xml
+* Add eus_vive to rosinstall
+* Merge pull request `#41 <https://github.com/knorth55/eus_vive/issues/41>`_ from knorth55/baxter-moveit-args
+  add gripper args in baxter_moveit.launch
+* add gripper args in baxter_moveit.launch
+* Merge pull request `#40 <https://github.com/knorth55/eus_vive/issues/40>`_ from knorth55/use-baxter-softhand-interface
+  use baxter-softhand-interface in jsk_robot
+* use baxter-softhand-interface in jsk_robot
+* Merge pull request `#37 <https://github.com/knorth55/eus_vive/issues/37>`_ from YUKINA-3252/global-time
+* Make global_time_enabled true
+* Update README.md
+* update rviz config
+* update moveit rviz
+* update rviz
+* update rviz config
+* add allow-other-keys
+* update *baxter* with potentio vector
+* add finger1,2,3 rotate method in baxter-interface
+* Merge pull request `#36 <https://github.com/knorth55/eus_vive/issues/36>`_ from softyanija/update-rotate-angle
+* add rotate-angle in baxter-interface.l
+* update baxter.rosinstall
+* Merge pull request `#35 <https://github.com/knorth55/eus_vive/issues/35>`_ from YUKINA-3252/baxter_torso_l515
+* update baxter torso l515 pose
+* add readme
+* add baxter_spacenav_gazebo.launch
+* update baxter_vr_gazebo.launch
+* Merge pull request `#34 <https://github.com/knorth55/eus_vive/issues/34>`_ from knorth55/spacenav
+  add baxter spacenav launch
+* euslint
+* update thumb button
+* fix typo
+* remove unused enable
+* add baxter spacenav launch
+* updata l515 pose
+* set default baxter spacenav arm: rarm
+* fix spacenav button p
+* set slot variables
+* Contributors: Kanazawa, Naoaki Kanazawa, Shingo Kitagawa, YUKINA-3252, softyanija
+
 0.0.7 (2022-02-08)
 ------------------
 * add new config
