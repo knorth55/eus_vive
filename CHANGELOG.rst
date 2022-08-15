@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.8 (2022-08-15)
+------------------
 * Merge pull request `#43 <https://github.com/knorth55/eus_vive/issues/43>`_ from Kanazawanaoaki/add-moveit-to-depend
 * Merge pull request `#42 <https://github.com/knorth55/eus_vive/issues/42>`_ from Kanazawanaoaki/add-eus_vive-to-rosinstall
 * Add pr2_moveit_config to depend in package.xml
