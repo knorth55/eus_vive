@@ -5,7 +5,7 @@
   (make-package "EUS_VIVE"))
 
 
-(defun eus_vive::baxter-init (&key (limit-in-front nil) &rest args)
+(defun eus_vive::baxter-init (&rest args &key (limit-in-front nil) &allow-other-keys)
   (apply 'baxter-init args)
   ;; overwrite s0, e0, e1 joint limit
   ;; do not rotate s0, e0, e1 joint and stay arm in front of the robot
