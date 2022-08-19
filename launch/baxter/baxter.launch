@@ -73,9 +73,9 @@
     <arg name="launch_time_signal" value="false" />
     <arg name="launch_db" value="false"/>
     <arg name="launch_twitter" value="false"/>
-    <arg name="launch_gripper_action" value="true" />
-    <arg name="left_electric_gripper" value="true" />
-    <arg name="right_electric_gripper" value="true" />
+    <arg name="launch_gripper_action" value="$(eval arg('lgripper_type') == 'parallel' or arg('rgripper_type') == 'parallel')" />
+    <arg name="left_electric_gripper" value="$(eval arg('lgripper_type') == 'parallel')" />
+    <arg name="right_electric_gripper" value="$(eval arg('rgripper_type') == 'parallel')" />
     <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
     <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
   </include>
