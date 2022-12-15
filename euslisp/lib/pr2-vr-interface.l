@@ -3,12 +3,12 @@
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :reset-torso-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-org))
+(if (not (assoc :init-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-pr2-org))
+(if (not (assoc :reset-arm-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-pr2-org))
+(if (not (assoc :reset-torso-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-pr2-org))
 
 
 (defmethod robot-vr-interface
@@ -40,7 +40,7 @@
           "/l_gripper_controller/gripper_action/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/r_gripper_controller/gripper_action/status")
-    (send* self :init-org args))
+    (send* self :init-pr2-org args))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -56,9 +56,9 @@
   (:start-grasp (arm &key (wait t))
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000)))
   (:reset-arm (arm &key (wait t) (reset-pose :reset-manip-pose))
-    (send self :reset-arm-org arm :wait wait :reset-pose reset-pose))
+    (send self :reset-arm-pr2-org arm :wait wait :reset-pose reset-pose))
   (:reset-torso (&key (wait t) (reset-pose :reset-manip-pose))
-    (send self :reset-torso-org :wait wait :reset-pose reset-pose)))
+    (send self :reset-torso-pr2-org :wait wait :reset-pose reset-pose)))
 
 
 (defun signal-hook (sig code)

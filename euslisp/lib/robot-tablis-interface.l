@@ -6,7 +6,9 @@
 
 
 (defclass robot-tablis-interface
+  ;; TODO: mulitple inheritance for move base robot
   :super robot-move-base-vive-interface
+  ; :super robot-vive-interface
   :slots (larm-target-pose
           larm-prev-target-pose
           rarm-target-pose
