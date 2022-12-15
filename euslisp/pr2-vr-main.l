@@ -3,6 +3,7 @@
 (load "package://eus_vive/euslisp/lib/pr2-vive-interface.l")
 (load "package://eus_vive/euslisp/lib/pr2-oculus-interface.l")
 (load "package://eus_vive/euslisp/lib/pr2-spacenav-interface.l")
+(load "package://eus_vive/euslisp/lib/pr2-tablis-interface.l")
 
 
 (defun vive-init (&key (loop-enable t))
@@ -31,13 +32,24 @@
   (send *ri* :wait-interpolation))
 
 
+(defun tablis-init (&key (loop-enable t))
+  (pr2-tablis-init :loop-enable loop-enable)
+  (send *ti* :reset-arm :larm :wait nil)
+  (send *ti* :reset-arm :rarm :wait nil)
+  (send *ti* :reset-torso :wait nil)
+  (send *ri* :wait-interpolation)
+  (send *ti* :send-joy-feedback :larm)
+  (send *ti* :send-joy-feedback :rarm))
+
+
 (defun init (&key (loop-enable t) (device-type :vive))
   (ros::roseus "pr2_vr_main" :anonymous nil)
   (cond
     ((eq device-type :vive) (vive-init :loop-enable loop-enable))
     ((eq device-type :oculus) (oculus-init :loop-enable loop-enable))
     ((eq device-type :spacenav) (spacenav-init :loop-enable loop-enable))
-    (t nil))
+    ((eq device-type :tablis) (tablis-init :loop-enable loop-enable))
+  (t nil))
   (send *irtviewer* :draw-objects)
   (x::window-main-one))
 
@@ -57,4 +69,8 @@
     ((eq device-type :spacenav)
      (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
            :enable-button :right :gripper-button :left :visualize visualize))
+    ((eq device-type :tablis)
+     (send *ti* :main-loop :head head :torso torso :base base
+           :safe-arm safe-arm :safe-base safe-base :mirror mirror
+           :enable-button :menu :gripper-button :trigger :visualize visualize))
     (t nil)))

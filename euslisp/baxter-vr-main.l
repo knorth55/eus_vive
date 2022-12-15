@@ -3,6 +3,7 @@
 (load "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
 (load "package://eus_vive/euslisp/lib/baxter-oculus-interface.l")
 (load "package://eus_vive/euslisp/lib/baxter-spacenav-interface.l")
+(load "package://eus_vive/euslisp/lib/baxter-tablis-interface.l")
 
 
 (defun vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
@@ -28,6 +29,15 @@
   (send *ri* :wait-interpolation))
 
 
+(defun tablis-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
+  (baxter-tablis-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable)
+  (send *ti* :reset-arm :larm :wait nil)
+  (send *ti* :reset-arm :rarm :wait nil)
+  (send *ri* :wait-interpolation)
+  (send *ti* :send-joy-feedback :larm)
+  (send *ti* :send-joy-feedback :rarm))
+
+
 (defun init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t) (device-type :vive))
   (ros::roseus "baxter_vr_main" :anonymous nil)
   (cond
@@ -37,6 +47,8 @@
      (oculus-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
     ((eq device-type :spacenav)
      (spacenav-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
+    ((eq device-type :tablis)
+     (tablis-init :lgripper lgripper :rgripper rgripper :loop-enable loop-enable))
     (t nil))
   (send *irtviewer* :draw-objects)
   (x::window-main-one))
@@ -57,4 +69,7 @@
     ((eq device-type :spacenav)
      (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
            :enable-button :right :gripper-button :left :visualize visualize))
+    ((eq device-type :tablis)
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
+           :enable-button :menu :gripper-button :trigger :visualize visualize))
     (t nil)))
