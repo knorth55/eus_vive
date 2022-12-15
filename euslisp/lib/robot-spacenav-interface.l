@@ -107,7 +107,7 @@
                   (trans-x (* (if mirror -1 1) diff-x))
                   (trans-y (* (if mirror -1 1) diff-y))
                   (trans-z diff-z))
-               (send robot :angle-vector (send robot-interface :state :potentio-vector))
+               (send self :update-robot-model)
                (setq target-coords
                      (send (send robot control-arm :end-coords) :copy-worldcoords))
                (send target-coords :translate (float-vector trans-x trans-y trans-z) :world)))
@@ -121,7 +121,7 @@
                   (rot-x (* (if mirror -1 1) diff-x))
                   (rot-y (* (if mirror -1 1) diff-y))
                   (rot-z diff-z))
-             (send robot :angle-vector (send robot-interface :state :potentio-vector))
+             (send self :update-robot-model)
              (setq target-coords
                    (send (send robot control-arm :end-coords) :copy-worldcoords))
              (send target-coords :rotate rot-x :x :world)

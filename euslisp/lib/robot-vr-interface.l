@@ -397,6 +397,8 @@
       ((eq arm :larm) :rarm)
       ((eq arm :rarm) :larm)
       (t nil)))
+  (:update-robot-model ()
+    (send robot :angle-vector (send robot-interface :state :potentio-vector)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
