@@ -111,7 +111,16 @@
       ((and (not larm-enable) rarm-enable)
        (send self :thumb-rotate-cb :rarm :mirror mirror :button thumb-rotate-button))
       (t nil))
-    (send* self :arm-motion-cb-org :mirror mirror args)))
+    (send* self :arm-motion-cb-org :mirror mirror args))
+  (:start-grasp (arm &rest args)
+   (if (equal (send self :get-arm-val arm :gripper-type) :parallel)
+     (send* robot-interface :start-grasp arm :wait nil args)
+     (send* robot-interface :start-grasp arm args)))
+  (:stop-grasp (arm &rest args)
+   (if (equal (send self :get-arm-val arm :gripper-type) :parallel)
+     (send* robot-interface :stop-grasp arm :wait nil args)
+     (send* robot-interface :stop-grasp arm args)))
+  )
 
 
 (defun signal-hook (sig code)
