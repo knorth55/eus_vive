@@ -1,9 +1,9 @@
 #!/usr/bin/env roseus
 
-(load "package://eus_vive/euslisp/lib/pr2-vive-interface.l")
-(load "package://eus_vive/euslisp/lib/pr2-oculus-interface.l")
-(load "package://eus_vive/euslisp/lib/pr2-spacenav-interface.l")
-(load "package://eus_vive/euslisp/lib/pr2-tablis-interface.l")
+(require :pr2-vive-interface "package://eus_vive/euslisp/lib/pr2-vive-interface.l")
+(require :pr2-oculus-interface "package://eus_vive/euslisp/lib/pr2-oculus-interface.l")
+(require :pr2-spacenav-interface "package://eus_vive/euslisp/lib/pr2-spacenav-interface.l")
+(require :pr2-tablis-interface "package://eus_vive/euslisp/lib/pr2-tablis-interface.l")
 
 
 (defun vive-init (&key (loop-enable t))

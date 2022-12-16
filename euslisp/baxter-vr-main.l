@@ -1,9 +1,9 @@
 #!/usr/bin/env roseus
 
-(load "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
-(load "package://eus_vive/euslisp/lib/baxter-oculus-interface.l")
-(load "package://eus_vive/euslisp/lib/baxter-spacenav-interface.l")
-(load "package://eus_vive/euslisp/lib/baxter-tablis-interface.l")
+(require :baxter-vive-interface "package://eus_vive/euslisp/lib/baxter-vive-interface.l")
+(require :baxter-oculus-interface "package://eus_vive/euslisp/lib/baxter-oculus-interface.l")
+(require :baxter-spacenav-interface "package://eus_vive/euslisp/lib/baxter-spacenav-interface.l")
+(require :baxter-tablis-interface "package://eus_vive/euslisp/lib/baxter-tablis-interface.l")
 
 
 (defun vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
