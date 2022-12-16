@@ -1,6 +1,7 @@
 <launch>
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
+  <arg name="spacenav" default="false" />
   <arg name="device" default="vive" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
@@ -62,56 +63,16 @@
 
   <param name="robot_description_semantic" textfile="$(find pr2_moveit_config)/config/pr2.srdf" />
 
-  <group ns="virtual_camera">
-    <group ns="left">
-      <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
-            args="-0.0315 0 0.01 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
-      <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
-            output="screen">
-        <remap from="~input/camera_info" to="$(arg DECOMP_CAMERA_INFO)" />
-        <rosparam>
-          frame_id: virtual_camera_left_rgb_optical_frame
-          height: 1080
-          width: 1200
-        </rosparam>
-      </node>
-      <node name="depth_image_creator" pkg="nodelet" type="nodelet"
-            args="standalone jsk_pcl/DepthImageCreator" output="screen">
-        <remap from="~input" to="$(arg DECOMP_POINTS)" />
-        <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
-      </node>
-    </group>
-    <group ns="right">
-      <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
-            args="0.0315 0 0.01 0 0 0 /head_mount_kinect_rgb_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
-      <node name="virtual_camera_info_publisher" pkg="eus_vive" type="virtual_camera_info_publisher.py"
-            output="screen">
-        <remap from="~input/camera_info" to="$(arg DECOMP_CAMERA_INFO)" />
-        <rosparam>
-          frame_id: virtual_camera_right_rgb_optical_frame
-          height: 1080
-          width: 1200
-        </rosparam>
-      </node>
-      <node name="depth_image_creator" pkg="nodelet" type="nodelet"
-            args="standalone jsk_pcl/DepthImageCreator" output="screen">
-        <remap from="~input" to="$(arg DECOMP_POINTS)" />
-        <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
-      </node>
-    </group>
-  </group>
-
-  <include file="$(find eus_vive)/launch/include/kinfu.launch" if="$(arg kinfu)">
-    <arg name="CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
-    <arg name="IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
-    <arg name="IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
-  </include>
-
+  <!-- launch vive-->
   <include file="$(find eus_vive)/launch/include/vive.launch" if="$(arg vive)">
     <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
     <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
   </include>
 
+  <!-- launch spacenav -->
+  <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
+  <!-- launch eus_vive-->
   <group ns="eus_vive">
     <rosparam subst_value="true">
       button_toggle: $(arg button_toggle)
@@ -153,6 +114,13 @@
     <arg name="IMAGE_COLOR" value="$(arg IMAGE_COLOR)" />
     <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DEPTH)" />
     <arg name="IMAGE_DEPTH_TYPE" value="$(arg IMAGE_DEPTH_TYPE)" />
+  </include>
+
+  <!-- launch kinfu -->
+  <include file="$(find eus_vive)/launch/include/kinfu.launch" if="$(arg kinfu)">
+    <arg name="CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
+    <arg name="IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
+    <arg name="IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
   </include>
 
   <!-- launch logging -->

@@ -1,13 +1,17 @@
 <launch>
   <arg name="main" default="true" />
+  <arg name="spacenav" default="true" />
   <arg name="button_toggle" default="true" />
+  <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
-    <arg name="spacenav" value="true" />
+    <arg name="spacenav" value="$(arg spacenav)" />
     <arg name="device" value="spacenav" />
+    <arg name="head" value="false" />
     <arg name="mirror" value="false" />
+    <arg name="display" value="$(arg display)" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
   </include>
 

@@ -1,6 +1,6 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="head" default="true" />
+  <arg name="head" default="false" />
   <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
   <arg name="realsense_camera" default="false" />
