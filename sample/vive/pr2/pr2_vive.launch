@@ -1,16 +1,16 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="false" />
+  <arg name="vive" default="true" />
   <arg name="vive_set" default="default" />
-  <arg name="head" default="false" />
+  <arg name="head" default="true" />
   <arg name="button_toggle" default="true" />
   <arg name="kinfu" default="false" />
   <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr1040_vr.launch">
+  <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
-    <arg name="device" value="tablis" />
+    <arg name="device" value="vive" />
     <arg name="head" value="$(arg head)" />
     <arg name="respeaker" value="true" />
     <arg name="mirror" value="false" />
