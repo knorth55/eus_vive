@@ -7,7 +7,7 @@
 (ros::load-ros-manifest "std_msgs")
 (ros::load-ros-manifest "std_srvs")
 
-(load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
+(require :display-robot-state "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 
 
 (defclass robot-vr-interface

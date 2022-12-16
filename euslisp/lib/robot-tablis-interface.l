@@ -2,13 +2,12 @@
 
 (ros::roseus-add-msgs "geometry_msgs")
 
+(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 
 (defclass robot-tablis-interface
-  ;; TODO: mulitple inheritance for move base robot
-  :super robot-move-base-vive-interface
-  ; :super robot-vive-interface
+  :super robot-vive-interface
   :slots (larm-target-pose
           larm-prev-target-pose
           rarm-target-pose

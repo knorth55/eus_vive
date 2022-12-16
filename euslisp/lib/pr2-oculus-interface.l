@@ -1,6 +1,8 @@
 ;; -*- mode: lisp;-*-
-(load "package://pr2eus/pr2-interface.l")
+
+(require :pr2-interface "package://pr2eus/pr2-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
 (require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
 (require :robot-oculus-interface "package://eus_vive/euslisp/lib/robot-oculus-interface.l")
 
