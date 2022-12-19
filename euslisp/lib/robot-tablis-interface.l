@@ -54,11 +54,13 @@
       (progn
         (send self :set-reference-coords :larm :update-robot-model t)
         (send self :set-reference-coords :rarm :update-robot-model nil))
-      (send self :set-reference-coords arm :update-robot-model t)))
+      (send self :set-reference-coords arm :update-robot-model t))
+    t)
   (:set-reference-coords (arm &key (update-robot-model t))
     (if update-robot-model (send self :update-robot-model))
     (send self :set-arm-val arm :ref-tablis-coords
           (send self :get-arm-val arm :tablis-coords))
     (send self :set-arm-val arm :ref-end-coords
-          (send (send robot arm :end-coords) :copy-worldcoords)))
+          (send (send robot arm :end-coords) :copy-worldcoords))
+    t)
   )
