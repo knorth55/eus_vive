@@ -46,8 +46,7 @@
           (setq target-coords (send ref-end-coords :copy-worldcoords))
           (setq diff-tablis-coords
                 (send ref-tablis-coords :transformation tablis-coords :world))
-          (send target-coords :transform diff-tablis-coords :world)
-          ))
+          (send target-coords :transform diff-tablis-coords :world)))
       target-coords))
   (:calib-controller (&optional (arm :rarm))
     (if (equal arm :arms)
