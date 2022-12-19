@@ -5,8 +5,10 @@
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 
-(if (not (assoc :controller-button-cb-move-base-vive-org (send robot-vive-interface :methods)))
-  (rplaca (assoc :controller-button-cb (send robot-vive-interface :methods)) :controller-button-cb-move-base-vive-org))
+(if (not (assoc :controller-button-cb-move-base-vive-org
+                (send robot-vive-interface :methods)))
+  (rplaca (assoc :controller-button-cb (send robot-vive-interface :methods))
+          :controller-button-cb-move-base-vive-org))
 
 
 (defmethod robot-vive-interface
