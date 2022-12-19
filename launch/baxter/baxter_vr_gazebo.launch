@@ -21,6 +21,11 @@
   <!-- initialize baxter in gazebo -->
   <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
 
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
   <!-- baxter_vr -->
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />

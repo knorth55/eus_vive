@@ -19,6 +19,12 @@
   <arg name="workspace_min_z" default="false" />
 
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
+
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
   <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
