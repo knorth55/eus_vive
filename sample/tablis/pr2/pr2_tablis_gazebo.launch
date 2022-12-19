@@ -7,7 +7,7 @@
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="device" value="tablis" />
-    <arg name="head" value="true" />
+    <arg name="head" value="false" />
     <arg name="mirror" value="false" />
     <arg name="display" value="$(arg display)" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
