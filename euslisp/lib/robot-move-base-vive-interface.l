@@ -5,33 +5,14 @@
 (require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
 
 
-(defclass robot-move-base-vive-interface
-  :super robot-vive-interface
-  :slots (base-enable
-          joy-org-topic-name
-          joy-other-topic-name
-          vx
-          vy
-          vw
-          vx-thresh
-          vy-thresh
-          vw-thresh
-          vx-scale
-          vy-scale
-          vw-scale
-          ))
+(if (not (assoc :controller-button-cb-move-base-vive-org (send robot-vive-interface :methods)))
+  (rplaca (assoc :controller-button-cb (send robot-vive-interface :methods)) :controller-button-cb-move-base-vive-org))
 
 
-(defmethod robot-move-base-vive-interface
-  (:init (&rest args)
-    (send-super* :init args)
-    ;; for move base
-    (send self :set-val 'joy-org-topic-name "/joy_org")
-    (send self :set-val 'joy-other-topic-name "/joy_other")
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
-  ;; controller button callbacks
+(defmethod robot-vive-interface
+  ;; overwrite controller button callbacks
   (:controller-button-cb (arm msg)
-    (send-super :controller-button-cb arm msg)
+    (send :controller-button-cb-move-base-vive-org arm msg)
     (cond
       ((eq arm :larm)
        (send self :set-val 'vw

@@ -9,7 +9,7 @@
 
 
 (defclass pr2-vive-interface
-  :super robot-move-base-vive-interface
+  :super robot-vive-interface
   :slots ())
 
 

@@ -93,6 +93,19 @@
           target-coords-min-z
           head->shoulder-x-distance
           head->shoulder-z-distance
+          ;; base
+          base-enable
+          joy-org-topic-name
+          joy-other-topic-name
+          vx
+          vy
+          vw
+          vx-thresh
+          vy-thresh
+          vw-thresh
+          vx-scale
+          vy-scale
+          vw-scale
           ))
 
 
@@ -230,13 +243,20 @@
     (send self :set-val 'loop-enable t)
     (send self :set-arm-val :larm :loop-enable t)
     (send self :set-arm-val :rarm :loop-enable t)
-    (send self :enable-arm :larm)
-    (send self :enable-arm :rarm)
-    (if torso (send self :enable-torso)))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :larm))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :rarm))
+    ;; (send self :enable-arm :larm)
+    ;; (send self :enable-arm :rarm)
+    (if (and torso (find-method robot-interface :torso-controller))
+      (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
+    )
   (:enable-arm (arm)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
-    (send self :reset-arm-val arm))
+    (send self :set-arm-val arm :enable t)
+    )
   (:enable-torso ()
     (if (find-method robot-interface :torso-controller)
       (send robot-interface :cancel-angle-vector :controller-type :torso-controller)))
@@ -244,20 +264,27 @@
     (send self :set-val 'loop-enable nil)
     (send self :set-arm-val :larm :loop-enable nil)
     (send self :set-arm-val :rarm :loop-enable nil)
-    (send self :disable-arm :larm)
-    (send self :disable-arm :rarm)
-    (if torso (send self :disable-torso)))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :larm))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :rarm))
+    ; (send self :disable-arm :larm)
+    ; (send self :disable-arm :rarm)
+    (if (and torso (find-method robot-interface :torso-controller))
+      (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
+    )
   (:disable-arm (arm)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
-    (send self :reset-arm-val arm))
+    (send self :set-arm-val arm :enable nil))
   (:disable-torso ()
     (if (find-method robot-interface :torso-controller)
       (send robot-interface :cancel-angle-vector :controller-type :torso-controller)))
   (:calibrate (&optional (arm :rarm))
     (let (calib-p)
       (setq calib-p (send *ti* :calib-controller arm))
-      (if (not calib-p) (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
+      (if (not calib-p)
+        (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
       calib-p))
   ;; services
   (:reset-service (req)
