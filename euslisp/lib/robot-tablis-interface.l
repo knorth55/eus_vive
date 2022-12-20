@@ -44,11 +44,19 @@
           (setq ref-end-coords
                 (send self :get-arm-val target-arm :ref-end-coords))))
       (if tablis-coords
-        (progn
+        (let* ((diff-tablis-coords
+                 (send ref-tablis-coords :transformation tablis-coords :world))
+               (diff-tablis-pos (send diff-tablis-coords :worldpos))
+               (diff-target-coords
+                 (make-coords
+                   :pos
+                   (float-vector
+                     (* scale (elt diff-tablis-pos 0))
+                     (* scale (elt diff-tablis-pos 1))
+                     (* scale (elt diff-tablis-pos 2)))
+                   :rot (send diff-tablis-coords :worldrot))))
           (setq target-coords (send ref-end-coords :copy-worldcoords))
-          (setq diff-tablis-coords
-                (send ref-tablis-coords :transformation tablis-coords :world))
-          (send target-coords :transform diff-tablis-coords :world)))
+          (send target-coords :transform diff-target-coords :world)))
       target-coords))
   (:calib-controller (&optional (arm :rarm))
     (if (equal arm :arms)
