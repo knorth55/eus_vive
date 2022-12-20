@@ -30,33 +30,40 @@
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
            (tablis-coords
-             (send self :get-arm-val target-arm :tablis-coords))
+             (if (send self :get-arm-val target-arm :tablis-coords)
+               (send (send self :get-arm-val target-arm :tablis-coords) :copy-worldcoords)))
            (ref-tablis-coords
-             (send self :get-arm-val target-arm :ref-tablis-coords))
+             (if (send self :get-arm-val target-arm :ref-tablis-coords)
+               (send (send self :get-arm-val target-arm :ref-tablis-coords) :copy-worldcoords)))
            (ref-end-coords
-             (send self :get-arm-val target-arm :ref-end-coords))
+             (if (send self :get-arm-val target-arm :ref-end-coords)
+               (send (send self :get-arm-val target-arm :ref-end-coords) :copy-worldcoords)))
            target-coords)
       (if (or (null ref-tablis-coords) (null ref-end-coords))
         (progn
           (send self :set-reference-coords target-arm :update-robot-model t)
           (setq ref-tablis-coords
-                (send self :get-arm-val target-arm :ref-tablis-coords))
+                (send (send self :get-arm-val target-arm :ref-tablis-coords) :copy-worldcoords))
           (setq ref-end-coords
-                (send self :get-arm-val target-arm :ref-end-coords))))
+                (send (send self :get-arm-val target-arm :ref-end-coords) :copy-worldcoords))))
       (if tablis-coords
-        (let* ((diff-tablis-coords
+        (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
+               (ref-end-coords-rot (send ref-end-coords :worldrot))
+               (diff-tablis-coords
                  (send ref-tablis-coords :transformation tablis-coords :world))
-               (diff-tablis-pos (send diff-tablis-coords :worldpos))
-               (diff-target-coords
-                 (make-coords
-                   :pos
-                   (float-vector
-                     (* scale (elt diff-tablis-pos 0))
-                     (* scale (elt diff-tablis-pos 1))
-                     (* scale (elt diff-tablis-pos 2)))
-                   :rot (send diff-tablis-coords :worldrot))))
-          (setq target-coords (send ref-end-coords :copy-worldcoords))
-          (send target-coords :transform diff-target-coords :world)))
+               (diff-tablis-pos
+                 (v- (send tablis-coords :worldpos)
+                     (send ref-tablis-coords :worldpos)))
+               (diff-tablis-rot (send diff-tablis-coords :worldrot))
+               (diff-target-pos
+                 (float-vector (* scale (elt diff-tablis-pos 0))
+                               (* scale (elt diff-tablis-pos 1))
+                               (* scale (elt diff-tablis-pos 2))))
+               (target-pos (v+ ref-end-coords-pos diff-target-pos)))
+          (setq target-coords (make-coords :rot ref-end-coords-rot))
+          (send target-coords :transform (make-coords :rot diff-tablis-rot) :world)
+          (send target-coords :translate target-pos :world)
+          ))
       target-coords))
   (:calib-controller (&optional (arm :rarm))
     (if (equal arm :arms)
@@ -67,9 +74,11 @@
     t)
   (:set-reference-coords (arm &key (update-robot-model t))
     (if update-robot-model (send self :update-robot-model))
-    (send self :set-arm-val arm :ref-tablis-coords
-          (send self :get-arm-val arm :tablis-coords))
-    (send self :set-arm-val arm :ref-end-coords
-          (send (send robot arm :end-coords) :copy-worldcoords))
+    (if (send self :get-arm-val arm :tablis-coords)
+      (send self :set-arm-val arm :ref-tablis-coords
+            (send (send self :get-arm-val arm :tablis-coords) :copy-worldcoords)))
+    (if (send robot arm :end-coords)
+      (send self :set-arm-val arm :ref-end-coords
+            (send (send robot arm :end-coords) :copy-worldcoords)))
     t)
   )
