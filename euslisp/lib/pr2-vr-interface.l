@@ -25,7 +25,6 @@
     (send self :set-val 'base-frame-id "base_footprint")
     (send self :set-val 'head-frame-id "head_tilt_link")
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 5.0)
     (send self :set-val 'min-time 0.3)
@@ -35,6 +34,15 @@
     (send self :set-val 'torso-z-thresh 100)
     (send self :set-val 'torso-ik-weight 0.0001)
     (send self :set-val 'grasp-timeout-time nil)
+    ;; for pr2 move base
+    (send self :set-val 'vx-thresh 0.3)
+    (send self :set-val 'vy-thresh 0.3)
+    (send self :set-val 'vw-thresh 0.3)
+    (send self :set-val 'vx-scale 1.0)
+    (send self :set-val 'vy-scale 1.0)
+    (send self :set-val 'vw-scale 1.0)
+    ;; pr2 hardware configuration
+    (send self :set-val 'scale 1.5)
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)

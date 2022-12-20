@@ -31,11 +31,11 @@
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 3.0)
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
+    ;; baxter hardware configuration
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)

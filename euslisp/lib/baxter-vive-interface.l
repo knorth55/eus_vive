@@ -16,6 +16,7 @@
 (defmethod baxter-vive-interface
   (:init (&rest args)
     ;; for vive
+    (send self :set-val 'scale 3.0)
     (send self :set-val 'trigger-wait-count 5)
     (send self :set-val 'menu-wait-count 5)
     (send self :set-val 'trackpad-wait-count 5)

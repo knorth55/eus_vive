@@ -17,6 +17,7 @@
 (defmethod baxter-tablis-interface
   (:init (&rest args)
     ;; for tablis
+    (send self :set-val 'scale 3.0)
     (send self :set-val 'trigger-wait-count 5)
     (send self :set-val 'menu-wait-count 5)
     (send self :set-val 'trackpad-wait-count 5)

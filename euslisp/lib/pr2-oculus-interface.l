@@ -15,6 +15,7 @@
 (defmethod pr2-oculus-interface
   (:init (&rest args)
     ;; for oculus
+    (send self :set-val 'scale 1.5)
     (send self :set-val 'hmd-pose-topic-name "/oculus/hmd/pose_stamped")
     (send self :set-val 'left-controller-pose-topic-name "/oculus/left_controller/pose_stamped")
     (send self :set-val 'right-controller-pose-topic-name "/oculus/right_controller/pose_stamped")

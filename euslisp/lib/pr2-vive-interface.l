@@ -16,17 +16,11 @@
 (defmethod pr2-vive-interface
   (:init (&rest args)
     ;; for vive
+    (send self :set-val 'scale 1.5)
     (send self :set-val 'trigger-wait-count 5)
     (send self :set-val 'menu-wait-count 5)
     (send self :set-val 'trackpad-wait-count 5)
     (send self :set-val 'grip-wait-count 5)
-    ;; for pr2 move base
-    (send self :set-val 'vx-thresh 0.3)
-    (send self :set-val 'vy-thresh 0.3)
-    (send self :set-val 'vw-thresh 0.3)
-    (send self :set-val 'vx-scale 1.0)
-    (send self :set-val 'vy-scale 1.0)
-    (send self :set-val 'vw-scale 1.0)
     (send-super* :init args)))
 
 
