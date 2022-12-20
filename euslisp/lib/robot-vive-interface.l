@@ -9,6 +9,9 @@
 (defclass robot-vive-interface
   :super robot-vr-interface
   :slots (hmd-frame-id
+          vrbase-device-id
+          larm-controller-device-id
+          rarm-controller-device-id
           vrbase-frame-id
           larm-controller-frame-id
           rarm-controller-frame-id
@@ -53,18 +56,34 @@
     (send self :set-val 'vrbase->shoulder-z nil)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'vrbase-frame-id
-          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
-    (send self :set-val 'larm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
-    (send self :set-val 'rarm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
+    (send self :set-val 'vrbase-device-id (ros::get-param "/eus_vive/b_lighthouse_id"))
+    (send self :set-arm-val :larm :controller-device-id
+          (ros::get-param "/eus_vive/l_controller_id"))
+    (send self :set-arm-val :rarm :controller-device-id
+          (ros::get-param "/eus_vive/r_controller_id"))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :larm :controller-frame-id))
-                          sensor_msgs::Joy #'send self :controller-button-cb :larm)
-    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :rarm :controller-frame-id))
-                          sensor_msgs::Joy #'send self :controller-button-cb :rarm)
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
+
+    (if vrbase-device-id
+      (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
+      (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))
+    (if larm-controller-device-id
+      (progn
+        (send self :set-arm-val :larm :controller-frame-id
+              (format nil "controller_LHR_~A" larm-controller-device-id))
+        (ros::subscribe (format nil "/vive/~A/joy"
+                                (send self :get-arm-val :larm :controller-frame-id))
+                        sensor_msgs::Joy #'send self :controller-button-cb :larm))
+      (ros::ros-warn "param: /eus_vive/l_controller_id is not set"))
+    (if rarm-controller-device-id
+      (progn
+        (send self :set-arm-val :rarm :controller-frame-id
+              (format nil "controller_LHR_~A" rarm-controller-device-id))
+        (ros::subscribe (format nil "/vive/~A/joy"
+                                (send self :get-arm-val :rarm :controller-frame-id))
+                        sensor_msgs::Joy #'send self :controller-button-cb :rarm))
+      (ros::ros-warn "param: /eus_vive/r_controller_id is not set"))
+
     (send-super* :init args))
   ;; redefine :reset-arm-val
   (:reset-arm-val (arm)
@@ -139,6 +158,11 @@
         (return-from :get-hmd->controller-coords nil)))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           coords)
+      (if (null controller-frame-id)
+        (progn
+          (ros::ros-warn "Controller frame id is not set properly.")
+          (ros::ros-warn "controller-frame-id: ~A" controller-frame-id)
+          (return-from :get-hmd->controller-coords nil)))
       (send tfl :wait-for-transform hmd-frame-id controller-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform hmd-frame-id controller-frame-id (ros::time 0)))
       (if coords
@@ -153,6 +177,12 @@
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-button-p)
+      (if (or (null vrbase-frame-id) (null controller-frame-id))
+        (progn
+          (ros::ros-warn "Frame ids are not set properly.")
+          (ros::ros-warn "vrbase-frame-id: ~A" vrbase-frame-id)
+          (ros::ros-warn "controller-frame-id: ~A" controller-frame-id)
+          (return-from :get-vrbase->controller-coords nil)))
       (if wait-trigger
         (progn
           (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
@@ -167,6 +197,11 @@
   ;; coordinate function for vive
   (:get-vrbase->hmd-coords ()
     (let (coords)
+      (if (null vrbase-frame-id)
+        (progn
+          (ros::ros-warn "VR base frame id is not set properly.")
+          (ros::ros-warn "vrbase-frame-id: ~A" vrbase-frame-id)
+          (return-from :get-vrbase->hmd-coords nil)))
       (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
       (if coords
