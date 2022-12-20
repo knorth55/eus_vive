@@ -841,6 +841,7 @@
     (send *ri* :speak "I'm ready to start demo." :wait nil :volume 0.6)
     (while (ros::ok)
       (if loop-enable (send* self :main-loop-step args))
+      (send *irtviewer* :draw-objects)
       (ros::spin-once)
       (ros::sleep)))
   ;; place holders
