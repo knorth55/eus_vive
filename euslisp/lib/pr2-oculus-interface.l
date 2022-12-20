@@ -23,16 +23,6 @@
 
 (defun pr2-oculus-init (&key (loop-enable t))
   (pr2-init)
-  (objects (list *pr2*))
-  (setq *camera-model*
-        (if (string>= (car lisp-implementation-version) "9.28")
-          (make-camera-from-param
-            :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
-            :name "camera" :create-viewer t :no-window t)
-          (make-camera-from-param
-            :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
-            :name "camera" :create-viewer t)))
-  (send *camera-model* :translate #f(1500 0 800))
-  (send *camera-model* :rotate -1.57 :y :world)
-  (send *camera-model* :rotate -1.57 :x :world)
+  (make-pr2-irtviewer :no-window t)
+  (make-pr2-camera-model :no-window t)
   (setq *ti* (instance pr2-oculus-interface :init :loop-enable loop-enable)))

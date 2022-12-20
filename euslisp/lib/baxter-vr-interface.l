@@ -123,6 +123,34 @@
   )
 
 
+(defun make-baxter-irtviewer (&key (no-window t))
+  (if (and no-window
+           (string>= (car lisp-implementation-version) "9.28"))
+    (make-irtviewer-no-window))
+  (objects (list *baxter*))
+  (send *irtviewer* :change-background (float-vector 1 1 1))
+  (send *irtviewer* :draw-floor 100)
+  (send *irtviewer* :floor-color #f(0 0 0))
+  (setq *background-cube* (make-cube 10 6000 6000))
+  (send *background-cube* :set-color #f(1 1 1))
+  (send *background-cube* :translate #f(-1000 0 0)))
+
+
+(defun make-baxter-camera-model (&key (no-window t))
+  (setq *camera-model*
+        (if (string>= (car lisp-implementation-version) "9.28")
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t :no-window no-window)
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t)))
+  (send *camera-model* :translate #f(1500 0 600))
+  (send *camera-model* :rotate -pi/2 :y :world)
+  (send *camera-model* :rotate -pi/2 :x :world)
+  (send *camera-model* :rotate -0.30 :y :world))
+
+
 (defun signal-hook (sig code)
   (if (boundp '*ri*)
     (progn
