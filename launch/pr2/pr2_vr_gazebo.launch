@@ -46,4 +46,8 @@
     <arg name="hmd_left_image" value="/wide_stereo/left/image_rect_color" />
     <arg name="hmd_right_image" value="/wide_stereo/right/image_rect_color" />
   </include>
+
+  <!-- launch rqt_gui -->
+  <include unless="$(arg display)" file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+
 </launch>

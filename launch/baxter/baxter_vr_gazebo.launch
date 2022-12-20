@@ -60,6 +60,6 @@
   </include>
 
   <!-- launch rqt_gui -->
-  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+  <include unless="$(arg display)" file="$(find eus_vive)/launch/include/rqt_gui.launch" />
 
 </launch>
