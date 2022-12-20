@@ -18,11 +18,11 @@
 
 (defmethod robot-tablis-interface
   (:init (&rest args)
-    (send-super* :init args)
     (ros::subscribe "/master_larm_pose" geometry_msgs::PoseStamped
                     #'send self :tablis-pose-stamped-cb :larm)
     (ros::subscribe "/master_rarm_pose" geometry_msgs::PoseStamped
-                    #'send self :tablis-pose-stamped-cb :rarm))
+                    #'send self :tablis-pose-stamped-cb :rarm)
+    (send-super* :init args))
   (:tablis-pose-stamped-cb (arm msg)
     (send self :set-arm-val arm :tablis-coords (ros::tf-pose-stamped->coords msg)))
   (:get-target-coords (arm &key (head t) (mirror nil))
