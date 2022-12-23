@@ -6,6 +6,7 @@
   <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
+    <arg name="tablis" value="true" />
     <arg name="device" value="tablis" />
     <arg name="head" value="false" />
     <arg name="mirror" value="false" />

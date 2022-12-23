@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
   <arg name="device" default="vive" />
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
@@ -29,6 +30,7 @@
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="spacenav" value="$(arg spacenav)" />
+    <arg name="tablis" value="$(arg tablis)" />
     <arg name="device" value="$(arg device)" />
     <arg name="head" value="$(arg head)" />
     <arg name="mirror" value="$(arg mirror)" />

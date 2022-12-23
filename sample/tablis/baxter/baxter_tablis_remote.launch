@@ -9,6 +9,7 @@
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="device" value="tablis" />
+    <arg name="tablis" value="true" />
     <arg name="head" value="false" />
     <arg name="mirror" value="false" />
     <arg name="launch_baxter" value="false" />
