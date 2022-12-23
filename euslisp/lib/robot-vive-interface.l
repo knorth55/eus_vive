@@ -9,6 +9,9 @@
 (defclass robot-vive-interface
   :super robot-vr-interface
   :slots (hmd-frame-id
+          vrbase-device-id
+          larm-controller-device-id
+          rarm-controller-device-id
           vrbase-frame-id
           larm-controller-frame-id
           rarm-controller-frame-id
@@ -53,18 +56,34 @@
     (send self :set-val 'vrbase->shoulder-z nil)
     ;; for vive
     (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'vrbase-frame-id
-          (format nil "lighthouse_LHB_~A" (ros::get-param "/eus_vive/b_lighthouse_id")))
-    (send self :set-val 'larm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/l_controller_id")))
-    (send self :set-val 'rarm-controller-frame-id
-          (format nil "controller_LHR_~A" (ros::get-param "/eus_vive/r_controller_id")))
+    (send self :set-val 'vrbase-device-id (ros::get-param "/eus_vive/b_lighthouse_id"))
+    (send self :set-arm-val :larm :controller-device-id
+          (ros::get-param "/eus_vive/l_controller_id"))
+    (send self :set-arm-val :rarm :controller-device-id
+          (ros::get-param "/eus_vive/r_controller_id"))
     (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :larm :controller-frame-id))
-                          sensor_msgs::Joy #'send self :controller-button-cb :larm)
-    (ros::subscribe (format nil "/vive/~A/joy" (send self :get-arm-val :rarm :controller-frame-id))
-                          sensor_msgs::Joy #'send self :controller-button-cb :rarm)
     (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
+
+    (if vrbase-device-id
+      (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
+      (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))
+    (if larm-controller-device-id
+      (progn
+        (send self :set-arm-val :larm :controller-frame-id
+              (format nil "controller_LHR_~A" larm-controller-device-id))
+        (ros::subscribe (format nil "/vive/~A/joy"
+                                (send self :get-arm-val :larm :controller-frame-id))
+                        sensor_msgs::Joy #'send self :controller-button-cb :larm))
+      (ros::ros-warn "param: /eus_vive/l_controller_id is not set"))
+    (if rarm-controller-device-id
+      (progn
+        (send self :set-arm-val :rarm :controller-frame-id
+              (format nil "controller_LHR_~A" rarm-controller-device-id))
+        (ros::subscribe (format nil "/vive/~A/joy"
+                                (send self :get-arm-val :rarm :controller-frame-id))
+                        sensor_msgs::Joy #'send self :controller-button-cb :rarm))
+      (ros::ros-warn "param: /eus_vive/r_controller_id is not set"))
+
     (send-super* :init args))
   ;; redefine :reset-arm-val
   (:reset-arm-val (arm)
@@ -139,6 +158,11 @@
         (return-from :get-hmd->controller-coords nil)))
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           coords)
+      (if (null controller-frame-id)
+        (progn
+          (ros::ros-warn "Controller frame id is not set properly.")
+          (ros::ros-warn "controller-frame-id: ~A" controller-frame-id)
+          (return-from :get-hmd->controller-coords nil)))
       (send tfl :wait-for-transform hmd-frame-id controller-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform hmd-frame-id controller-frame-id (ros::time 0)))
       (if coords
@@ -153,6 +177,12 @@
     (let ((controller-frame-id (send self :get-arm-val arm :controller-frame-id))
           (start-time (ros::time 0))
           coords controller-trigger-button-p)
+      (if (or (null vrbase-frame-id) (null controller-frame-id))
+        (progn
+          (ros::ros-warn "Frame ids are not set properly.")
+          (ros::ros-warn "vrbase-frame-id: ~A" vrbase-frame-id)
+          (ros::ros-warn "controller-frame-id: ~A" controller-frame-id)
+          (return-from :get-vrbase->controller-coords nil)))
       (if wait-trigger
         (progn
           (ros::ros-info "Waiting for trigger: ~A~%" (string-downcase arm))
@@ -167,6 +197,11 @@
   ;; coordinate function for vive
   (:get-vrbase->hmd-coords ()
     (let (coords)
+      (if (null vrbase-frame-id)
+        (progn
+          (ros::ros-warn "VR base frame id is not set properly.")
+          (ros::ros-warn "vrbase-frame-id: ~A" vrbase-frame-id)
+          (return-from :get-vrbase->hmd-coords nil)))
       (send tfl :wait-for-transform vrbase-frame-id hmd-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform vrbase-frame-id hmd-frame-id (ros::time 0)))
       (if coords
@@ -302,134 +337,5 @@
                           :type 1 :id id :intensity 3000))
       (ros::publish feedback-topic-name msg))))
 
-
-(defclass robot-move-base-vive-interface
-  :super robot-vive-interface
-  :slots (base-enable
-          joy-org-topic-name
-          joy-other-topic-name
-          vx
-          vy
-          vw
-          vx-thresh
-          vy-thresh
-          vw-thresh
-          vx-scale
-          vy-scale
-          vw-scale
-          ))
-
-
-(defmethod robot-move-base-vive-interface
-  (:init (&rest args)
-    (send-super* :init args)
-    ;; for move base
-    (send self :set-val 'joy-org-topic-name "/joy_org")
-    (send self :set-val 'joy-other-topic-name "/joy_other")
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
-  ;; redefine :reset
-  (:reset (&key (loop-enable t))
-    (send-super :reset :loop-enable loop-enable)
-    (send robot-interface :clear-costmap)
-    (send self :set-val 'vx 0.0)
-    (send self :set-val 'vy 0.0)
-    (send self :set-val 'vw 0.0)
-    (send self :set-val 'base-enable nil))
-  ;; redefine :base-cb
-  (:base-cb (&key (safe t) (mirror nil))
-    (let (msg (axes (make-list 29 :initial-element 0))
-              (buttons (make-list 17 :initial-element 0)))
-      (cond
-        ((not (or larm-trigger rarm-trigger))
-         (setf (elt buttons 10) 1)
-         (setf (elt buttons 12)
-               (if (and larm-trackpad (not rarm-trackpad)) 1 0))
-         (setf (elt buttons 14)
-               (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
-        ((and rarm-trigger
-              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
-         ;; for unsafe teleop
-         (if (and (not safe) larm-trigger) (setf (elt buttons 9) 1))
-         (setf (elt buttons 10) 1)
-         (setf (elt axes 3)
-               (* (if mirror -1.0 1.0)
-                  (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0))))
-         (setf (elt axes 2)
-               (* (if mirror -1.0 1.0)
-                  (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0))))
-         (setf (elt axes 0)
-               (* (if mirror -1.0 1.0)
-                  (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0)))))
-        (t nil))
-      (setq msg (instance sensor_msgs::Joy :init))
-      (send msg :header :stamp (ros::time-now))
-      (send msg :axes axes)
-      (send msg :buttons buttons)
-      (ros::publish joy-other-topic-name msg)))
-  ;; controller button callbacks
-  (:controller-button-cb (arm msg)
-    (send-super :controller-button-cb arm msg)
-    (cond
-      ((eq arm :larm)
-       (send self :set-val 'vw
-             (if (send self :get-arm-val arm :trackpad)
-               (* -1 (elt (send msg :axes) 0)) 0)))
-      ((eq arm :rarm)
-       (send self :set-val 'vx
-             (if (send self :get-arm-val arm :trackpad)
-               (elt (send msg :axes) 1) 0))
-       (send self :set-val 'vy
-             (if (send self :get-arm-val arm :trackpad)
-               (* -1 (elt (send msg :axes) 0)) 0)))
-      (t nil)))
-  ;; switch joy from ps3joy to vive
-  (:switch-joy (joy-topic-name)
-    (let ((joy-mux-service-name "/multiple_joystick_mux/select")
-          mux-req)
-      (setq mux-req (instance topic_tools::MuxSelectRequest :init))
-      (send mux-req :topic joy-topic-name)
-      (ros::service-call joy-mux-service-name mux-req)))
-  (:switch-joy-to-controller ()
-    (send self :switch-joy joy-other-topic-name))
-  (:switch-joy-to-ps3joy ()
-    (send self :switch-joy joy-org-topic-name))
-  ;; redefine :enable-cb for base
-  (:enable-cb (&key (mirror nil) (base t) (button :menu))
-    (send-super :enable-cb :mirror mirror :button button)
-    (if base (send self :enable-base)))
-  (:enable-base ()
-    (cond
-      ((and (not larm-enable) (not rarm-enable))
-       (if (not base-enable) (send self :switch-joy-to-controller))
-       (send self :set-val 'base-enable t))
-      ((or larm-enable rarm-enable)
-       (if base-enable (send self :switch-joy-to-ps3joy))
-       (send self :set-val 'base-enable nil))
-      (t nil)))
-  ;; redefine :motion-cb for base
-  (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                    (gripper-button :trigger))
-    (let (visualize-arm-coords)
-      (cond
-        ((or larm-enable rarm-enable)
-         (setq visualize-arm-coords
-               (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
-                     :gripper-button gripper-button)))
-        ((and loop-enable base-enable)
-         (if base (send self :base-cb :safe safe-base :mirror mirror)))
-        (t nil))
-      visualize-arm-coords))
-  ;; redefine :main-loop-step for base
-  (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                         (enable-button :menu) (gripper-button :trigger) (visualize t))
-    (let (visualize-arm-coords)
-      (send self :update-current-end-coords)
-      (send self :enable-cb :mirror mirror :base base :button enable-button)
-      (setq visualize-arm-coords
-            (send self :motion-cb :head head :torso torso
-                  :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror
-                  :gripper-button gripper-button))
-      (if (and head loop-enable) (send self :head-cb))
-      (if visualize (send self :visualize visualize-arm-coords)))))
 
 (provide :robot-vive-interface)

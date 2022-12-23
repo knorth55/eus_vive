@@ -5,18 +5,18 @@
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :disable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :disable (send robot-vr-interface :methods)) :disable-org))
-(if (not (assoc :enable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :enable (send robot-vr-interface :methods)) :enable-org))
-(if (not (assoc :arm-motion-cb-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :arm-motion-cb (send robot-vr-interface :methods)) :arm-motion-cb-org))
+(if (not (assoc :init-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-baxter-org))
+(if (not (assoc :reset-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-baxter-org))
+(if (not (assoc :reset-arm-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-baxter-org))
+(if (not (assoc :disable-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :disable (send robot-vr-interface :methods)) :disable-baxter-org))
+(if (not (assoc :enable-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :enable (send robot-vr-interface :methods)) :enable-baxter-org))
+(if (not (assoc :arm-motion-cb-baxter-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :arm-motion-cb (send robot-vr-interface :methods)) :arm-motion-cb-baxter-org))
 
 
 (defmethod robot-vr-interface
@@ -31,11 +31,11 @@
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 3.0)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 3.0)
     (send self :set-val 'min-time 0.3)
     (send self :set-val 'grasp-timeout-time 1.5)
+    ;; baxter hardware configuration
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
@@ -48,14 +48,14 @@
     (send self :set-arm-val :rarm :collision-status-topic-name
           "/robot/limb/right/collision_detection_state")
     (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
-    (send* self :init-org args))
+    (send* self :init-baxter-org args))
   (:reset (&key (loop-enable t))
-    (send self :reset-org :loop-enable loop-enable :torso nil))
+    (send self :reset-baxter-org :loop-enable loop-enable :torso nil))
   (:reset-arm (arm &key (wait t))
-    (send self :reset-arm-org arm :wait wait :reset-pose :reset-teleop-pose)
+    (send self :reset-arm-baxter-org arm :wait wait :reset-pose :reset-teleop-pose)
     (send self :close-thumb arm))
-  (:enable () (send self :enable-org :torso nil))
-  (:disable () (send self :disable-org :torso nil))
+  (:enable () (send self :enable-baxter-org :torso nil))
+  (:disable () (send self :disable-baxter-org :torso nil))
   (:move-head (yaw pitch roll)
     ;; no pitch joint
     (send robot :head-neck-y :joint-angle (rad2deg yaw))
@@ -111,7 +111,44 @@
       ((and (not larm-enable) rarm-enable)
        (send self :thumb-rotate-cb :rarm :mirror mirror :button thumb-rotate-button))
       (t nil))
-    (send* self :arm-motion-cb-org :mirror mirror args)))
+    (send* self :arm-motion-cb-baxter-org :mirror mirror args))
+  (:start-grasp (arm &rest args)
+   (if (equal (send self :get-arm-val arm :gripper-type) :parallel)
+     (send* robot-interface :start-grasp arm :wait nil args)
+     (send* robot-interface :start-grasp arm args)))
+  (:stop-grasp (arm &rest args)
+   (if (equal (send self :get-arm-val arm :gripper-type) :parallel)
+     (send* robot-interface :stop-grasp arm :wait nil args)
+     (send* robot-interface :stop-grasp arm args)))
+  )
+
+
+(defun make-baxter-irtviewer (&key (no-window t))
+  (if (and no-window
+           (string>= (car lisp-implementation-version) "9.28"))
+    (make-irtviewer-no-window))
+  (objects (list *baxter*))
+  (send *irtviewer* :change-background (float-vector 1 1 1))
+  (send *irtviewer* :draw-floor 100)
+  (send *irtviewer* :floor-color #f(0 0 0))
+  (setq *background-cube* (make-cube 10 6000 6000))
+  (send *background-cube* :set-color #f(1 1 1))
+  (send *background-cube* :translate #f(-1000 0 0)))
+
+
+(defun make-baxter-camera-model (&key (no-window t))
+  (setq *camera-model*
+        (if (string>= (car lisp-implementation-version) "9.28")
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t :no-window no-window)
+          (make-camera-from-param
+            :pwidth 600 :pheight 600 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t)))
+  (send *camera-model* :translate #f(1500 0 600))
+  (send *camera-model* :rotate -pi/2 :y :world)
+  (send *camera-model* :rotate -pi/2 :x :world)
+  (send *camera-model* :rotate -0.30 :y :world))
 
 
 (defun signal-hook (sig code)

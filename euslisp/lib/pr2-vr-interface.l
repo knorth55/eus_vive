@@ -1,14 +1,16 @@
 ;; -*- mode: lisp;-*-
-(load "package://pr2eus/pr2-interface.l")
+
+(require :pr2-interface "package://pr2eus/pr2-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :reset-torso-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-org))
+(if (not (assoc :init-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-pr2-org))
+(if (not (assoc :reset-arm-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-pr2-org))
+(if (not (assoc :reset-torso-pr2-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-torso (send robot-vr-interface :methods)) :reset-torso-pr2-org))
 
 
 (defmethod robot-vr-interface
@@ -23,7 +25,6 @@
     (send self :set-val 'base-frame-id "base_footprint")
     (send self :set-val 'head-frame-id "head_tilt_link")
     (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'scale 1.5)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 5.0)
     (send self :set-val 'min-time 0.3)
@@ -33,6 +34,15 @@
     (send self :set-val 'torso-z-thresh 100)
     (send self :set-val 'torso-ik-weight 0.0001)
     (send self :set-val 'grasp-timeout-time nil)
+    ;; for pr2 move base
+    (send self :set-val 'vx-thresh 0.3)
+    (send self :set-val 'vy-thresh 0.3)
+    (send self :set-val 'vw-thresh 0.3)
+    (send self :set-val 'vx-scale 1.0)
+    (send self :set-val 'vy-scale 1.0)
+    (send self :set-val 'vw-scale 1.0)
+    ;; pr2 hardware configuration
+    (send self :set-val 'scale 1.5)
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
@@ -40,7 +50,7 @@
           "/l_gripper_controller/gripper_action/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/r_gripper_controller/gripper_action/status")
-    (send* self :init-org args))
+    (send* self :init-pr2-org args))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -56,9 +66,33 @@
   (:start-grasp (arm &key (wait t))
     (send robot-interface :start-grasp arm :wait wait :gain (/ 50.0 2000)))
   (:reset-arm (arm &key (wait t) (reset-pose :reset-manip-pose))
-    (send self :reset-arm-org arm :wait wait :reset-pose reset-pose))
+    (send self :reset-arm-pr2-org arm :wait wait :reset-pose reset-pose))
   (:reset-torso (&key (wait t) (reset-pose :reset-manip-pose))
-    (send self :reset-torso-org :wait wait :reset-pose reset-pose)))
+    (send self :reset-torso-pr2-org :wait wait :reset-pose reset-pose)))
+
+
+(defun make-pr2-irtviewer (&key (no-window t))
+  (if (and no-window
+           (string>= (car lisp-implementation-version) "9.28"))
+    (make-irtviewer-no-window))
+  (objects (list *pr2*))
+  (send *irtviewer* :change-background (float-vector 1 1 1))
+  (send *irtviewer* :draw-floor 100)
+  (send *irtviewer* :floor-color #f(0 0 0)))
+
+
+(defun make-pr2-camera-model (&key (no-window t))
+  (setq *camera-model*
+        (if (string>= (car lisp-implementation-version) "9.28")
+          (make-camera-from-param
+            :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t :no-window t)
+          (make-camera-from-param
+            :pwidth 640 :pheight 640 :fx 400 :fy 400 :cx 319.5 :cy 319.5
+            :name "camera" :create-viewer t)))
+  (send *camera-model* :translate #f(1500 0 800))
+  (send *camera-model* :rotate -1.57 :y :world)
+  (send *camera-model* :rotate -1.57 :x :world))
 
 
 (defun signal-hook (sig code)

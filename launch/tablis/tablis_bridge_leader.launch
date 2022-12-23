@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="connect_two_ros_master" type="connect_two_master" name="connect_two_master">
+    <rosparam>
+      topics: ["/master_rleg_pose","/master_lleg_pose","/master_rarm_pose","/master_larm_pose"]
+      slaveside: false
+      queuesize: 50
+    </rosparam>
+  </node>
+</launch>

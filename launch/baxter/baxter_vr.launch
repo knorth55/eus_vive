@@ -2,6 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
   <arg name="device" default="vive" />
   <arg name="head" default="true" />
   <arg name="respeaker" default="true" />
@@ -87,6 +88,9 @@
 
   <!-- launch spacenav -->
   <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
+  <!-- launch tablis bridge -->
+  <include file="$(find eus_vive)/launch/tablis/tablis_bridge_follower.launch" if="$(arg tablis)" />
 
   <!-- launch eus_vive-->
   <group ns="eus_vive">

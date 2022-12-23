@@ -1,0 +1,4 @@
+- git:
+    local-name: Naoki-Hiraoka/connect_two_ros_master
+    uri: https://github.com/Naoki-Hiraoka/connect_two_ros_master.git
+    version: master

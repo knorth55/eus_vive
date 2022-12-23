@@ -7,7 +7,7 @@
 (ros::load-ros-manifest "std_msgs")
 (ros::load-ros-manifest "std_srvs")
 
-(load "package://jsk_interactive_marker/euslisp/display-robot-state.l")
+(require :display-robot-state "package://jsk_interactive_marker/euslisp/display-robot-state.l")
 
 
 (defclass robot-vr-interface
@@ -93,6 +93,19 @@
           target-coords-min-z
           head->shoulder-x-distance
           head->shoulder-z-distance
+          ;; base
+          base-enable
+          joy-org-topic-name
+          joy-other-topic-name
+          vx
+          vy
+          vw
+          vx-thresh
+          vy-thresh
+          vw-thresh
+          vx-scale
+          vy-scale
+          vw-scale
           ))
 
 
@@ -230,13 +243,20 @@
     (send self :set-val 'loop-enable t)
     (send self :set-arm-val :larm :loop-enable t)
     (send self :set-arm-val :rarm :loop-enable t)
-    (send self :enable-arm :larm)
-    (send self :enable-arm :rarm)
-    (if torso (send self :enable-torso)))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :larm))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :rarm))
+    ;; (send self :enable-arm :larm)
+    ;; (send self :enable-arm :rarm)
+    (if (and torso (find-method robot-interface :torso-controller))
+      (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
+    )
   (:enable-arm (arm)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
-    (send self :reset-arm-val arm))
+    (send self :set-arm-val arm :enable t)
+    )
   (:enable-torso ()
     (if (find-method robot-interface :torso-controller)
       (send robot-interface :cancel-angle-vector :controller-type :torso-controller)))
@@ -244,20 +264,27 @@
     (send self :set-val 'loop-enable nil)
     (send self :set-arm-val :larm :loop-enable nil)
     (send self :set-arm-val :rarm :loop-enable nil)
-    (send self :disable-arm :larm)
-    (send self :disable-arm :rarm)
-    (if torso (send self :disable-torso)))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :larm))
+    (send robot-interface :cancel-angle-vector
+          :controller-type (send self :get-arm-controller :rarm))
+    ; (send self :disable-arm :larm)
+    ; (send self :disable-arm :rarm)
+    (if (and torso (find-method robot-interface :torso-controller))
+      (send robot-interface :cancel-angle-vector :controller-type :torso-controller))
+    )
   (:disable-arm (arm)
     (send robot-interface :cancel-angle-vector
           :controller-type (send self :get-arm-controller arm))
-    (send self :reset-arm-val arm))
+    (send self :set-arm-val arm :enable nil))
   (:disable-torso ()
     (if (find-method robot-interface :torso-controller)
       (send robot-interface :cancel-angle-vector :controller-type :torso-controller)))
   (:calibrate (&optional (arm :rarm))
     (let (calib-p)
       (setq calib-p (send *ti* :calib-controller arm))
-      (if (not calib-p) (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
+      (if (not calib-p)
+        (send *ri* :speak "Please try calibration again." :wait t :volume 0.6))
       calib-p))
   ;; services
   (:reset-service (req)
@@ -461,6 +488,15 @@
           (rarm-target-z (elt (send (cadr arm-coords) :worldpos) 2)))
       (or (> (abs (- larm-current-z larm-target-z)) torso-z-thresh)
           (> (abs (- rarm-current-z rarm-target-z)) torso-z-thresh))))
+  (:get-mirror-pos (target-pos)
+     (float-vector (elt target-pos 0) (* -1.0 (elt target-pos 1)) (elt target-pos 2)))
+  (:get-mirror-rot (target-rot)
+     (let* ((mirror-coords (make-coords :rot target-rot))
+            (rpy-angle (car (send mirror-coords :rpy-angle))))
+       (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
+       (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
+       (setq mirror-coords (make-coords :rpy rpy-angle))
+       (send mirror-coords :worldrot)))
   (:get-target-coords-from-pos-rot (target-pos target-rot &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
@@ -468,13 +504,9 @@
       (if (and target-pos target-rot)
         (progn
           (if mirror
-            (let* ((mirror-coords (make-coords :rot target-rot))
-                   (rpy-angle (car (send mirror-coords :rpy-angle))))
-              (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
-              (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
-              (setq mirror-coords (make-coords :rpy rpy-angle))
-              (setq target-rot (send mirror-coords :worldrot))
-              (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
+            (progn
+              (setq target-pos (send self :get-mirror-pos target-pos))
+              (setq target-rot (send self :get-mirror-rot target-rot))))
           (setq target-coords
                 (make-coords :pos (float-vector
                                     (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
@@ -814,6 +846,7 @@
     (send *ri* :speak "I'm ready to start demo." :wait nil :volume 0.6)
     (while (ros::ok)
       (if loop-enable (send* self :main-loop-step args))
+      (send *irtviewer* :draw-objects)
       (ros::spin-once)
       (ros::sleep)))
   ;; place holders

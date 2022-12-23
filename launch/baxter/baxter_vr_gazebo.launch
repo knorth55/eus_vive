@@ -2,9 +2,11 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
   <arg name="device" default="vive" />
   <arg name="head" default="false" />
   <arg name="mirror" default="false" />
+  <arg name="display" default="true" />
 
   <!-- vive -->
   <arg name="button_toggle" default="true" />
@@ -20,21 +22,27 @@
   <!-- initialize baxter in gazebo -->
   <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
 
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
   <!-- baxter_vr -->
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="spacenav" value="$(arg spacenav)" />
+    <arg name="tablis" value="$(arg tablis)" />
     <arg name="device" value="$(arg device)" />
     <arg name="head" value="$(arg head)" />
     <arg name="mirror" value="$(arg mirror)" />
+    <arg name="display" value="$(arg display)" />
     <arg name="respeaker" value="false" />
     <arg name="logging" value="false" />
     <arg name="twitter" value="false" />
     <arg name="debug" value="false" />
     <arg name="home_dir" value="$(env HOME)" />
     <arg name="mask_rcnn" value="false" />
-    <arg name="display" value="false" />
     <arg name="custom_xdisplay" value="false" />
     <arg name="launch_baxter" value="false" />
     <arg name="launch_xdisplay" value="false" />
@@ -54,6 +62,6 @@
   </include>
 
   <!-- launch rqt_gui -->
-  <include file="$(find eus_vive)/launch/include/rqt_gui.launch" />
+  <include unless="$(arg display)" file="$(find eus_vive)/launch/include/rqt_gui.launch" />
 
 </launch>
