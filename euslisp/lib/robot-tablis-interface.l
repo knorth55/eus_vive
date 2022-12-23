@@ -59,11 +59,18 @@
                  (float-vector (* scale (elt diff-tablis-pos 0))
                                (* scale (elt diff-tablis-pos 1))
                                (* scale (elt diff-tablis-pos 2))))
-               (target-pos (v+ ref-end-coords-pos diff-target-pos)))
-          (setq target-coords (make-coords :rot ref-end-coords-rot))
-          (send target-coords :transform (make-coords :rot diff-tablis-rot) :world)
-          (send target-coords :translate target-pos :world)
-          ))
+               (target-pos (v+ ref-end-coords-pos diff-target-pos))
+               (target-rot
+                 (send (send (make-coords :rot ref-end-coords-rot) :transform
+                             (make-coords :rot diff-tablis-rot) :world)
+                       :worldrot)))
+          (if mirror
+            (progn
+              (setq target-pos (send self :get-mirror-pos target-pos))
+              (setq target-rot (send self :get-mirror-rot target-rot))))
+          (setq target-coords
+                (make-coords :pos target-pos
+                             :rot target-rot))))
       target-coords))
   (:calib-controller (&optional (arm :rarm))
     (if (equal arm :arms)

@@ -488,6 +488,15 @@
           (rarm-target-z (elt (send (cadr arm-coords) :worldpos) 2)))
       (or (> (abs (- larm-current-z larm-target-z)) torso-z-thresh)
           (> (abs (- rarm-current-z rarm-target-z)) torso-z-thresh))))
+  (:get-mirror-pos (target-pos)
+     (float-vector (elt target-pos 0) (* -1.0 (elt target-pos 1)) (elt target-pos 2)))
+  (:get-mirror-rot (target-rot)
+     (let* ((mirror-coords (make-coords :rot target-rot))
+            (rpy-angle (car (send mirror-coords :rpy-angle))))
+       (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
+       (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
+       (setq mirror-coords (make-coords :rpy rpy-angle))
+       (send mirror-coords :worldrot)))
   (:get-target-coords-from-pos-rot (target-pos target-rot &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
@@ -495,13 +504,9 @@
       (if (and target-pos target-rot)
         (progn
           (if mirror
-            (let* ((mirror-coords (make-coords :rot target-rot))
-                   (rpy-angle (car (send mirror-coords :rpy-angle))))
-              (setf (elt rpy-angle 0) (* -1.0 (elt rpy-angle 0)))
-              (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
-              (setq mirror-coords (make-coords :rpy rpy-angle))
-              (setq target-rot (send mirror-coords :worldrot))
-              (setf (elt target-pos 1) (* -1.0 (elt target-pos 1)))))
+            (progn
+              (setq target-pos (send self :get-mirror-pos target-pos))
+              (setq target-rot (send self :get-mirror-rot target-rot))))
           (setq target-coords
                 (make-coords :pos (float-vector
                                     (+ head->shoulder-x-distance (* scale (elt target-pos 0)))
