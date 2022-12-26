@@ -45,7 +45,7 @@ This package depends on these branches below:
   - [x] HMD visual interface
   - [x] Vibration interface
   - [x] Sound interface
-- 3D mouse
+- SpaceNav (3D mouse)
   - [x] Arm motion tracking
   - [x] Controller button interface
 - Oculus
@@ -150,37 +150,44 @@ The arm calibration is required for no HMD mode in order to measure your positio
 
 ### PR2 + Vive
 
-#### PR1040 in JSK 73B2
+#### PR2 + Vive in JSK 73B2 or 610
 
 ```bash
 rossetip
 rossetmaster pr1040
 # HMD mode
-roslaunch eus_vive pr1040_vive.launch
+roslaunch eus_vive pr2_vive.launch
 # No HMD mode
-roslaunch eus_vive pr1040_vive.launch head:=false
+roslaunch eus_vive pr2_vive.launch head:=false
 ```
 
-#### PR1012 in JSK 610
+#### PR2 + Vive in Gazebo
+
+```bash
+roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roslaunch eus_vive pr2_vive_gazebo.launch
+```
+
+### PR2 + Tablis
+
+#### PR2 + Tablis in JSK 73B2 or 610
 
 ```bash
 rossetip
-rossetmaster pr1012
-# HMD mode
-roslaunch eus_vive pr1012_vive.launch
-# No HMD mode
-roslaunch eus_vive pr1012_vive.launch head:=false
+rossetmaster pr1040
+roslaunch eus_vive pr2_tablis.launch
 ```
 
-#### Gazebo
+#### PR2 + Tablis in Gazebo
 
 ```bash
-roslaunch eus_vive pr2_vive_gazebo.launch
+roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roslaunch eus_vive pr2_tablis_gazebo.launch
 ```
 
 ### Baxter + Vive
 
-#### Real Robot in JSK 73B2
+#### Baxter + Vive in JSK 73B2
 
 ```bash
 rossetip
@@ -191,29 +198,45 @@ roslaunch eus_vive baxter_vive.launch
 roslaunch eus_vive baxter_vive.launch head:=false
 ```
 
-#### Gazebo
+#### Baxter + Vive in Gazebo
 
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive vive.launch
 roslaunch eus_vive baxter_vive_gazebo.launch
+```
+
+### Baxter + Tablis
+
+#### Baxter + Tablis in JSK 73B2 or 610
+
+```bash
+rossetip
+rossetmaster baxter 
+roslaunch eus_vive baxter_tablis.launch
+```
+
+#### Baxter + Tablis in Gazebo
+
+```bash
+roslaunch baxter_gazebo baxter_world.launch
+roslaunch eus_vive baxter_tablis_gazebo.launch
 ```
 
 ### Baxter + SpaceNav
 
-#### Gazebo
-
-```bash
-roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive baxter_spacenav_gazebo.launch
-```
-
-#### Real Robot in JSK 73B2
+#### Baxter + SpaceNav in JSK 73B2
 
 ```bash
 rossetip
 rossetmaster baxter
 roslaunch eus_vive baxter_spacenav.launch
+```
+
+#### Baxter + SpaceNav in Gazebo
+
+```bash
+roslaunch baxter_gazebo baxter_world.launch
+roslaunch eus_vive baxter_spacenav_gazebo.launch
 ```
 
 ### Baxter + MoveIt!
