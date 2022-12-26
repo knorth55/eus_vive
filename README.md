@@ -31,7 +31,7 @@ This package depends on these branches below:
   - OpenVR: `1.3.22`
   - Steam VR: `1.6.10`
 
-### VR Devices
+### User interface devices
 
 - Vive
   - [x] Arm motion tracking
@@ -39,12 +39,22 @@ This package depends on these branches below:
   - [x] HMD visual interface
   - [x] Vibration interface
   - [x] Sound interface
+- Tablis
+  - [x] Arm motion tracking
+  - [x] Controller button interface
+  - [x] HMD visual interface
+  - [x] Vibration interface
+  - [x] Sound interface
+- 3D mouse
+  - [x] Arm motion tracking
+  - [x] Controller button interface
 - Oculus
   - [x] Arm motion tracking
   - [ ] Controller button interface
   - [ ] HMD visual interface
   - [ ] Vibration interface
   - [ ] Sound interface
+  
 
 ## Installation
 
