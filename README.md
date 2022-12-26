@@ -55,7 +55,6 @@ This package depends on these branches below:
   - [ ] Vibration interface
   - [ ] Sound interface
   
-
 ## Installation
 
 ### Dependency installation
