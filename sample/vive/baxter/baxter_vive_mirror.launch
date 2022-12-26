@@ -1,25 +1,36 @@
 <launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
   <arg name="vive_set" default="default" />
+  <arg name="head" default="true" />
+  <arg name="respeaker" value="true" />
+  <arg name="realsense_camera" default="false" />
+  <arg name="spherical_camera" default="true" />
+  <arg name="spherical_stereo" default="true" />
+  <arg name="republish" default="false" />
+  <arg name="lgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand" />
+  <arg name="button_toggle" default="true" />
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
-    <arg name="main" value="true" />
-    <arg name="vive" value="true" />
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
     <arg name="device" value="vive" />
     <arg name="mirror" value="true" />
-    <arg name="head" value="false" />
-    <arg name="respeaker" value="false" />
-    <arg name="twitter" value="false" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="twitter" value="true" />
     <arg name="debug" value="false" />
-    <arg name="custom_xdisplay" value="false" />
+    <arg name="custom_xdisplay" value="true" />
     <arg name="launch_baxter" value="true" />
     <arg name="launch_xdisplay" value="true" />
-    <arg name="realsense_camera" value="false" />
-    <arg name="spherical_camera" value="false" />
-    <arg name="spherical_stereo" value="false" />
-    <arg name="republish" value="false" />
-    <arg name="lgripper_type" value="parallel" />
-    <arg name="rgripper_type" value="parallel" />
-    <arg name="button_toggle" value="true" />
+    <arg name="realsense_camera" value="$(arg realsense_camera)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="republish" value="$(arg republish)" />
+    <arg name="lgripper_type" value="$(arg lgripper_type)" />
+    <arg name="rgripper_type" value="$(arg rgripper_type)" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
     <arg name="workspace_max_x" value="1300.0" />
     <arg name="workspace_min_x" value="300.0" />
     <arg name="workspace_max_y" value="750.0" />

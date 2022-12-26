@@ -2,6 +2,8 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="vive_set" default="default" />
+  <arg name="head" default="true" />
+  <arg name="mirror" default="false" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
   <arg name="button_toggle" default="true" />
@@ -10,8 +12,8 @@
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="device" value="vive" />
-    <arg name="head" value="false" />
-    <arg name="mirror" value="false" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
     <arg name="launch_baxter" value="false" />
     <arg name="display" value="false" />
     <arg name="lgripper_type" value="$(arg lgripper_type)" />
