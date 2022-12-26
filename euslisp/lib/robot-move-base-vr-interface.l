@@ -55,10 +55,12 @@
         (t nil))
       (if (or (some #'(lambda (x) (null (equal x 0))) axes)
               (some #'(lambda (x) (null (equal x 0))) buttons))
-        (send msg :header :stamp (ros::time-now))
-        (send msg :axes axes)
-        (send msg :buttons buttons)
-        (ros::publish joy-other-topic-name msg))))
+        (progn
+          (send msg :header :stamp (ros::time-now))
+          (send msg :axes axes)
+          (send msg :buttons buttons)
+          (ros::publish joy-other-topic-name msg)
+          ))))
   ;; switch joy from ps3joy to vive
   (:switch-joy (joy-topic-name)
     (let ((joy-mux-service-name "/multiple_joystick_mux/select")
