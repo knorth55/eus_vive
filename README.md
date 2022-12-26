@@ -33,28 +33,35 @@ This package depends on these branches below:
 
 ### User interface devices
 
-- Vive
-  - [x] Arm motion tracking
-  - [x] Controller button interface
-  - [x] HMD visual interface
-  - [x] Vibration interface
-  - [x] Sound interface
-- Tablis
-  - [x] Arm motion tracking
-  - [x] Controller button interface
-  - [x] HMD visual interface
-  - [x] Vibration interface
-  - [x] Sound interface
-- SpaceNav (3D mouse)
-  - [x] Arm motion tracking
-  - [x] Controller button interface
-- Oculus
-  - [x] Arm motion tracking
-  - [ ] Controller button interface
-  - [ ] HMD visual interface
-  - [ ] Vibration interface
-  - [ ] Sound interface
-  
+#### Vive
+
+- [x] Arm motion tracking
+- [x] Controller button interface
+- [x] HMD visual interface
+- [x] Vibration interface
+- [x] Sound interface
+
+#### Tablis
+
+- [x] Arm motion tracking
+- [x] Controller button interface
+- [x] HMD visual interface
+- [x] Vibration interface
+- [x] Sound interface
+
+#### SpaceNav (3D mouse)
+
+- [x] Arm motion tracking
+- [x] Controller button interface
+
+#### Oculus
+
+- [x] Arm motion tracking
+- [ ] Controller button interface
+- [ ] HMD visual interface
+- [ ] Vibration interface
+- [ ] Sound interface
+
 ## Installation
 
 ### Dependency installation
