@@ -1,6 +1,8 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="head" default="false" />
+  <arg name="vive" value="true" />
+  <arg name="vive_set" default="default" />
+  <arg name="head" default="true" />
   <arg name="button_toggle" default="true" />
   <arg name="kinfu" default="false" />
   <arg name="mirror" default="false" />
@@ -8,7 +10,7 @@
 
   <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="false" />
+    <arg name="vive" value="$(arg vive)" />
     <arg name="tablis" value="true" />
     <arg name="device" value="tablis" />
     <arg name="head" value="$(arg head)" />
@@ -20,4 +22,7 @@
     <arg name="button_toggle" value="$(arg button_toggle)" />
   </include>
 
+  <group ns="eus_vive" if="$(arg vive)">
+    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
+  </group>
 </launch>

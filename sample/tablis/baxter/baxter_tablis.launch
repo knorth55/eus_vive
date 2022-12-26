@@ -1,6 +1,8 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="head" default="false" />
+  <arg name="vive" value="true" />
+  <arg name="vive_set" default="default" />
+  <arg name="head" default="true" />
   <arg name="respeaker" value="true" />
   <arg name="mirror" default="false" />
   <arg name="realsense_camera" default="false" />
@@ -13,7 +15,7 @@
 
   <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
     <arg name="main" value="$(arg main)" />
-    <arg name="vive" value="false" />
+    <arg name="vive" value="$(arg vive)" />
     <arg name="tablis" value="true" />
     <arg name="device" value="tablis" />
     <arg name="head" value="$(arg head)" />
@@ -39,4 +41,7 @@
     <arg name="workspace_min_z" value="-150.0" />
   </include>
 
+  <group ns="eus_vive" if="$(arg vive)">
+    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
+  </group>
 </launch>
