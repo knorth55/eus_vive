@@ -22,14 +22,17 @@ This package depends on these branches below:
 
 ### Build environment
 
-- Ubuntu 16.04 + ROS Kinetic
-  - NVidia driver: `396.37`
-  - OpenVR: `1.3.22`
-  - Steam VR: `1.6.10`
-- Ubuntu 18.04 + ROS Melodic
-  - NVidia driver: `390.116`
-  - OpenVR: `1.3.22`
-  - Steam VR: `1.6.10`
+#### Ubuntu 16.04 + ROS Kinetic
+
+- NVidia driver: `396.37`
+- OpenVR: `1.3.22`
+- Steam VR: `1.6.10`
+
+#### Ubuntu 18.04 + ROS Melodic
+
+- NVidia driver: `390.116`
+- OpenVR: `1.3.22`
+- Steam VR: `1.6.10`
 
 ### User interface devices
 
