@@ -1,18 +1,19 @@
 ;; -*- mode: lisp;-*-
+
 (load "package://dragon/euslisp/quad/dragon-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 
 
-(if (not (assoc :init-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-org))
-(if (not (assoc :reset-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-org))
-(if (not (assoc :reset-arm-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-org))
-(if (not (assoc :disable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :disable (send robot-vr-interface :methods)) :disable-org))
-(if (not (assoc :enable-org (send robot-vr-interface :methods)))
-  (rplaca (assoc :enable (send robot-vr-interface :methods)) :enable-org))
+(if (not (assoc :init-dragon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :init (send robot-vr-interface :methods)) :init-dragon-org))
+(if (not (assoc :reset-dragon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-dragon-org))
+(if (not (assoc :reset-arm-dragon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :reset-arm (send robot-vr-interface :methods)) :reset-arm-dragon-org))
+(if (not (assoc :disable-dragon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :disable (send robot-vr-interface :methods)) :disable-dragon-org))
+(if (not (assoc :enable-dragon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :enable (send robot-vr-interface :methods)) :enable-dragon-org))
 
 
 (defmethod robot-vr-interface
@@ -39,13 +40,13 @@
           "/dragon/l_gripper_controller/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/dragon/r_gripper_controller/status")
-    (send* self :init-org args))
+    (send* self :init-dragon-org args))
   (:reset (&key (loop-enable t))
-    (send self :reset-org :loop-enable loop-enable :torso nil))
+    (send self :reset-dragon-org :loop-enable loop-enable :torso nil))
   (:reset-arm (arm &key (wait t))
-    (send self :reset-arm-org arm :wait wait :reset-pose :reset-manip-pose))
-  (:enable () (send self :enable-org :torso nil))
-  (:disable () (send self :disable-org :torso nil))
+    (send self :reset-arm-dragon-org arm :wait wait :reset-pose :reset-manip-pose))
+  (:enable () (send self :enable-dragon-org :torso nil))
+  (:disable () (send self :disable-dragon-org :torso nil))
   (:inverse-kinematics (arm target-coords &rest args)
     (if (eq arm :arms)
       ;; only for larm
