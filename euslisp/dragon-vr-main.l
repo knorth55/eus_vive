@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(load "package://eus_vive/euslisp/lib/dragon-spacenav-interface.l")
+(require :dragon-spacenav-interface "package://eus_vive/euslisp/lib/dragon-spacenav-interface.l")
 
 
 (defun spacenav-init (&key (loop-enable t))
