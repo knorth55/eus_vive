@@ -18,6 +18,9 @@ This package depends on these branches below:
   - [knorth55/baxter_interface@baxter-vive-control](https://github.com/knorth55/baxter_interface/tree/baxter-vive-control)
   - [pazeshun/dynamixel_motor@gripper-v6-devel](https://github.com/pazeshun/dynamixel_motor/tree/gripper-v6-devel)
 
+- For Dragon only
+  - [knorth55/jsk_aeriao_robot@drone-euslisp](https://github.com/knorth55/jsk_aerial_robot/tree/drone-euslisp)
+
 ## Tested Environment
 
 ### Build environment
@@ -122,14 +125,17 @@ cd ~/vive_ws/src
 wstool init . https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
 
 # Only for baxter users
-# wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall
-# wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
+wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall
+wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
+
+# Only for dragon users
+wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/dragon.rosinstall
 
 wstool up
 rosdep install --ignore-src --from-path . -y -r -i
 
 # Only for baxter users
-# source ~/jsk_apc_ws/devel/setup.bash
+source ~/jsk_apc_ws/devel/setup.bash
 
 cd ~/vive_ws
 catkin config
@@ -256,6 +262,15 @@ roslaunch eus_vive baxter_spacenav_gazebo.launch
 rossetip
 rossetmaster baxter
 roslaunch eus_vive baxter_moveit.launch
+```
+
+### Dragon + SpaceNav
+
+#### Dragon + SpaceNav in Gazebo
+
+```bash
+roslaunch dragon bringup.launch simulation:=true real_machine:=false headless:=false
+roslaunch eus_vive dragon_spacenav_gazebo.launch
 ```
 
 ### Demo & Experiments

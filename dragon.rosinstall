@@ -1,0 +1,16 @@
+- git:
+    local-name: jsk-ros-pkg/jsk_aerial_robot
+    uri: https://github.com/knorth55/jsk_aerial_robot.git
+    version: drone-euslisp
+- git:
+    local-name: JSKAerialRobot/aerial_robot_3rdparty
+    uri: https://github.com/JSKAerialRobot/aerial_robot_3rdparty.git
+    version: master
+- git:
+    local-name: JSKAerialRobot/kalman_filter
+    uri: https://github.com/JSKAerialRobot/kalman_filter.git
+    version: master
+- git:
+    local-name: JSKAerialRobot/sensor_interface
+    uri: https://github.com/JSKAerialRobot/sensor_interface.git
+    version: master

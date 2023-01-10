@@ -1,18 +1,17 @@
 ;; -*- mode: lisp;-*-
 
-(require :pr2-interface "package://pr2eus/pr2-interface.l")
+(require :dragon-interface "package://dragon/euslisp/quad/dragon-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
+(require :dragon-vr-interface "package://eus_vive/euslisp/lib/dragon-vr-interface.l")
 (require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
 
 
-(defclass pr2-spacenav-interface
+(defclass dragon-spacenav-interface
   :super robot-spacenav-interface
   :slots ())
 
 
-(defmethod pr2-spacenav-interface
+(defmethod dragon-spacenav-interface
   (:init (&rest args)
     ;; for spacenav
     (send self :set-val 'scale 1.0)
@@ -22,8 +21,8 @@
     (send-super* :init args)))
 
 
-(defun pr2-spacenav-init (&key (loop-enable t))
-  (pr2-init)
-  (make-pr2-irtviewer :no-window t)
-  (make-pr2-camera-model :no-window t)
-  (setq *ti* (instance pr2-spacenav-interface :init :loop-enable loop-enable)))
+(defun dragon-spacenav-init (&key (loop-enable t))
+  (dragon-init)
+  (make-dragon-irtviewer :no-window t)
+  (make-dragon-camera-model :no-window t)
+  (setq *ti* (instance dragon-spacenav-interface :init :loop-enable loop-enable)))

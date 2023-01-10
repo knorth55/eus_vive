@@ -95,40 +95,59 @@
           (if controller-right-button-p (cons controller-right-button-p right-button))))))
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
-    (let ((target-coords nil))
-      (if (and spacenav-joy-axes (eq arm control-arm))
-        (cond
-          ((or (> (abs (elt spacenav-joy-axes 0)) 0)
-               (> (abs (elt spacenav-joy-axes 1)) 0)
-               (> (abs (elt spacenav-joy-axes 2)) 0))
-           (let* ((diff-x (* spacenav-trans-scale (elt spacenav-joy-axes 0)))
-                  (diff-y (* spacenav-trans-scale (elt spacenav-joy-axes 1)))
-                  (diff-z (* spacenav-trans-scale (elt spacenav-joy-axes 2)))
-                  (trans-x (* (if mirror -1 1) diff-x))
-                  (trans-y (* (if mirror -1 1) diff-y))
-                  (trans-z diff-z))
-               (send self :update-robot-model)
-               (setq target-coords
-                     (send (send robot control-arm :end-coords) :copy-worldcoords))
-               (send target-coords :translate (float-vector trans-x trans-y trans-z) :world)))
-          ;; TODO (knorth55): implement rotation
-          ((or (> (abs (elt spacenav-joy-axes 3)) 0)
-               (> (abs (elt spacenav-joy-axes 4)) 0)
-               (> (abs (elt spacenav-joy-axes 5)) 0))
-           (let* ((diff-x (* spacenav-rot-scale (elt spacenav-joy-axes 3)))
-                  (diff-y (* spacenav-rot-scale (elt spacenav-joy-axes 4)))
-                  (diff-z (* spacenav-rot-scale (elt spacenav-joy-axes 5)))
-                  (rot-x (* (if mirror -1 1) diff-x))
-                  (rot-y (* (if mirror -1 1) diff-y))
-                  (rot-z diff-z))
-             (send self :update-robot-model)
-             (setq target-coords
-                   (send (send robot control-arm :end-coords) :copy-worldcoords))
-             (send target-coords :rotate rot-x :x :world)
-             (send target-coords :rotate rot-y :y :world)
-             (send target-coords :rotate rot-z :z :world)))
-          (t nil)))
-      target-coords)))
+    ;; TODO: support dual arm control
+    (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
+           (ref-end-coords
+             (send (send robot target-arm :end-coords) :copy-worldcoords))
+           target-coords)
+      (if (null (equal target-arm control-arm))
+        (progn
+          (ros::ros-error "Unsupported control arm: ~A" target-arm)
+          (return-from :get-target-coords nil)))
+      (send self :update-robot-model)
+      (if spacenav-joy-axes
+        (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
+               (ref-end-coords-rot (send ref-end-coords :worldrot))
+               (update-pos
+                 (or (> (abs (elt spacenav-joy-axes 0)) 0)
+                     (> (abs (elt spacenav-joy-axes 1)) 0)
+                     (> (abs (elt spacenav-joy-axes 2)) 0)))
+               (diff-target-pos
+                 (if update-pos
+                   (float-vector
+                     (* scale spacenav-trans-scale (elt spacenav-joy-axes 0))
+                     (* scale spacenav-trans-scale (elt spacenav-joy-axes 1))
+                     (* scale spacenav-trans-scale (elt spacenav-joy-axes 2)))))
+               (target-pos
+                 (if diff-target-pos
+                   (v+ ref-end-coords-pos diff-target-pos)
+                   ref-end-coords-pos))
+               (update-rot
+                 (and (null update-pos)
+                      (or (> (abs (elt spacenav-joy-axes 3)) 0)
+                          (> (abs (elt spacenav-joy-axes 4)) 0)
+                          (> (abs (elt spacenav-joy-axes 5)) 0))))
+               (diff-target-rot
+                 (if update-rot
+                   (rpy-matrix
+                     (* spacenav-rot-scale (elt spacenav-joy-axes 5))
+                     (* spacenav-rot-scale (elt spacenav-joy-axes 4))
+                     (* spacenav-rot-scale (elt spacenav-joy-axes 3)))))
+               (target-rot
+                 (if diff-target-rot
+                   (send (send (make-coords :rot ref-end-coords-rot) :transform
+                               (make-coords :rot diff-target-rot) :world)
+                         :worldrot)
+                   ref-end-coords-rot)))
+          (if mirror
+            (progn
+              (setq target-pos (send self :get-mirror-pos target-pos))
+              (setq target-rot (send self :get-mirror-rot target-rot))))
+          (setq target-coords
+                (make-coords :pos target-pos
+                             :rot target-rot))))
+      target-coords))
+  )
 
 
 (provide :robot-spacenav-interface)
