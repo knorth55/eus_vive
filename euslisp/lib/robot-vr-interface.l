@@ -607,11 +607,11 @@
               (if larm-target-coords
                 (ros::publish
                   (send self :get-arm-val :larm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (car target-coords-pair))))
+                  (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
               (if rarm-target-coords
                 (ros::publish
                   (send self :get-arm-val :rarm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (cadr target-coords-pair))))
+                  (ros::coords->tf-pose-stamped (cadr target-coords-pair) "")))
               )))
         target-coords-pair)
       (let* ((raw-target-coords
@@ -645,10 +645,10 @@
             (progn
               (ros::publish
                 (send self :get-arm-val :larm :command-pose-topic-name)
-                (ros::coords->tf-pose-stamped (car target-coords-pair)))
+                (ros::coords->tf-pose-stamped (car target-coords-pair) ""))
               (ros::publish
                 (send self :get-arm-val :rarm :command-pose-topic-name)
-                (ros::coords->tf-pose-stamped (cadr target-coords-pair)))
+                (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))
               )))
         target-coords-pair)
       ))
