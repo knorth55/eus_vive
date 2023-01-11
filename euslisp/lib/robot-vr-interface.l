@@ -57,6 +57,7 @@
           larm-collision-status-topic-name
           larm-gripper-type
           larm-loop-enable
+          larm-ref-end-coords
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -71,6 +72,7 @@
           rarm-collision-status-topic-name
           rarm-gripper-type
           rarm-loop-enable
+          rarm-ref-end-coords
           ik-stop-step
           scale
           av-tm
@@ -427,6 +429,12 @@
       (t nil)))
   (:update-robot-model ()
     (send robot :angle-vector (send robot-interface :state :potentio-vector)))
+  (:set-reference-end-coords (arm &key (update-robot-model t))
+    (if update-robot-model (send self :update-robot-model))
+    (if (send robot arm :end-coords)
+      (send self :set-arm-val arm :ref-end-coords
+            (send (send robot arm :end-coords) :copy-worldcoords)))
+    t)
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)

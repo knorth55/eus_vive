@@ -96,10 +96,11 @@
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control
-    (send self :update-robot-model)
+    (send self :set-reference-end-coords arm :update-robot-model t)
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
            (ref-end-coords
-             (send (send robot target-arm :end-coords) :copy-worldcoords))
+             (send (send self :get-arm-val target-arm :ref-end-coords)
+                   :copy-worldcoords))
            target-coords)
       (if (null (equal target-arm control-arm))
         (progn
