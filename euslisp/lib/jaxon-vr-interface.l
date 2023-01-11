@@ -17,20 +17,14 @@
     (send self :set-val 'rate 10)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *jaxon*))
-    ;; for jaxon
+    ;; jaxon frame
     (send self :set-val 'base-frame-id "BODY")
     (send self :set-val 'head-frame-id "HEAD_LINK1")
-    (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'av-tm 300)
-    (send self :set-val 'av-scale 5.0)
-    (send self :set-val 'min-time 0.3)
-    (send self :set-val 'torso-av-tm 500)
-    (send self :set-val 'torso-av-scale 1.5)
-    (send self :set-val 'torso-min-time 0.5)
-    (send self :set-val 'torso-z-thresh 100)
-    (send self :set-val 'torso-ik-weight 0.0001)
+    ;; jaxon ik
+    (send self :set-val 'arm-cb-solve-ik nil)
+    ;; jaxon gripper
     (send self :set-val 'grasp-timeout-time nil)
-    ;; for jaxon move base
+    ;; jaxon move base
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
     (send self :set-val 'vw-thresh 0.3)
@@ -42,7 +36,6 @@
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
-    (send self :set-val 'arm-cb-solve-ik nil)
 
     (send self :set-arm-val :larm :gripper-status-topic-name
           "/jaxon/l_gripper_controller/status")

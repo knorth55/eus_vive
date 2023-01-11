@@ -27,19 +27,21 @@
     (send self :set-val 'rate 10)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
-    ;; for baxter
+    ;; baxter frame
     (send self :set-val 'base-frame-id "base")
     (send self :set-val 'head-frame-id "head")
+    ;; baxter ik
+    (send self :set-val 'arm-cb-solve-ik t)
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 3.0)
     (send self :set-val 'min-time 0.3)
+    ;; baxter gripper
     (send self :set-val 'grasp-timeout-time 1.5)
     ;; baxter hardware configuration
     (send self :set-val 'arm-length 1000)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
-    (send self :set-val 'arm-cb-solve-ik t)
 
     (send self :set-arm-val :larm :gripper-status-topic-name
           "/robot/end_effector/left_gripper/gripper_action/status")

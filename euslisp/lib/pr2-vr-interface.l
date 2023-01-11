@@ -21,9 +21,11 @@
     (send self :set-val 'rate 10)
     (send self :set-val 'end-coords-pos-diff-thresh 400)
     (send self :set-val 'draw-object-list (list *pr2*))
-    ;; for pr2
+    ;; pr2 frame
     (send self :set-val 'base-frame-id "base_footprint")
     (send self :set-val 'head-frame-id "head_tilt_link")
+    ;; pr2 ik
+    (send self :set-val 'arm-cb-solve-ik t)
     (send self :set-val 'ik-stop-step 10)
     (send self :set-val 'av-tm 300)
     (send self :set-val 'av-scale 5.0)
@@ -33,8 +35,9 @@
     (send self :set-val 'torso-min-time 0.5)
     (send self :set-val 'torso-z-thresh 100)
     (send self :set-val 'torso-ik-weight 0.0001)
+    ;; pr2 gripper
     (send self :set-val 'grasp-timeout-time nil)
-    ;; for pr2 move base
+    ;; pr2 move base
     (send self :set-val 'vx-thresh 0.3)
     (send self :set-val 'vy-thresh 0.3)
     (send self :set-val 'vw-thresh 0.3)
@@ -46,7 +49,6 @@
     (send self :set-val 'arm-length 600)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
-    (send self :set-val 'arm-cb-solve-ik t)
 
     (send self :set-arm-val :larm :gripper-status-topic-name
           "/l_gripper_controller/gripper_action/status")
