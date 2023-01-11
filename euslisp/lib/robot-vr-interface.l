@@ -799,23 +799,23 @@
                  (send self :arm-cb :arms :head head :torso torso :safe safe :mirror mirror)))
           ((and larm-enable (not rarm-enable))
            (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-           (setf visualize-arm-coords
+           (setf (elt visualize-arm-coords 0)
                  (send self :arm-cb :larm :head head :torso torso :safe safe :mirror mirror)))
           ((and (not larm-enable) rarm-enable)
            (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-           (setf visualize-arm-coords
+           (setf (elt visualize-arm-coords 1)
                  (send self :arm-cb :rarm :head head :torso torso :safe safe :mirror mirror)))
           (t nil))
         (progn
           (if (and larm-enable (not (send self :grasping-p :larm)))
             (progn
               (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-              (setf visualize-arm-coords
+              (setf (elt visualize-arm-coords 0)
                     (send self :arm-cb :larm :head head :torso nil :safe safe :mirror mirror))))
           (if (and rarm-enable (not (send self :grasping-p :rarm)))
             (progn
               (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-              (setf visualize-arm-coords
+              (setf (elt visualize-arm-coords 1)
                     (send self :arm-cb :rarm :head head :torso nil :safe safe :mirror mirror))))))
       visualize-arm-coords))
   ;; motion cb
