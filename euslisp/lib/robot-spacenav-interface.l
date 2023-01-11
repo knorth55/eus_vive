@@ -96,6 +96,7 @@
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control
+    (send self :update-robot-model)
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
            (ref-end-coords
              (send (send robot target-arm :end-coords) :copy-worldcoords))
@@ -104,7 +105,6 @@
         (progn
           (ros::ros-error "Unsupported control arm: ~A" target-arm)
           (return-from :get-target-coords nil)))
-      (send self :update-robot-model)
       (if spacenav-joy-axes
         (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
                (ref-end-coords-rot (send ref-end-coords :worldrot))
