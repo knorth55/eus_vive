@@ -45,6 +45,8 @@
           "/jaxon/l_gripper_controller/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/jaxon/r_gripper_controller/status")
+    (ros::advertise larm-command-pose-topic-name geometry_msgs::PoseStamped)
+    (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
     (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
                     #'send self :ee-pose-topic-cb :larm)
     (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
