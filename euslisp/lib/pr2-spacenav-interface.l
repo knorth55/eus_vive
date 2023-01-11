@@ -5,6 +5,7 @@
 (require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
 (require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
 (require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
+(require :robot-move-base-spacenav-interface "package://eus_vive/euslisp/lib/robot-move-base-spacenav-interface.l")
 
 
 (defclass pr2-spacenav-interface
