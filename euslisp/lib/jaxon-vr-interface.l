@@ -1,5 +1,7 @@
 ;; -*- mode: lisp;-*-
 
+(ros::roseus-add-msgs "geometry_msgs")
+
 (require :jaxon-interface "package://hrpsys_ros_bridge_tutorials/euslisp/jaxon-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 (require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
@@ -41,9 +43,17 @@
           "/jaxon/l_gripper_controller/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/jaxon/r_gripper_controller/status")
+    (ros::subsribe "/slave_larm_pose" geometry_msgs::PoseStamped
+                   #'send self :ee-pose-topic-cb :larm)
+    (ros::subsribe "/slave_rarm_pose" geometry_msgs::PoseStamped
+                   #'send self :ee-pose-topic-cb :rarm)
     (send* self :init-jaxon-org args))
-  (:angle-vector (&rest args)
-    (send* robot-interface :angle-vector args))
+  (:ee-pose-stamped-cb (arm msg)
+    (send self :set-arm-val arm :ref-end-coords
+          (ros::tf-pose-stamped->coords msg)))
+  (:set-reference-end-coords (arm &key (update-robot-model t))
+    (if update-robot-model (send self :update-robot-model))
+    t)
   )
 
 
