@@ -28,19 +28,21 @@
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
   ;; redefine :base-cb
-  (:base-cb (&key (safe t) (mirror nil) (button :trigger))
+  (:base-cb (&key (safe t) (mirror nil) (button :trigger) (trackpad :trackpad))
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
           (buttons (make-list 17 :initial-element 0))
           (larm-button-p (send self :get-arm-val :larm button))
-          (rarm-button-p (send self :get-arm-val :rarm button)))
+          (rarm-button-p (send self :get-arm-val :rarm button))
+          (larm-trackpad-val (send self :get-arm-val :larm trackpad))
+          (rarm-trackpad-val (send self :get-arm-val :rarm trackpad)))
       (cond
         ((not (or larm-button-p rarm-button-p))
          (setf (elt buttons 10) 1)
          (setf (elt buttons 12)
-               (if (and larm-trackpad (not rarm-trackpad)) 1 0))
+               (if (and larm-trackpad-val (not rarm-trackpad-val)) 1 0))
          (setf (elt buttons 14)
-               (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
+               (if (and (not larm-trackpad-val) rarm-trackpad-val) 1 0)))
         ((and rarm-button-p
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
          ;; for unsafe teleop
