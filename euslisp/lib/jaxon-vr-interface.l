@@ -45,12 +45,12 @@
           "/jaxon/l_gripper_controller/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name
           "/jaxon/r_gripper_controller/status")
-    (ros::subsribe "/slave_larm_pose" geometry_msgs::PoseStamped
-                   #'send self :ee-pose-topic-cb :larm)
-    (ros::subsribe "/slave_rarm_pose" geometry_msgs::PoseStamped
-                   #'send self :ee-pose-topic-cb :rarm)
+    (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
+                    #'send self :ee-pose-topic-cb :larm)
+    (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
+                    #'send self :ee-pose-topic-cb :rarm)
     (send* self :init-jaxon-org args))
-  (:ee-pose-stamped-cb (arm msg)
+  (:ee-pose-topic-cb (arm msg)
     (send self :set-arm-val arm :ref-end-coords
           (ros::tf-pose-stamped->coords msg)))
   (:set-reference-end-coords (arm &key (update-robot-model t))

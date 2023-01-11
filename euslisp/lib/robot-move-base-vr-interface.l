@@ -21,7 +21,8 @@
   ;; redefine :reset
   (:reset (&key (loop-enable t))
     (send self :reset-move-base-org :loop-enable loop-enable)
-    (send robot-interface :clear-costmap)
+    (if (assoc :clear-costmap (send robot-interface :methods))
+      (send robot-interface :clear-costmap))
     (send self :set-val 'vx 0.0)
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
