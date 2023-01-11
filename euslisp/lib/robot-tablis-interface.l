@@ -42,6 +42,7 @@
       (if (or (null ref-tablis-coords) (null ref-end-coords))
         (progn
           (send self :set-reference-coords target-arm :update-robot-model t)
+          (send self :set-reference-tablis-coords target-arm)
           (setq ref-tablis-coords
                 (send (send self :get-arm-val target-arm :ref-tablis-coords) :copy-worldcoords))
           (setq ref-end-coords
@@ -76,14 +77,20 @@
     (if (equal arm :arms)
       (progn
         (send self :set-reference-coords :larm :update-robot-model t)
-        (send self :set-reference-coords :rarm :update-robot-model nil))
-      (send self :set-reference-coords arm :update-robot-model t))
+        (send self :set-reference-coords :rarm :update-robot-model nil)
+        (send self :set-reference-tablis-coords :larm)
+        (send self :set-reference-tablis-coords :rarm))
+      (progn
+        (send self :set-reference-coords arm :update-robot-model t)
+        (send self :set-reference-tablis-coords arm)))
     t)
-  (:set-reference-coords (arm &key (update-robot-model t))
-    (if update-robot-model (send self :update-robot-model))
+  (:set-reference-tablis-coords (arm)
     (if (send self :get-arm-val arm :tablis-coords)
       (send self :set-arm-val arm :ref-tablis-coords
             (send (send self :get-arm-val arm :tablis-coords) :copy-worldcoords)))
+    t)
+  (:set-reference-coords (arm &key (update-robot-model t))
+    (if update-robot-model (send self :update-robot-model))
     (if (send robot arm :end-coords)
       (send self :set-arm-val arm :ref-end-coords
             (send (send robot arm :end-coords) :copy-worldcoords)))
