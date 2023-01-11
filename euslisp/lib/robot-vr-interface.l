@@ -412,13 +412,17 @@
       (progn
         (ros::ros-error (format nil "Invalid args: (send self :get-arm-val ~A ~A)" arm name))
         (return-from :get-arm-val nil)))
-    (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
+    (let ((valname (format nil "~A-~A" (string-upcase arm) (string-upcase name))))
+      (if (boundp (read-from-string valname)) (send self :get-val (intern valname)))
+      ))
   (:set-arm-val (arm name val)
     (if (not (or (eq arm :larm) (eq arm :rarm)))
       (progn
         (ros::ros-error (format nil "Invalid args: (send self :set-arm-val: ~A ~A ~A)" arm name val))
         (return-from :set-arm-val nil)))
-    (send self :set-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name))) val))
+    (let ((valname (format nil "~A-~A" (string-upcase arm) (string-upcase name))))
+      (send self :set-val (intern valname) val)
+      ))
   (:get-arm-controller (arm)
     (cond
       ((eq arm :larm) :larm-controller)
