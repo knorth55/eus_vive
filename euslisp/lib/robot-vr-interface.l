@@ -58,6 +58,7 @@
           larm-gripper-type
           larm-loop-enable
           larm-ref-end-coords
+          larm-command-pose-topic-name
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -73,6 +74,7 @@
           rarm-gripper-type
           rarm-loop-enable
           rarm-ref-end-coords
+          rarm-command-pose-topic-name
           ik-stop-step
           scale
           av-tm
@@ -595,9 +597,17 @@
                          :min-time torso-min-time :scale torso-av-scale)))
                 (t nil))))
           ;; TODO: publish pose to ik server
-          (progn
-            )
-          )
+          (if (and loop-enable target-coords-pair)
+            (progn
+              (if larm-target-coords
+                (ros::publish
+                  (send self :get-arm-val :larm :command-pose-topic-name)
+                  (ros::coords->tf-pose-stamped (car target-coords-pair))))
+              (if rarm-target-coords
+                (ros::publish
+                  (send self :get-arm-val :rarm :command-pose-topic-name)
+                  (ros::coords->tf-pose-stamped (cadr target-coords-pair))))
+              )))
         target-coords-pair)
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
@@ -626,9 +636,15 @@
                     av-tm (send self :get-arm-controller arm)
                     0 :min-time min-time :scale av-scale)))
           ;; TODO: publish pose to ik server
-          (progn
-            )
-          )
+          (if (and loop-enable target-coords target-coords-pair)
+            (progn
+              (ros::publish
+                (send self :get-arm-val :larm :command-pose-topic-name)
+                (ros::coords->tf-pose-stamped (car target-coords-pair)))
+              (ros::publish
+                (send self :get-arm-val :rarm :command-pose-topic-name)
+                (ros::coords->tf-pose-stamped (cadr target-coords-pair)))
+              )))
         target-coords-pair)
       ))
   (:get-head-end-coords ()
