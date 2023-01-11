@@ -36,6 +36,8 @@
     (send self :set-val 'arm-length 1800)
     (send self :set-val 'head->shoulder-x-distance 100)
     (send self :set-val 'head->shoulder-z-distance 50)
+    (send self :set-val 'arm-cb-solve-ik t)
+
     (send self :set-arm-val :larm :gripper-status-topic-name
           "/dragon/l_gripper_controller/status")
     (send self :set-arm-val :rarm :gripper-status-topic-name

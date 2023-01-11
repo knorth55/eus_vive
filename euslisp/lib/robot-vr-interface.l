@@ -93,6 +93,7 @@
           target-coords-min-z
           head->shoulder-x-distance
           head->shoulder-z-distance
+          arm-cb-solve-ik
           ;; base
           base-enable
           joy-org-topic-name
@@ -532,58 +533,64 @@
              (rarm-target-coords
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
                  rarm-raw-target-coords))
-             (ik-target-coords
+             (target-coords-pair
                (cond
-                 ((and larm-raw-target-coords rarm-raw-target-coords)
-                  (list larm-raw-target-coords rarm-raw-target-coords))
-                 ((and larm-raw-target-coords (not rarm-raw-target-coords))
-                  (list larm-raw-target-coords
+                 ((and larm-target-coords-pair rarm-target-coords-pair)
+                  (list larm-target-coords-pair rarm-target-coords-pair))
+                 ((and larm-target-coords-pair (not rarm-target-coords-pair))
+                  (list larm-target-coords-pair
                         (send self :get-arm-val :rarm :current-end-coords)))
-                 ((and (not larm-raw-target-coords) rarm-raw-target-coords)
+                 ((and (not larm-target-coords-pair) rarm-target-coords-pair)
                   (list (send self :get-arm-val :larm :current-end-coords)
-                        rarm-raw-target-coords))
+                        rarm-target-coords-pair))
                  (t nil))))
-        (if ik-target-coords
+        (if arm-cb-solve-ik
           (progn
-            (setq torso (and torso (send self :filter-use-torso ik-target-coords)))
-            (send self :inverse-kinematics :arms ik-target-coords
-                  :use-torso
-                  (if (and torso
-                           larm-raw-target-coords
-                           rarm-raw-target-coords)
-                    torso-ik-weight)))
-          (setq ik-target-coords (list nil nil)))
-        (if loop-enable
-          (cond
-            ((and larm-target-coords rarm-target-coords)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :larm) 0
-                   :min-time min-time :scale av-scale)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :rarm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            ((and larm-target-coords (not rarm-target-coords))
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :larm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            ((and (not larm-target-coords) rarm-target-coords)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :rarm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            (t nil)))
-        ik-target-coords)
+            (if target-coords-pair
+              (progn
+                (setq torso (and torso (send self :filter-use-torso target-coords-pair)))
+                (send self :inverse-kinematics :arms target-coords-pair
+                      :use-torso
+                      (if (and torso
+                               larm-target-coords-pair
+                               rarm-target-coords-pair)
+                        torso-ik-weight)))
+              (setq target-coords-pair (list nil nil)))
+            (if loop-enable
+              (cond
+                ((and larm-target-coords rarm-target-coords)
+                 (send self :angle-vector (send robot :angle-vector)
+                       av-tm (send self :get-arm-controller :larm) 0
+                       :min-time min-time :scale av-scale)
+                 (send self :angle-vector (send robot :angle-vector)
+                       av-tm (send self :get-arm-controller :rarm) 0
+                       :min-time min-time :scale av-scale)
+                 (if torso
+                   (send self :angle-vector (send robot :angle-vector)
+                         torso-av-tm :torso-controller 0
+                         :min-time torso-min-time :scale torso-av-scale)))
+                ((and larm-target-coords (not rarm-target-coords))
+                 (send self :angle-vector (send robot :angle-vector)
+                       av-tm (send self :get-arm-controller :larm) 0
+                       :min-time min-time :scale av-scale)
+                 (if torso
+                   (send self :angle-vector (send robot :angle-vector)
+                         torso-av-tm :torso-controller 0
+                         :min-time torso-min-time :scale torso-av-scale)))
+                ((and (not larm-target-coords) rarm-target-coords)
+                 (send self :angle-vector (send robot :angle-vector)
+                       av-tm (send self :get-arm-controller :rarm) 0
+                       :min-time min-time :scale av-scale)
+                 (if torso
+                   (send self :angle-vector (send robot :angle-vector)
+                         torso-av-tm :torso-controller 0
+                         :min-time torso-min-time :scale torso-av-scale)))
+                (t nil))))
+          ;; TODO: publish pose to ik server
+          (progn
+            )
+          )
+        target-coords-pair)
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
                  (send self :get-target-coords arm :head head :mirror mirror)))
@@ -593,22 +600,29 @@
              (target-coords
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords))
-             (ik-target-coords
+             (target-coords-pair
                (cond
                  ((and raw-target-coords (eq arm :larm))
                   (list raw-target-coords opposite-arm-coords))
                  ((and raw-target-coords (eq arm :rarm))
                   (list opposite-arm-coords raw-target-coords))
                  (t nil))))
-        (if ik-target-coords
+        (if arm-cb-solve-ik
           (progn
-            (send self :inverse-kinematics :arms ik-target-coords :use-torso nil))
-          (setq ik-target-coords (list nil nil)))
-        (if (and loop-enable target-coords)
-          (send self :angle-vector (send robot :angle-vector)
-                av-tm (send self :get-arm-controller arm)
-                0 :min-time min-time :scale av-scale))
-        ik-target-coords)))
+            (if target-coords-pair
+              (progn
+                (send self :inverse-kinematics :arms target-coords-pair :use-torso nil))
+              (setq target-coords-pair (list nil nil)))
+            (if (and loop-enable target-coords)
+              (send self :angle-vector (send robot :angle-vector)
+                    av-tm (send self :get-arm-controller arm)
+                    0 :min-time min-time :scale av-scale)))
+          ;; TODO: publish pose to ik server
+          (progn
+            )
+          )
+        target-coords-pair)
+      ))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
   (:head-cb ()
