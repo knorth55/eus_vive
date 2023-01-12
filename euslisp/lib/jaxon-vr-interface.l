@@ -53,8 +53,9 @@
                     #'send self :ee-pose-topic-cb :rarm)
     (send* self :init-jaxon-org args))
   (:ee-pose-topic-cb (arm msg)
-    (send self :set-arm-val arm :ref-end-coords
-          (ros::tf-pose-stamped->coords msg)))
+    (let ((ee-coords (ros::tf-pose-stamped->coords msg)))
+      (send self :set-arm-val arm :ref-end-coords ee-coords)
+      (send self :set-arm-val arm :current-end-coords ee-coords)))
   ;; do nothing
   (:update-current-end-coords ()
     t)
