@@ -106,7 +106,7 @@
         (progn
           (ros::ros-error "Unsupported control arm: ~A" target-arm)
           (return-from :get-target-coords nil)))
-      (if spacenav-joy-axes
+      (if (some #'(lambda (x) (> (abs x) 0)) spacenav-joy-axes)
         (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
                (ref-end-coords-rot (send ref-end-coords :worldrot))
                (update-pos
