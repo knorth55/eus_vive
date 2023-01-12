@@ -817,9 +817,9 @@
      (let ((av (send robot :angle-vector)))
        (send robot :angle-vector
              (send robot-interface :state :potentio-vector))
-       (send self :set-val 'larm-current-end-coords
+       (send self :set-arm-val :larm :current-end-coords
              (send robot :larm :end-coords :copy-worldcoords))
-       (send self :set-val 'rarm-current-end-coords
+       (send self :set-arm-val :rarm :current-end-coords
              (send robot :rarm :end-coords :copy-worldcoords))
        (send robot :angle-vector av)))
   (:set-reference-end-coords (arm &key (update-robot-model t))
