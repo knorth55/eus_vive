@@ -55,8 +55,11 @@
   (:ee-pose-topic-cb (arm msg)
     (send self :set-arm-val arm :ref-end-coords
           (ros::tf-pose-stamped->coords msg)))
+  ;; do nothing
+  (:update-current-end-coords ()
+    t)
+  ;; do nothing
   (:set-reference-end-coords (arm &key (update-robot-model t))
-    (if update-robot-model (send self :update-robot-model))
     t)
   )
 
