@@ -593,18 +593,20 @@
                          torso-av-tm :torso-controller 0
                          :min-time torso-min-time :scale torso-av-scale)))
                 (t nil))))
-          ;; TODO: publish pose to ik server
-          (if (and loop-enable target-coords-pair)
-            (progn
-              (if larm-target-coords
-                (ros::publish
-                  (send self :get-arm-val :larm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
-              (if rarm-target-coords
-                (ros::publish
-                  (send self :get-arm-val :rarm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (cadr target-coords-pair) "")))
-              )))
+          (progn
+            (send self :update-robot-model)
+            (if (and loop-enable target-coords-pair)
+              (progn
+                (if larm-target-coords
+                  (ros::publish
+                    (send self :get-arm-val :larm :command-pose-topic-name)
+                    (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
+                (if rarm-target-coords
+                  (ros::publish
+                    (send self :get-arm-val :rarm :command-pose-topic-name)
+                    (ros::coords->tf-pose-stamped (cadr target-coords-pair) "")))
+                )))
+          )
         target-coords-pair)
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
@@ -632,16 +634,17 @@
               (send self :angle-vector (send robot :angle-vector)
                     av-tm (send self :get-arm-controller arm)
                     0 :min-time min-time :scale av-scale)))
-          ;; TODO: publish pose to ik server
-          (if (and loop-enable target-coords target-coords-pair)
-            (progn
-              (ros::publish
-                (send self :get-arm-val :larm :command-pose-topic-name)
-                (ros::coords->tf-pose-stamped (car target-coords-pair) ""))
-              (ros::publish
-                (send self :get-arm-val :rarm :command-pose-topic-name)
-                (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))
-              )))
+          (progn
+            (send self :update-robot-model)
+            (if (and loop-enable target-coords target-coords-pair)
+              (progn
+                (ros::publish
+                  (send self :get-arm-val :larm :command-pose-topic-name)
+                  (ros::coords->tf-pose-stamped (car target-coords-pair) ""))
+                (ros::publish
+                  (send self :get-arm-val :rarm :command-pose-topic-name)
+                  (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))
+                ))))
         target-coords-pair)
       ))
   (:get-head-end-coords ()
