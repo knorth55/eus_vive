@@ -24,6 +24,7 @@
     (send self :set-val 'head-frame-id "HEAD_LINK1")
     ;; jaxon ik
     (send self :set-val 'arm-cb-solve-ik nil)
+    (send self :set-val 'always-publish-command-pose t)
     (send self :set-arm-val :larm :command-pose-topic-name "/master_larm_pose_converted")
     (send self :set-arm-val :rarm :command-pose-topic-name "/master_rarm_pose_converted")
     ;; jaxon gripper
