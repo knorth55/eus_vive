@@ -48,4 +48,9 @@
     </group>
   </group>
 
+  <node name="lleg_slave_to_master_relay" pkg="topic_tools" type="relay"
+        args="/slave_lleg_pose /master_lleg_pose_converted" />
+  <node name="rleg_slave_to_master_relay" pkg="topic_tools" type="relay"
+        args="/slave_rleg_pose /master_rleg_pose_converted" />
+
 </launch>
