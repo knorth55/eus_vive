@@ -434,14 +434,6 @@
       ((eq arm :larm) :rarm)
       ((eq arm :rarm) :larm)
       (t nil)))
-  (:update-robot-model ()
-    (send robot :angle-vector (send robot-interface :state :potentio-vector)))
-  (:set-reference-end-coords (arm &key (update-robot-model t))
-    (if update-robot-model (send self :update-robot-model))
-    (if (send robot arm :end-coords)
-      (send self :set-arm-val arm :ref-end-coords
-            (send (send robot arm :end-coords) :copy-worldcoords)))
-    t)
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -819,6 +811,8 @@
               (ros::ros-info "arm: ~A starting" arm)))
           (send self :set-arm-val arm :enable (not enable-p))
           (send self :send-joy-feedback arm)))))
+  (:update-robot-model ()
+    (send robot :angle-vector (send robot-interface :state :potentio-vector)))
   (:update-current-end-coords ()
      (let ((av (send robot :angle-vector)))
        (send robot :angle-vector
@@ -828,6 +822,12 @@
        (send self :set-val 'rarm-current-end-coords
              (send robot :rarm :end-coords :copy-worldcoords))
        (send robot :angle-vector av)))
+  (:set-reference-end-coords (arm &key (update-robot-model t))
+    (if update-robot-model (send self :update-robot-model))
+    (if (send robot arm :end-coords)
+      (send self :set-arm-val arm :ref-end-coords
+            (send (send robot arm :end-coords) :copy-worldcoords)))
+    t)
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
