@@ -36,6 +36,10 @@
       (send self :set-val 'lleg-command-pose-topic-name "/master_lleg_pose_converted")
       (send self :set-val 'rleg-command-pose-topic-name "/master_rleg_pose_converted")
       (send self :set-val 'always-command-current-coords t)
+      (send self :set-val 'larm-feedback-pose-topic-name "/slave_larm_pose")
+      (send self :set-val 'rarm-feedback-pose-topic-name "/slave_rarm_pose")
+      (send self :set-val 'lleg-feedback-pose-topic-name "/slave_lleg_pose")
+      (send self :set-val 'rleg-feedback-pose-topic-name "/slave_rleg_pose")
       ;; jaxon gripper
       (send self :set-val 'grasp-timeout-time nil)
       ;; jaxon move base
@@ -63,13 +67,13 @@
       (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
       (ros::advertise lleg-command-pose-topic-name geometry_msgs::PoseStamped)
       (ros::advertise rleg-command-pose-topic-name geometry_msgs::PoseStamped)
-      (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
+      (ros::subscribe larm-feedback-pose-topic-name geometry_msgs::PoseStamped
                       #'send self :ee-pose-topic-cb :larm)
-      (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
+      (ros::subscribe rarm-feedback-pose-topic-name geometry_msgs::PoseStamped
                       #'send self :ee-pose-topic-cb :rarm)
-      (ros::subscribe "/slave_lleg_pose" geometry_msgs::PoseStamped
+      (ros::subscribe lleg-feedback-pose-topic-name geometry_msgs::PoseStamped
                       #'send self :ee-pose-topic-cb :lleg)
-      (ros::subscribe "/slave_rleg_pose" geometry_msgs::PoseStamped
+      (ros::subscribe rleg-feedback-pose-topic-name geometry_msgs::PoseStamped
                       #'send self :ee-pose-topic-cb :rleg)))
   (:ee-pose-topic-cb (limb msg)
     (let ((ee-coords (ros::tf-pose-stamped->coords msg)))

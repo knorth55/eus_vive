@@ -59,8 +59,10 @@
           larm-loop-enable
           larm-ref-end-coords
           larm-command-pose-topic-name
+          larm-feedback-pose-topic-name
           lleg-current-end-coords
           lleg-command-pose-topic-name
+          lleg-feedback-pose-topic-name
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -77,8 +79,10 @@
           rarm-loop-enable
           rarm-ref-end-coords
           rarm-command-pose-topic-name
+          rarm-feedback-pose-topic-name
           rleg-current-end-coords
           rleg-command-pose-topic-name
+          rleg-feedback-pose-topic-name
           always-command-current-coords
           ik-stop-step
           scale
