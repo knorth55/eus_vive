@@ -8,10 +8,10 @@
 
 (defclass robot-tablis-interface
   :super robot-vive-interface
-  :slots (left-tablis-pose-topic-name
+  :slots (larm-tablis-pose-topic-name
           larm-tablis-coords
           larm-ref-tablis-coords
-          right-tablis-pose-topic-name
+          rarm-tablis-pose-topic-name
           rarm-tablis-coords
           rarm-ref-tablis-coords
           ))
@@ -19,9 +19,9 @@
 
 (defmethod robot-tablis-interface
   (:init (&rest args)
-    (ros::subscribe left-tablis-pose-topic-name geometry_msgs::PoseStamped
+    (ros::subscribe larm-tablis-pose-topic-name geometry_msgs::PoseStamped
                     #'send self :tablis-pose-stamped-cb :larm)
-    (ros::subscribe right-tablis-pose-topic-name geometry_msgs::PoseStamped
+    (ros::subscribe rarm-tablis-pose-topic-name geometry_msgs::PoseStamped
                     #'send self :tablis-pose-stamped-cb :rarm)
     (send-super* :init args))
   (:tablis-pose-stamped-cb (arm msg)

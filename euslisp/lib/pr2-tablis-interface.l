@@ -23,8 +23,8 @@
     (send self :set-val 'menu-wait-count 5)
     (send self :set-val 'trackpad-wait-count 5)
     (send self :set-val 'grip-wait-count 5)
-    (send self :set-val 'left-tablis-pose-topic-name "/master_larm_pose")
-    (send self :set-val 'right-tablis-pose-topic-name "/master_rarm_pose")
+    (send self :set-val 'larm-tablis-pose-topic-name "/master_larm_pose")
+    (send self :set-val 'rarm-tablis-pose-topic-name "/master_rarm_pose")
     (send-super* :init args)))
 
 
