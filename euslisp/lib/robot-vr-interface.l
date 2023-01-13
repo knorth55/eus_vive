@@ -612,6 +612,8 @@
                                 rarm-command-target-coords))
                          (t nil))))
             (send self :update-robot-model)
+            (if always-publish-command-pose (setq larm-target-coords t))
+            (if always-publish-command-pose (setq rarm-target-coords t))
             (if (and loop-enable target-coords-pair)
               (progn
                 (if larm-target-coords
