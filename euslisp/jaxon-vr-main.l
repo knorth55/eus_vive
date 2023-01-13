@@ -1,6 +1,7 @@
 #!/usr/bin/env roseus
 
 (require :jaxon-spacenav-interface "package://eus_vive/euslisp/lib/jaxon-spacenav-interface.l")
+(require :jaxon-tablis-interface "package://eus_vive/euslisp/lib/jaxon-tablis-interface.l")
 
 
 (defun spacenav-init (&key (loop-enable t))
