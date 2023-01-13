@@ -9,6 +9,9 @@
 
 (if (not (assoc :init-jaxon-org (send robot-vr-interface :methods)))
   (rplaca (assoc :init (send robot-vr-interface :methods)) :init-jaxon-org))
+(if (not (assoc :publish-command-pose-jaxon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :publish-command-pose (send robot-vr-interface :methods))
+          :publish-command-pose-jaxon-org))
 
 
 (defmethod robot-vr-interface
@@ -56,11 +59,33 @@
                     #'send self :ee-pose-topic-cb :larm)
     (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
                     #'send self :ee-pose-topic-cb :rarm)
+    (ros::subscribe "/slave_lleg_pose" geometry_msgs::PoseStamped
+                    #'send self :ee-pose-topic-cb :lleg)
+    (ros::subscribe "/slave_rleg_pose" geometry_msgs::PoseStamped
+                    #'send self :ee-pose-topic-cb :rleg)
     (send* self :init-jaxon-org args))
-  (:ee-pose-topic-cb (arm msg)
+  (:ee-pose-topic-cb (limb msg)
     (let ((ee-coords (ros::tf-pose-stamped->coords msg)))
-      (send self :set-arm-val arm :ref-end-coords ee-coords)
-      (send self :set-arm-val arm :current-end-coords ee-coords)))
+      (cond
+        ((equal limb :larm)
+         (send self :set-val 'larm-ref-end-coords ee-coords)
+         (send self :set-val 'larm-current-end-coords ee-coords))
+        ((equal limb :rarm)
+         (send self :set-val 'rarm-ref-end-coords ee-coords)
+         (send self :set-val 'rarm-current-end-coords ee-coords))
+        ((equal limb :lleg)
+         (send self :set-val 'lleg-current-end-coords ee-coords))
+        ((equal limb :rleg)
+         (send self :set-val 'rleg-current-end-coords ee-coords))
+        (t nil))))
+  (:publish-command-pose (target-coords-pair)
+    (send self :publish-command-pose-jaxon-org target-coords-pair)
+    (if lleg-current-end-coords
+      (ros::publish lleg-command-pose-topic-name
+        (ros::coords->tf-pose-stamped lleg-current-end-coords "")))
+    (if rleg-current-end-coords
+      (ros::publish rleg-command-pose-topic-name
+        (ros::coords->tf-pose-stamped rleg-current-end-coords ""))))
   ;; do nothing
   (:update-current-end-coords ()
     t)

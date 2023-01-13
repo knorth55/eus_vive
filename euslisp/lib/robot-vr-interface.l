@@ -59,6 +59,7 @@
           larm-loop-enable
           larm-ref-end-coords
           larm-command-pose-topic-name
+          lleg-current-end-coords
           lleg-command-pose-topic-name
           rarm-enable
           rarm-grasp
@@ -76,6 +77,7 @@
           rarm-loop-enable
           rarm-ref-end-coords
           rarm-command-pose-topic-name
+          rleg-current-end-coords
           rleg-command-pose-topic-name
           always-command-current-coords
           ik-stop-step
@@ -660,12 +662,10 @@
       (t nil)))
   (:publish-command-pose (target-coords-pair)
     (if (car target-coords-pair)
-      (ros::publish
-        (send self :get-val 'larm-command-pose-topic-name)
+      (ros::publish larm-command-pose-topic-name
         (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
     (if (cadr target-coords-pair)
-      (ros::publish
-        (send self :get-val 'rarm-command-pose-topic-name)
+      (ros::publish rarm-command-pose-topic-name
         (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
