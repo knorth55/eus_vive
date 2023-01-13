@@ -615,15 +615,9 @@
             (if always-publish-command-pose (setq larm-target-coords t))
             (if always-publish-command-pose (setq rarm-target-coords t))
             (if (and loop-enable target-coords-pair)
-              (progn
-                (if larm-target-coords
-                  (ros::publish
-                    (send self :get-arm-val :larm :command-pose-topic-name)
-                    (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
-                (if rarm-target-coords
-                  (ros::publish
-                    (send self :get-arm-val :rarm :command-pose-topic-name)
-                    (ros::coords->tf-pose-stamped (cadr target-coords-pair) "")))))
+              (send self :publish-command-pose
+                    (list (if larm-target-coords (car target-coords-pair))
+                          (if rarm-target-coords (cadr target-coords-pair)))))
             target-coord-pair)))
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
@@ -663,14 +657,17 @@
             (if always-publish-command-pose (setq target-coords t))
             (send self :update-robot-model)
             (if (and loop-enable target-coords target-coords-pair)
-              (progn
-                (ros::publish
-                  (send self :get-arm-val :larm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (car target-coords-pair) ""))
-                (ros::publish
-                  (send self :get-arm-val :rarm :command-pose-topic-name)
-                  (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))))
+              (send self :publish-command-pose target-coords-pair))
             target-coords-pair)))))
+  (:publish-command-pose (target-coords-pair)
+    (if (car target-coords-pair)
+      (ros::publish
+        (send self :get-val 'larm-command-pose-topic-name)
+        (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
+    (if (cadr target-coords-pair)
+      (ros::publish
+        (send self :get-val 'rarm-command-pose-topic-name)
+        (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
   (:head-cb ()
