@@ -13,11 +13,12 @@
 
 (defmethod robot-vr-interface
   (:init (&rest args)
-    (send* self :init-move-base-org args)
-    ;; for move base
-    (send self :set-val 'joy-org-topic-name "/joy_org")
-    (send self :set-val 'joy-other-topic-name "/joy_other")
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
+    (prog1
+      (send* self :init-move-base-org args)
+      ;; for move base
+      (send self :set-val 'joy-org-topic-name "/joy_org")
+      (send self :set-val 'joy-other-topic-name "/joy_other")
+      (ros::advertise joy-other-topic-name sensor_msgs::Joy 1)))
   ;; redefine :reset
   (:reset (&key (loop-enable t))
     (send self :reset-move-base-org :loop-enable loop-enable)

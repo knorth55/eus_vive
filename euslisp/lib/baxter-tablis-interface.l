@@ -16,15 +16,16 @@
 
 (defmethod baxter-tablis-interface
   (:init (&rest args)
-    ;; for tablis
-    (send self :set-val 'scale 1.0)
-    (send self :set-val 'trigger-wait-count 5)
-    (send self :set-val 'menu-wait-count 5)
-    (send self :set-val 'trackpad-wait-count 5)
-    (send self :set-val 'grip-wait-count 5)
-    (send self :set-val 'larm-tablis-pose-topic-name "/master_larm_pose")
-    (send self :set-val 'rarm-tablis-pose-topic-name "/master_rarm_pose")
-    (send-super* :init args))
+    (prog1
+      (send-super* :init args)
+      ;; for tablis
+      (send self :set-val 'scale 1.0)
+      (send self :set-val 'trigger-wait-count 5)
+      (send self :set-val 'menu-wait-count 5)
+      (send self :set-val 'trackpad-wait-count 5)
+      (send self :set-val 'grip-wait-count 5)
+      (send self :set-val 'larm-tablis-pose-topic-name "/master_larm_pose")
+      (send self :set-val 'rarm-tablis-pose-topic-name "/master_rarm_pose")))
   (:get-hmd->tablis-coords (arm)
     (let* ((coords (send-super :get-hmd->tablis-coords arm))
            (btablis->hmd-coords (send self :get-btablis->hmd-coords))

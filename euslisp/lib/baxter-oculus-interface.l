@@ -15,12 +15,13 @@
 
 (defmethod baxter-oculus-interface
   (:init (&rest args)
-    ;; for oculus
-    (send self :set-val 'scale 3.0)
-    (send self :set-val 'hmd-pose-topic-name "/oculus/hmd/pose_stamped")
-    (send self :set-val 'left-controller-pose-topic-name "/oculus/left_controller/pose_stamped")
-    (send self :set-val 'right-controller-pose-topic-name "/oculus/right_controller/pose_stamped")
-    (send-super* :init args)))
+    (prog1
+      (send-super* :init args)
+      ;; for oculus
+      (send self :set-val 'scale 3.0)
+      (send self :set-val 'hmd-pose-topic-name "/oculus/hmd/pose_stamped")
+      (send self :set-val 'left-controller-pose-topic-name "/oculus/left_controller/pose_stamped")
+      (send self :set-val 'right-controller-pose-topic-name "/oculus/right_controller/pose_stamped"))))
 
 
 (defun baxter-oculus-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))

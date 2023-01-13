@@ -15,14 +15,15 @@
 
 (defmethod baxter-spacenav-interface
   (:init (&rest args)
-    ;; for spacenav
-    (send self :set-val 'scale 1.0)
-    (send self :set-val 'left-button-wait-count 10)
-    (send self :set-val 'right-button-wait-count 10)
-    (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
-    (send-super* :init args)
-    ;; override to control rarm
-    (send self :set-val 'control-arm :rarm))
+    (prog1
+      (send-super* :init args)
+      ;; for spacenav
+      (send self :set-val 'scale 1.0)
+      (send self :set-val 'left-button-wait-count 10)
+      (send self :set-val 'right-button-wait-count 10)
+      (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
+      ;; override to control rarm
+      (send self :set-val 'control-arm :rarm)))
   (:arm-motion-cb (&rest args &key (mirror nil) (thumb-rotate-button nil) &allow-other-keys)
     (send-super* :arm-motion-cb :mirror mirror :thumb-rotate-button thumb-rotate-button args)))
 

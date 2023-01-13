@@ -21,38 +21,39 @@
 
 (defmethod robot-vr-interface
   (:init (&rest args)
-    (send self :set-val 'robot *baxter*)
-    (send self :set-val 'robot-interface *ri*)
-    (send self :set-val 'camera-model *camera-model*)
-    (send self :set-val 'rate 10)
-    (send self :set-val 'end-coords-pos-diff-thresh 400)
-    (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
-    ;; baxter frame
-    (send self :set-val 'base-frame-id "base")
-    (send self :set-val 'head-frame-id "head")
-    ;; baxter ik
-    (send self :set-val 'arm-cb-solve-ik t)
-    (send self :set-val 'ik-stop-step 10)
-    (send self :set-val 'av-tm 300)
-    (send self :set-val 'av-scale 3.0)
-    (send self :set-val 'min-time 0.3)
-    ;; baxter gripper
-    (send self :set-val 'grasp-timeout-time 1.5)
-    ;; baxter hardware configuration
-    (send self :set-val 'arm-length 1000)
-    (send self :set-val 'head->shoulder-x-distance 100)
-    (send self :set-val 'head->shoulder-z-distance 50)
+    (prog1
+      (send* self :init-baxter-org args)
+      (send self :set-val 'robot *baxter*)
+      (send self :set-val 'robot-interface *ri*)
+      (send self :set-val 'camera-model *camera-model*)
+      (send self :set-val 'rate 10)
+      (send self :set-val 'end-coords-pos-diff-thresh 400)
+      (send self :set-val 'draw-object-list (list *baxter* *background-cube*))
+      ;; baxter frame
+      (send self :set-val 'base-frame-id "base")
+      (send self :set-val 'head-frame-id "head")
+      ;; baxter ik
+      (send self :set-val 'arm-cb-solve-ik t)
+      (send self :set-val 'ik-stop-step 10)
+      (send self :set-val 'av-tm 300)
+      (send self :set-val 'av-scale 3.0)
+      (send self :set-val 'min-time 0.3)
+      ;; baxter gripper
+      (send self :set-val 'grasp-timeout-time 1.5)
+      ;; baxter hardware configuration
+      (send self :set-val 'arm-length 1000)
+      (send self :set-val 'head->shoulder-x-distance 100)
+      (send self :set-val 'head->shoulder-z-distance 50)
 
-    (send self :set-arm-val :larm :gripper-status-topic-name
-          "/robot/end_effector/left_gripper/gripper_action/status")
-    (send self :set-arm-val :rarm :gripper-status-topic-name
-          "/robot/end_effector/right_gripper/gripper_action/status")
-    (send self :set-arm-val :larm :collision-status-topic-name
-          "/robot/limb/left/collision_detection_state")
-    (send self :set-arm-val :rarm :collision-status-topic-name
-          "/robot/limb/right/collision_detection_state")
-    (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)
-    (send* self :init-baxter-org args))
+      (send self :set-arm-val :larm :gripper-status-topic-name
+            "/robot/end_effector/left_gripper/gripper_action/status")
+      (send self :set-arm-val :rarm :gripper-status-topic-name
+            "/robot/end_effector/right_gripper/gripper_action/status")
+      (send self :set-arm-val :larm :collision-status-topic-name
+            "/robot/limb/left/collision_detection_state")
+      (send self :set-arm-val :rarm :collision-status-topic-name
+            "/robot/limb/right/collision_detection_state")
+      (send self :set-val 'collision-status-topic-type baxter_core_msgs::CollisionDetectionState)))
   (:reset (&key (loop-enable t))
     (send self :reset-baxter-org :loop-enable loop-enable :torso nil))
   (:reset-arm (arm &key (wait t))

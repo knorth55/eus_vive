@@ -17,15 +17,16 @@
 
 (defmethod pr2-tablis-interface
   (:init (&rest args)
-    ;; for tablis
-    (send self :set-val 'scale 1.0)
-    (send self :set-val 'trigger-wait-count 5)
-    (send self :set-val 'menu-wait-count 5)
-    (send self :set-val 'trackpad-wait-count 5)
-    (send self :set-val 'grip-wait-count 5)
-    (send self :set-val 'larm-tablis-pose-topic-name "/master_larm_pose")
-    (send self :set-val 'rarm-tablis-pose-topic-name "/master_rarm_pose")
-    (send-super* :init args)))
+    (prog1
+      (send-super* :init args)
+      ;; for tablis
+      (send self :set-val 'scale 1.0)
+      (send self :set-val 'trigger-wait-count 5)
+      (send self :set-val 'menu-wait-count 5)
+      (send self :set-val 'trackpad-wait-count 5)
+      (send self :set-val 'grip-wait-count 5)
+      (send self :set-val 'larm-tablis-pose-topic-name "/master_larm_pose")
+      (send self :set-val 'rarm-tablis-pose-topic-name "/master_rarm_pose"))))
 
 
 (defun pr2-tablis-init (&key (loop-enable t))

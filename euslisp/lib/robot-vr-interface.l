@@ -214,7 +214,8 @@
                             #'send self :toggle-grasp-service)
     (ros::advertise-service eus-vive-hold-grasp-service-name std_srvs::Empty
                             #'send self :hold-grasp-service)
-    (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
+    (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1)
+    self)
   ;; fundamental methods
   (:reset-arm-val (arm)
     (send self :set-arm-val arm :enable nil)

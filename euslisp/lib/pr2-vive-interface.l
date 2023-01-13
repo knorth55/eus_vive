@@ -15,13 +15,14 @@
 
 (defmethod pr2-vive-interface
   (:init (&rest args)
-    ;; for vive
-    (send self :set-val 'scale 1.5)
-    (send self :set-val 'trigger-wait-count 5)
-    (send self :set-val 'menu-wait-count 5)
-    (send self :set-val 'trackpad-wait-count 5)
-    (send self :set-val 'grip-wait-count 5)
-    (send-super* :init args)))
+    (prog1
+      (send-super* :init args)
+      ;; for vive
+      (send self :set-val 'scale 1.5)
+      (send self :set-val 'trigger-wait-count 5)
+      (send self :set-val 'menu-wait-count 5)
+      (send self :set-val 'trackpad-wait-count 5)
+      (send self :set-val 'grip-wait-count 5))))
 
 
 (defun pr2-vive-init (&key (loop-enable t))

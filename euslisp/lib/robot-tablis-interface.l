@@ -11,21 +11,42 @@
   :slots (larm-tablis-pose-topic-name
           larm-tablis-coords
           larm-ref-tablis-coords
+          lleg-tablis-pose-topic-name
+          lleg-tablis-coords
           rarm-tablis-pose-topic-name
           rarm-tablis-coords
           rarm-ref-tablis-coords
+          rleg-tablis-pose-topic-name
+          rleg-tablis-coords
           ))
 
 
 (defmethod robot-tablis-interface
   (:init (&rest args)
-    (ros::subscribe larm-tablis-pose-topic-name geometry_msgs::PoseStamped
-                    #'send self :tablis-pose-stamped-cb :larm)
-    (ros::subscribe rarm-tablis-pose-topic-name geometry_msgs::PoseStamped
-                    #'send self :tablis-pose-stamped-cb :rarm)
-    (send-super* :init args))
-  (:tablis-pose-stamped-cb (arm msg)
-    (send self :set-arm-val arm :tablis-coords (ros::tf-pose-stamped->coords msg)))
+    (prog1
+      (send-super* :init args)
+      (ros::subscribe larm-tablis-pose-topic-name geometry_msgs::PoseStamped
+                      #'send self :tablis-pose-stamped-cb :larm)
+      (ros::subscribe rarm-tablis-pose-topic-name geometry_msgs::PoseStamped
+                      #'send self :tablis-pose-stamped-cb :rarm)
+      (if lleg-tablis-pose-topic-name
+        (ros::subscribe lleg-tablis-pose-topic-name geometry_msgs::PoseStamped
+                        #'send self :tablis-pose-stamped-cb :lleg))
+      (if rleg-tablis-pose-topic-name
+        (ros::subscribe rleg-tablis-pose-topic-name geometry_msgs::PoseStamped
+                        #'send self :tablis-pose-stamped-cb :rleg))
+      ))
+  (:tablis-pose-stamped-cb (limb msg)
+    (cond
+      ((equal limb :larm)
+       (send self :set-val 'larm-tablis-coords (ros::tf-pose-stamped->coords msg)))
+      ((equal limb :rarm)
+       (send self :set-val 'rarm-tablis-coords (ros::tf-pose-stamped->coords msg)))
+      ((equal limb :lleg)
+       (send self :set-val 'lleg-tablis-coords (ros::tf-pose-stamped->coords msg)))
+      ((equal limb :rleg)
+       (send self :set-val 'rleg-tablis-coords (ros::tf-pose-stamped->coords msg)))
+      (t nil)))
   (:get-target-coords (arm &key (head t) (mirror nil))
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
            (tablis-coords

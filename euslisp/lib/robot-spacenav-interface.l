@@ -27,20 +27,21 @@
 
 (defmethod robot-spacenav-interface
   (:init (&rest args)
-    ;; for spacenav
-    (send self :set-val 'control-arm :larm)
-    (send self :set-val 'left-button nil)
-    (send self :set-val 'left-button-count 0)
-    (send self :set-val 'prev-left-button nil)
-    (send self :set-val 'right-button nil)
-    (send self :set-val 'right-button-count 0)
-    (send self :set-val 'prev-right-button nil)
-    (send self :set-val 'spacenav-trans-scale 50)
-    (send self :set-val 'spacenav-rot-scale (/ pi 16.0))
-    (send self :set-val 'spacenav-joy-axes-threshold 0.2)
-    (ros::subscribe spacenav-joy-topic-name
-                    sensor_msgs::Joy #'send self :spacenav-joy-cb)
-    (send-super* :init args))
+    (prog1
+      (send-super* :init args)
+      ;; for spacenav
+      (send self :set-val 'control-arm :larm)
+      (send self :set-val 'left-button nil)
+      (send self :set-val 'left-button-count 0)
+      (send self :set-val 'prev-left-button nil)
+      (send self :set-val 'right-button nil)
+      (send self :set-val 'right-button-count 0)
+      (send self :set-val 'prev-right-button nil)
+      (send self :set-val 'spacenav-trans-scale 50)
+      (send self :set-val 'spacenav-rot-scale (/ pi 16.0))
+      (send self :set-val 'spacenav-joy-axes-threshold 0.2)
+      (ros::subscribe spacenav-joy-topic-name
+                      sensor_msgs::Joy #'send self :spacenav-joy-cb)))
   ;; spacenav joy callbacks
   (:spacenav-joy-cb (msg)
     (send self :spacenav-joy-axes-cb (send msg :axes))

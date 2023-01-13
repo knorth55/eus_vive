@@ -51,40 +51,40 @@
 
 (defmethod robot-vive-interface
   (:init (&rest args)
-    ;; for calibration
-    (send self :set-val 'vrbase->shoulder-x nil)
-    (send self :set-val 'vrbase->shoulder-z nil)
-    ;; for vive
-    (send self :set-val 'hmd-frame-id "hmd")
-    (send self :set-val 'vrbase-device-id (ros::get-param "/eus_vive/b_lighthouse_id"))
-    (send self :set-arm-val :larm :controller-device-id
-          (ros::get-param "/eus_vive/l_controller_id"))
-    (send self :set-arm-val :rarm :controller-device-id
-          (ros::get-param "/eus_vive/r_controller_id"))
-    (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-    (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
-
-    (if vrbase-device-id
-      (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
-      (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))
-    (if larm-controller-device-id
-      (progn
-        (send self :set-arm-val :larm :controller-frame-id
-              (format nil "controller_LHR_~A" larm-controller-device-id))
-        (ros::subscribe (format nil "/vive/~A/joy"
-                                (send self :get-arm-val :larm :controller-frame-id))
-                        sensor_msgs::Joy #'send self :controller-button-cb :larm))
-      (ros::ros-warn "param: /eus_vive/l_controller_id is not set"))
-    (if rarm-controller-device-id
-      (progn
-        (send self :set-arm-val :rarm :controller-frame-id
-              (format nil "controller_LHR_~A" rarm-controller-device-id))
-        (ros::subscribe (format nil "/vive/~A/joy"
-                                (send self :get-arm-val :rarm :controller-frame-id))
-                        sensor_msgs::Joy #'send self :controller-button-cb :rarm))
-      (ros::ros-warn "param: /eus_vive/r_controller_id is not set"))
-
-    (send-super* :init args))
+    (prog1
+      (send-super* :init args)
+      ;; for calibration
+      (send self :set-val 'vrbase->shoulder-x nil)
+      (send self :set-val 'vrbase->shoulder-z nil)
+      ;; for vive
+      (send self :set-val 'hmd-frame-id "hmd")
+      (send self :set-val 'vrbase-device-id (ros::get-param "/eus_vive/b_lighthouse_id"))
+      (send self :set-arm-val :larm :controller-device-id
+            (ros::get-param "/eus_vive/l_controller_id"))
+      (send self :set-arm-val :rarm :controller-device-id
+            (ros::get-param "/eus_vive/r_controller_id"))
+      (send self :set-val 'feedback-topic-name "/vive/set_feedback")
+      (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
+  
+      (if vrbase-device-id
+        (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
+        (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))
+      (if larm-controller-device-id
+        (progn
+          (send self :set-arm-val :larm :controller-frame-id
+                (format nil "controller_LHR_~A" larm-controller-device-id))
+          (ros::subscribe (format nil "/vive/~A/joy"
+                                  (send self :get-arm-val :larm :controller-frame-id))
+                          sensor_msgs::Joy #'send self :controller-button-cb :larm))
+        (ros::ros-warn "param: /eus_vive/l_controller_id is not set"))
+      (if rarm-controller-device-id
+        (progn
+          (send self :set-arm-val :rarm :controller-frame-id
+                (format nil "controller_LHR_~A" rarm-controller-device-id))
+          (ros::subscribe (format nil "/vive/~A/joy"
+                                  (send self :get-arm-val :rarm :controller-frame-id))
+                          sensor_msgs::Joy #'send self :controller-button-cb :rarm))
+        (ros::ros-warn "param: /eus_vive/r_controller_id is not set"))))
   ;; redefine :reset-arm-val
   (:reset-arm-val (arm)
     (send-super :reset-arm-val arm)

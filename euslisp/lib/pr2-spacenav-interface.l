@@ -15,12 +15,13 @@
 
 (defmethod pr2-spacenav-interface
   (:init (&rest args)
-    ;; for spacenav
-    (send self :set-val 'scale 1.0)
-    (send self :set-val 'left-button-wait-count 10)
-    (send self :set-val 'right-button-wait-count 10)
-    (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy")
-    (send-super* :init args)))
+    (prog1
+      (send-super* :init args)
+      ;; for spacenav
+      (send self :set-val 'scale 1.0)
+      (send self :set-val 'left-button-wait-count 10)
+      (send self :set-val 'right-button-wait-count 10)
+      (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy"))))
 
 
 (defun pr2-spacenav-init (&key (loop-enable t))

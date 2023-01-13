@@ -16,54 +16,55 @@
 
 (defmethod robot-vr-interface
   (:init (&rest args)
-    (send self :set-val 'robot *jaxon*)
-    (send self :set-val 'robot-interface *ri*)
-    (send self :set-val 'camera-model *camera-model*)
-    (send self :set-val 'rate 10)
-    (send self :set-val 'end-coords-pos-diff-thresh 400)
-    (send self :set-val 'draw-object-list (list *jaxon*))
-    ;; jaxon frame
-    (send self :set-val 'base-frame-id "BODY")
-    (send self :set-val 'head-frame-id "HEAD_LINK1")
-    ;; jaxon ik
-    (send self :set-val 'arm-cb-solve-ik nil)
-    (send self :set-val 'larm-command-pose-topic-name "/master_larm_pose_converted")
-    (send self :set-val 'rarm-command-pose-topic-name "/master_rarm_pose_converted")
-    (send self :set-val 'lleg-command-pose-topic-name "/master_lleg_pose_converted")
-    (send self :set-val 'rleg-command-pose-topic-name "/master_rleg_pose_converted")
-    (send self :set-val 'always-command-current-coords t)
-    ;; jaxon gripper
-    (send self :set-val 'grasp-timeout-time nil)
-    ;; jaxon move base
-    (send self :set-val 'vx-thresh 0.3)
-    (send self :set-val 'vy-thresh 0.3)
-    (send self :set-val 'vw-thresh 0.3)
-    (send self :set-val 'vx-scale 1.0)
-    (send self :set-val 'vy-scale 1.0)
-    (send self :set-val 'vw-scale 1.0)
-    ;; jaxon hardware configuration
-    (send self :set-val 'scale 1.5)
-    (send self :set-val 'arm-length 600)
-    (send self :set-val 'head->shoulder-x-distance 100)
-    (send self :set-val 'head->shoulder-z-distance 50)
+    (prog1
+      (send* self :init-jaxon-org args)
+      (send self :set-val 'robot *jaxon*)
+      (send self :set-val 'robot-interface *ri*)
+      (send self :set-val 'camera-model *camera-model*)
+      (send self :set-val 'rate 10)
+      (send self :set-val 'end-coords-pos-diff-thresh 400)
+      (send self :set-val 'draw-object-list (list *jaxon*))
+      ;; jaxon frame
+      (send self :set-val 'base-frame-id "BODY")
+      (send self :set-val 'head-frame-id "HEAD_LINK1")
+      ;; jaxon ik
+      (send self :set-val 'arm-cb-solve-ik nil)
+      (send self :set-val 'larm-command-pose-topic-name "/master_larm_pose_converted")
+      (send self :set-val 'rarm-command-pose-topic-name "/master_rarm_pose_converted")
+      (send self :set-val 'lleg-command-pose-topic-name "/master_lleg_pose_converted")
+      (send self :set-val 'rleg-command-pose-topic-name "/master_rleg_pose_converted")
+      (send self :set-val 'always-command-current-coords t)
+      ;; jaxon gripper
+      (send self :set-val 'grasp-timeout-time nil)
+      ;; jaxon move base
+      (send self :set-val 'vx-thresh 0.3)
+      (send self :set-val 'vy-thresh 0.3)
+      (send self :set-val 'vw-thresh 0.3)
+      (send self :set-val 'vx-scale 1.0)
+      (send self :set-val 'vy-scale 1.0)
+      (send self :set-val 'vw-scale 1.0)
+      ;; jaxon hardware configuration
+      (send self :set-val 'scale 1.5)
+      (send self :set-val 'arm-length 600)
+      (send self :set-val 'head->shoulder-x-distance 100)
+      (send self :set-val 'head->shoulder-z-distance 50)
 
-    (send self :set-arm-val :larm :gripper-status-topic-name
-          "/jaxon/l_gripper_controller/status")
-    (send self :set-arm-val :rarm :gripper-status-topic-name
-          "/jaxon/r_gripper_controller/status")
-    (ros::advertise larm-command-pose-topic-name geometry_msgs::PoseStamped)
-    (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
-    (ros::advertise lleg-command-pose-topic-name geometry_msgs::PoseStamped)
-    (ros::advertise rleg-command-pose-topic-name geometry_msgs::PoseStamped)
-    (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
-                    #'send self :ee-pose-topic-cb :larm)
-    (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
-                    #'send self :ee-pose-topic-cb :rarm)
-    (ros::subscribe "/slave_lleg_pose" geometry_msgs::PoseStamped
-                    #'send self :ee-pose-topic-cb :lleg)
-    (ros::subscribe "/slave_rleg_pose" geometry_msgs::PoseStamped
-                    #'send self :ee-pose-topic-cb :rleg)
-    (send* self :init-jaxon-org args))
+      (send self :set-arm-val :larm :gripper-status-topic-name
+            "/jaxon/l_gripper_controller/status")
+      (send self :set-arm-val :rarm :gripper-status-topic-name
+            "/jaxon/r_gripper_controller/status")
+      (ros::advertise larm-command-pose-topic-name geometry_msgs::PoseStamped)
+      (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
+      (ros::advertise lleg-command-pose-topic-name geometry_msgs::PoseStamped)
+      (ros::advertise rleg-command-pose-topic-name geometry_msgs::PoseStamped)
+      (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
+                      #'send self :ee-pose-topic-cb :larm)
+      (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped
+                      #'send self :ee-pose-topic-cb :rarm)
+      (ros::subscribe "/slave_lleg_pose" geometry_msgs::PoseStamped
+                      #'send self :ee-pose-topic-cb :lleg)
+      (ros::subscribe "/slave_rleg_pose" geometry_msgs::PoseStamped
+                      #'send self :ee-pose-topic-cb :rleg)))
   (:ee-pose-topic-cb (limb msg)
     (let ((ee-coords (ros::tf-pose-stamped->coords msg)))
       (cond
