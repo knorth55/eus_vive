@@ -44,4 +44,5 @@
   (make-baxter-irtviewer :no-window t)
   (make-baxter-camera-model :no-window t)
   (setq *ti* (instance baxter-tablis-interface :init :loop-enable loop-enable
-                       :lgripper lgripper :rgripper rgripper)))
+                       :lgripper lgripper :rgripper rgripper))
+  (send *ti* :ros-init))

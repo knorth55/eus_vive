@@ -5,6 +5,8 @@
 
 (if (not (assoc :init-move-base-org (send robot-vr-interface :methods)))
   (rplaca (assoc :init (send robot-vr-interface :methods)) :init-move-base-org))
+(if (not (assoc :ros-init-move-base-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :ros-init (send robot-vr-interface :methods)) :ros-init-move-base-org))
 (if (not (assoc :reset-move-base-org (send robot-vr-interface :methods)))
   (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-move-base-org))
 (if (not (assoc :enable-cb-move-base-org (send robot-vr-interface :methods)))
@@ -17,7 +19,10 @@
       (send* self :init-move-base-org args)
       ;; for move base
       (send self :set-val 'joy-org-topic-name "/joy_org")
-      (send self :set-val 'joy-other-topic-name "/joy_other")
+      (send self :set-val 'joy-other-topic-name "/joy_other")))
+  (:ros-init ()
+    (prog1
+      (send self :ros-init-move-base-org)
       (ros::advertise joy-other-topic-name sensor_msgs::Joy 1)))
   ;; redefine :reset
   (:reset (&key (loop-enable t))

@@ -64,11 +64,13 @@
       (send self :set-arm-val :rarm :controller-device-id
             (ros::get-param "/eus_vive/r_controller_id"))
       (send self :set-val 'feedback-topic-name "/vive/set_feedback")
-      (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
-  
       (if vrbase-device-id
         (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
-        (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))
+        (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))))
+  (:ros-init ()
+    (prog1
+      (send-super :ros-init)
+      (ros::advertise feedback-topic-name sensor_msgs::JoyFeedback 1)
       (if larm-controller-device-id
         (progn
           (send self :set-arm-val :larm :controller-frame-id

@@ -39,7 +39,10 @@
       (send self :set-val 'prev-right-button nil)
       (send self :set-val 'spacenav-trans-scale 50)
       (send self :set-val 'spacenav-rot-scale (/ pi 16.0))
-      (send self :set-val 'spacenav-joy-axes-threshold 0.2)
+      (send self :set-val 'spacenav-joy-axes-threshold 0.2)))
+  (:ros-init ()
+    (prog1
+      (send-super :ros-init)
       (ros::subscribe spacenav-joy-topic-name
                       sensor_msgs::Joy #'send self :spacenav-joy-cb)))
   ;; spacenav joy callbacks

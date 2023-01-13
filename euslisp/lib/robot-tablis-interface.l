@@ -22,9 +22,9 @@
 
 
 (defmethod robot-tablis-interface
-  (:init (&rest args)
+  (:ros-init
     (prog1
-      (send-super* :init args)
+      (send-super :ros-init)
       (ros::subscribe larm-tablis-pose-topic-name geometry_msgs::PoseStamped
                       #'send self :tablis-pose-stamped-cb :larm)
       (ros::subscribe rarm-tablis-pose-topic-name geometry_msgs::PoseStamped
@@ -34,8 +34,7 @@
                         #'send self :tablis-pose-stamped-cb :lleg))
       (if rleg-tablis-pose-topic-name
         (ros::subscribe rleg-tablis-pose-topic-name geometry_msgs::PoseStamped
-                        #'send self :tablis-pose-stamped-cb :rleg))
-      ))
+                        #'send self :tablis-pose-stamped-cb :rleg))))
   (:tablis-pose-stamped-cb (limb msg)
     (cond
       ((equal limb :larm)

@@ -28,4 +28,5 @@
   (jaxon-init)
   (make-jaxon-irtviewer :no-window t)
   (make-jaxon-camera-model :no-window t)
-  (setq *ti* (instance jaxon-spacenav-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance jaxon-spacenav-interface :init :loop-enable loop-enable))
+  (send *ti* :ros-init))

@@ -33,4 +33,5 @@
   (pr2-init)
   (make-pr2-irtviewer :no-window t)
   (make-pr2-camera-model :no-window t)
-  (setq *ti* (instance pr2-tablis-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance pr2-tablis-interface :init :loop-enable loop-enable))
+  (send *ti* :ros-init))

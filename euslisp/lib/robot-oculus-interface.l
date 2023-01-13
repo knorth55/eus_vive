@@ -18,9 +18,9 @@
 
 
 (defmethod robot-oculus-interface
-  (:init (&rest args)
+  (:ros-init ()
     (prog1
-      (send-super* :init args)
+      (send-super :ros-init)
       ;; for oculus
       (ros::subscribe hmd-pose-topic-name
                       geometry_msgs::PoseStamped #'send self :hmd-pose-cb :larm)

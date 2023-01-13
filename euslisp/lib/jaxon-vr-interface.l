@@ -9,6 +9,8 @@
 
 (if (not (assoc :init-jaxon-org (send robot-vr-interface :methods)))
   (rplaca (assoc :init (send robot-vr-interface :methods)) :init-jaxon-org))
+(if (not (assoc :ros-init-jaxon-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :ros-init (send robot-vr-interface :methods)) :ros-init-jaxon-org))
 (if (not (assoc :publish-command-pose-jaxon-org (send robot-vr-interface :methods)))
   (rplaca (assoc :publish-command-pose (send robot-vr-interface :methods))
           :publish-command-pose-jaxon-org))
@@ -53,6 +55,10 @@
             "/jaxon/l_gripper_controller/status")
       (send self :set-arm-val :rarm :gripper-status-topic-name
             "/jaxon/r_gripper_controller/status")
+      ))
+  (:ros-init ()
+    (prog1
+      (send self :ros-init-jaxon-org)
       (ros::advertise larm-command-pose-topic-name geometry_msgs::PoseStamped)
       (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
       (ros::advertise lleg-command-pose-topic-name geometry_msgs::PoseStamped)

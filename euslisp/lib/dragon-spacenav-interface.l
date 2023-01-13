@@ -26,4 +26,5 @@
   (dragon-init)
   (make-dragon-irtviewer :no-window t)
   (make-dragon-camera-model :no-window t)
-  (setq *ti* (instance dragon-spacenav-interface :init :loop-enable loop-enable)))
+  (setq *ti* (instance dragon-spacenav-interface :init :loop-enable loop-enable))
+  (send *ti* :ros-init))

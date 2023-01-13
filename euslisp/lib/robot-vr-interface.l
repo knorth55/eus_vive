@@ -155,6 +155,14 @@
     (send self :set-val 'eus-vive-hold-grasp-service-name "/eus_vive/hold_grasp")
     (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
 
+    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
+    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
+    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")
+    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_vive/right/hand_open_rate")
+    (send self :set-val 'tfl (instance ros::transform-listener :init))
+
+    self)
+  (:ros-init ()
     (ros::subscribe larm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :larm)
     (ros::subscribe rarm-gripper-status-topic-name
@@ -167,11 +175,6 @@
                         collision-status-topic-type #'send self :collision-status-cb :larm)
         (ros::subscribe rarm-collision-status-topic-name
                         collision-status-topic-type #'send self :collision-status-cb :rarm)))
-    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
-    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
-    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")
-    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_vive/right/hand_open_rate")
-    (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise larm-grasp-visualize-topic-name std_msgs::Float32 1)
@@ -215,7 +218,7 @@
     (ros::advertise-service eus-vive-hold-grasp-service-name std_srvs::Empty
                             #'send self :hold-grasp-service)
     (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1)
-    self)
+    t)
   ;; fundamental methods
   (:reset-arm-val (arm)
     (send self :set-arm-val arm :enable nil)
