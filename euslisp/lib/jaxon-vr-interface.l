@@ -24,9 +24,11 @@
     (send self :set-val 'head-frame-id "HEAD_LINK1")
     ;; jaxon ik
     (send self :set-val 'arm-cb-solve-ik nil)
-    (send self :set-val 'always-publish-command-pose t)
-    (send self :set-arm-val :larm :command-pose-topic-name "/master_larm_pose_converted")
-    (send self :set-arm-val :rarm :command-pose-topic-name "/master_rarm_pose_converted")
+    (send self :set-val 'larm-command-pose-topic-name "/master_larm_pose_converted")
+    (send self :set-val 'rarm-command-pose-topic-name "/master_rarm_pose_converted")
+    (send self :set-val 'lleg-command-pose-topic-name "/master_lleg_pose_converted")
+    (send self :set-val 'rleg-command-pose-topic-name "/master_rleg_pose_converted")
+    (send self :set-val 'always-command-current-coords t)
     ;; jaxon gripper
     (send self :set-val 'grasp-timeout-time nil)
     ;; jaxon move base
@@ -48,6 +50,8 @@
           "/jaxon/r_gripper_controller/status")
     (ros::advertise larm-command-pose-topic-name geometry_msgs::PoseStamped)
     (ros::advertise rarm-command-pose-topic-name geometry_msgs::PoseStamped)
+    (ros::advertise lleg-command-pose-topic-name geometry_msgs::PoseStamped)
+    (ros::advertise rleg-command-pose-topic-name geometry_msgs::PoseStamped)
     (ros::subscribe "/slave_larm_pose" geometry_msgs::PoseStamped
                     #'send self :ee-pose-topic-cb :larm)
     (ros::subscribe "/slave_rarm_pose" geometry_msgs::PoseStamped

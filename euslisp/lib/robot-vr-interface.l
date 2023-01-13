@@ -59,6 +59,7 @@
           larm-loop-enable
           larm-ref-end-coords
           larm-command-pose-topic-name
+          lleg-command-pose-topic-name
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -75,7 +76,8 @@
           rarm-loop-enable
           rarm-ref-end-coords
           rarm-command-pose-topic-name
-          always-publish-command-pose
+          rleg-command-pose-topic-name
+          always-command-current-coords
           ik-stop-step
           scale
           av-tm
@@ -533,25 +535,37 @@
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
                (if larm-loop-enable (send self :get-target-coords :larm :head head :mirror mirror)))
-             (larm-target-coords
+             (larm-target-coords-safe
                (if safe (send self :filter-unsafe-target-coords :larm larm-raw-target-coords)
                  larm-raw-target-coords))
              (rarm-raw-target-coords
                (if rarm-loop-enable (send self :get-target-coords :rarm :head head :mirror mirror)))
-             (rarm-target-coords
+             (rarm-target-coords-safe
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
-                 rarm-raw-target-coords)))
+                 rarm-raw-target-coords))
+             (larm-command-target-coords
+               (if (and always-command-current-coords (null larm-raw-target-coords))
+                 (send self :get-arm-val :larm :current-end-coords)
+                 larm-raw-target-coords))
+             (rarm-command-target-coords
+               (if (and always-command-current-coords (null rarm-raw-target-coords))
+                 (send self :get-arm-val :rarm :current-end-coords)
+                 rarm-raw-target-coords))
+             (target-coords-pair
+               (cond ((and larm-command-target-coords rarm-command-target-coords)
+                      (list larm-command-target-coords rarm-command-target-coords))
+                     ((and larm-command-target-coords (not rarm-command-target-coords))
+                      (list larm-command-target-coords
+                            (send self :get-arm-val :rarm :current-end-coords)))
+                     ((and (not larm-command-target-coords) rarm-command-target-coords)
+                      (list (send self :get-arm-val :larm :current-end-coords)
+                            rarm-command-target-coords))
+                     (t nil))))
         (if arm-cb-solve-ik
-          (let ((target-coords-pair
-                  (cond ((and larm-raw-target-coords rarm-raw-target-coords)
-                         (list larm-raw-target-coords rarm-raw-target-coords))
-                        ((and larm-raw-target-coords (not rarm-raw-target-coords))
-                         (list larm-raw-target-coords
-                               (send self :get-arm-val :rarm :current-end-coords)))
-                        ((and (not larm-raw-target-coords) rarm-raw-target-coords)
-                         (list (send self :get-arm-val :larm :current-end-coords)
-                               rarm-raw-target-coords))
-                        (t nil))))
+          ;; TODO: always-command-current-coords t + arm-cb-solve-ik t not tested
+          (progn
+            (if always-command-current-coords (setq larm-target-coords-safe t))
+            (if always-command-current-coords (setq rarm-target-coords-safe t))
             (if target-coords-pair
               (progn
                 (setq torso (and torso (send self :filter-use-torso target-coords-pair)))
@@ -564,101 +578,86 @@
               (setq target-coords-pair (list nil nil)))
             (if loop-enable
               (cond
-                ((and larm-target-coords rarm-target-coords)
-                 (send self :angle-vector (send robot :angle-vector)
-                       av-tm (send self :get-arm-controller :larm) 0
-                       :min-time min-time :scale av-scale)
-                 (send self :angle-vector (send robot :angle-vector)
-                       av-tm (send self :get-arm-controller :rarm) 0
-                       :min-time min-time :scale av-scale)
-                 (if torso
-                   (send self :angle-vector (send robot :angle-vector)
-                         torso-av-tm :torso-controller 0
-                         :min-time torso-min-time :scale torso-av-scale)))
-                ((and larm-target-coords (not rarm-target-coords))
-                 (send self :angle-vector (send robot :angle-vector)
-                       av-tm (send self :get-arm-controller :larm) 0
-                       :min-time min-time :scale av-scale)
-                 (if torso
-                   (send self :angle-vector (send robot :angle-vector)
-                         torso-av-tm :torso-controller 0
-                         :min-time torso-min-time :scale torso-av-scale)))
-                ((and (not larm-target-coords) rarm-target-coords)
-                 (send self :angle-vector (send robot :angle-vector)
-                       av-tm (send self :get-arm-controller :rarm) 0
-                       :min-time min-time :scale av-scale)
-                 (if torso
-                   (send self :angle-vector (send robot :angle-vector)
-                         torso-av-tm :torso-controller 0
-                         :min-time torso-min-time :scale torso-av-scale)))
-                (t nil)))
-            target-coords-pair)
-          (let* ((larm-command-target-coords
-                   (if (and always-publish-command-pose (null larm-raw-target-coords))
-                     (send self :get-arm-val :larm :current-end-coords)
-                     larm-raw-target-coords))
-                 (rarm-command-target-coords
-                   (if (and always-publish-command-pose (null rarm-raw-target-coords))
-                     (send self :get-arm-val :rarm :current-end-coords)
-                     rarm-raw-target-coords))
-                 (target-coords-pair
-                   (cond ((and larm-command-target-coords rarm-command-target-coords)
-                          (list larm-command-target-coords rarm-command-target-coords))
-                         ((and larm-command-target-coords (not rarm-command-target-coords))
-                          (list larm-command-target-coords
-                                (send self :get-arm-val :rarm :current-end-coords)))
-                         ((and (not larm-command-target-coords) rarm-command-target-coords)
-                          (list (send self :get-arm-val :larm :current-end-coords)
-                                rarm-command-target-coords))
-                         (t nil))))
+                ((and larm-target-coords-safe rarm-target-coords-safe)
+                 (send self :angle-command-vector :arms :torso torso))
+                ((and larm-target-coords-safe (not rarm-target-coords-safe))
+                 (send self :angle-command-vector :larm :torso torso))
+                ((and (not larm-target-coords-safe) rarm-target-coords-safe)
+                 (send self :angle-command-vector :rarm :torso torso))
+                (t nil))))
+          (progn
             (send self :update-robot-model)
-            (if always-publish-command-pose (setq larm-target-coords t))
-            (if always-publish-command-pose (setq rarm-target-coords t))
+            (if always-command-current-coords (setq larm-target-coords-safe t))
+            (if always-command-current-coords (setq rarm-target-coords-safe t))
             (if (and loop-enable target-coords-pair)
               (send self :publish-command-pose
-                    (list (if larm-target-coords (car target-coords-pair))
-                          (if rarm-target-coords (cadr target-coords-pair)))))
-            target-coord-pair)))
+                    (list (if larm-target-coords-safe (car target-coords-pair))
+                          (if rarm-target-coords-safe (cadr target-coords-pair)))))))
+        target-coords-pair)
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
                  (send self :get-target-coords arm :head head :mirror mirror)))
              (opposite-arm-coords
                (send self :get-arm-val (send self :get-opposite-arm arm)
                      :current-end-coords))
-             (target-coords
+             (target-coords-safe
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
-                 raw-target-coords)))
+                 raw-target-coords))
+             (command-target-coords
+               (if (and always-command-current-coords (null raw-target-coords))
+                 (send self :get-arm-val arm :current-end-coords)
+                 raw-target-coords))
+             (target-coords-pair
+               (cond ((and command-target-coords (eq arm :larm))
+                      (list command-target-coords opposite-arm-coords))
+                     ((and command-target-coords (eq arm :rarm))
+                      (list opposite-arm-coords command-target-coords))
+                     (t nil))))
         (if arm-cb-solve-ik
-          (let ((target-coords-pair
-                  (cond ((and raw-target-coords (eq arm :larm))
-                         (list raw-target-coords opposite-arm-coords))
-                        ((and raw-target-coords (eq arm :rarm))
-                         (list opposite-arm-coords raw-target-coords))
-                        (t nil))))
+          ;; TODO: always-command-current-coords t + arm-cb-solve-ik t not tested
+          (progn
             (if target-coords-pair
               (progn
                 (send self :inverse-kinematics :arms target-coords-pair :use-torso nil))
               (setq target-coords-pair (list nil nil)))
-            (if (and loop-enable target-coords)
-              (send self :angle-vector (send robot :angle-vector)
-                    av-tm (send self :get-arm-controller arm)
-                    0 :min-time min-time :scale av-scale))
-            target-coords-pair)
-          (let* ((command-target-coords
-                   (if (and always-publish-command-pose (null raw-target-coords))
-                     (send self :get-arm-val arm :current-end-coords)
-                     raw-target-coords))
-                 (target-coords-pair
-                   (cond ((and command-target-coords (eq arm :larm))
-                          (list command-target-coords opposite-arm-coords))
-                         ((and command-target-coords (eq arm :rarm))
-                          (list opposite-arm-coords command-target-coords))
-                         (t nil))))
-            (if always-publish-command-pose (setq target-coords t))
+            (if (and loop-enable target-coords-safe)
+              (send self :angle-command-vector arm :torso nil)))
+          (progn
+            (if always-command-current-coords (setq target-coords-safe t))
             (send self :update-robot-model)
-            (if (and loop-enable target-coords target-coords-pair)
-              (send self :publish-command-pose target-coords-pair))
-            target-coords-pair)))))
+            (if (and loop-enable target-coords-safe target-coords-pair)
+              (send self :publish-command-pose target-coords-pair))))
+        target-coords-pair)))
+  (:angle-command-vector (arm &key (torso t))
+    (cond
+      ((equal arm :arms)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :larm) 0
+             :min-time min-time :scale av-scale)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :rarm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      ((equal arm :larm)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :larm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      ((equal arm :rarm)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :rarm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      (t nil)))
   (:publish-command-pose (target-coords-pair)
     (if (car target-coords-pair)
       (ros::publish
