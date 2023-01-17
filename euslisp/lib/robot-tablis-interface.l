@@ -22,7 +22,7 @@
 
 
 (defmethod robot-tablis-interface
-  (:ros-init
+  (:ros-init ()
     (prog1
       (send-super :ros-init)
       (ros::subscribe larm-tablis-pose-topic-name geometry_msgs::PoseStamped
