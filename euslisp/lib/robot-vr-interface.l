@@ -125,7 +125,6 @@
 
 (defmethod robot-vr-interface
   (:init (&key (loop-enable t) (lgripper nil) (rgripper nil))
-    (send self :reset :loop-enable loop-enable)
     (send self :set-val 'larm-gripper-type lgripper)
     (send self :set-val 'rarm-gripper-type rgripper)
     ;; for workspace
@@ -167,6 +166,7 @@
 
     self)
   (:ros-init ()
+    (send self :reset :loop-enable loop-enable)
     (ros::subscribe larm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :larm)
     (ros::subscribe rarm-gripper-status-topic-name
