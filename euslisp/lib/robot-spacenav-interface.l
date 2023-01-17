@@ -100,10 +100,10 @@
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control
-    (send self :set-reference-end-coords arm :update-robot-model t)
+    (send self :update-current-end-coords)
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
-           (ref-end-coords
-             (send (send self :get-arm-val target-arm :ref-end-coords)
+           (current-end-coords
+             (send (send self :get-arm-val target-arm :current-end-coords)
                    :copy-worldcoords))
            target-coords)
       (if (null (equal target-arm control-arm))
@@ -111,8 +111,8 @@
           (ros::ros-error "Unsupported control arm: ~A" target-arm)
           (return-from :get-target-coords nil)))
       (if (some #'(lambda (x) (> (abs x) 0)) spacenav-joy-axes)
-        (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
-               (ref-end-coords-rot (send ref-end-coords :worldrot))
+        (let* ((current-end-coords-pos (send current-end-coords :worldpos))
+               (current-end-coords-rot (send current-end-coords :worldrot))
                (update-pos
                  (or (> (abs (elt spacenav-joy-axes 0)) 0)
                      (> (abs (elt spacenav-joy-axes 1)) 0)
@@ -125,8 +125,8 @@
                      (* scale spacenav-trans-scale (elt spacenav-joy-axes 2)))))
                (target-pos
                  (if diff-target-pos
-                   (v+ ref-end-coords-pos diff-target-pos)
-                   ref-end-coords-pos))
+                   (v+ current-end-coords-pos diff-target-pos)
+                   current-end-coords-pos))
                (update-rot
                  (and (null update-pos)
                       (or (> (abs (elt spacenav-joy-axes 3)) 0)
@@ -140,10 +140,10 @@
                      (* spacenav-rot-scale (elt spacenav-joy-axes 3)))))
                (target-rot
                  (if diff-target-rot
-                   (send (send (make-coords :rot ref-end-coords-rot) :transform
+                   (send (send (make-coords :rot current-end-coords-rot) :transform
                                (make-coords :rot diff-target-rot) :world)
                          :worldrot)
-                   ref-end-coords-rot)))
+                   current-end-coords-rot)))
           (if mirror
             (progn
               (setq target-pos (send self :get-mirror-pos target-pos))

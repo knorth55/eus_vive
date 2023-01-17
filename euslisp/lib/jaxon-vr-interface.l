@@ -79,10 +79,8 @@
     (let ((ee-coords (ros::tf-pose-stamped->coords msg)))
       (cond
         ((equal limb :larm)
-         (send self :set-val 'larm-ref-end-coords ee-coords)
          (send self :set-val 'larm-current-end-coords ee-coords))
         ((equal limb :rarm)
-         (send self :set-val 'rarm-ref-end-coords ee-coords)
          (send self :set-val 'rarm-current-end-coords ee-coords))
         ((equal limb :lleg)
          (send self :set-val 'lleg-current-end-coords ee-coords))
@@ -99,9 +97,6 @@
         (ros::coords->tf-pose-stamped rleg-current-end-coords ""))))
   ;; do nothing
   (:update-current-end-coords ()
-    t)
-  ;; do nothing
-  (:set-reference-end-coords (arm &key (update-robot-model t))
     t)
   )
 
