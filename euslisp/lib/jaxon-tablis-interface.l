@@ -33,27 +33,7 @@
       (send self :set-val 'rarm-command-pose-topic-name "/master_rarm_pose")
       (send self :set-val 'lleg-command-pose-topic-name "/master_lleg_pose")
       (send self :set-val 'rleg-command-pose-topic-name "/master_rleg_pose")
-      (send self :set-val 'larm-feedback-pose-topic-name "/slave_larm_pose")
-      (send self :set-val 'rarm-feedback-pose-topic-name "/slave_rarm_pose")
-      (send self :set-val 'lleg-feedback-pose-topic-name "/slave_lleg_pose")
-      (send self :set-val 'rleg-feedback-pose-topic-name "/slave_rleg_pose")
       ))
-  (:get-target-coords (arm &key (head t) (mirror nil))
-    (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
-           (tablis-coords
-             (if (send self :get-arm-val target-arm :tablis-coords)
-               (send (send self :get-arm-val target-arm :tablis-coords) :copy-worldcoords)))
-           (target-pos (send tablis-coords :worldpos))
-           (target-rot (send tablis-coords :worldrot))
-           target-coords)
-      (if mirror
-        (progn
-          (setq target-pos (send self :get-mirror-pos target-pos))
-          (setq target-rot (send self :get-mirror-pos target-rot))
-          (setq target-coords
-                (make-coords :pos target-pos :rot target-rot)))
-        (setq target-coords tablis-coords))
-      tablis-coords))
   )
 
 
