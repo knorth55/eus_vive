@@ -5,6 +5,8 @@
 
 (if (not (assoc :init-move-base-org (send robot-vr-interface :methods)))
   (rplaca (assoc :init (send robot-vr-interface :methods)) :init-move-base-org))
+(if (not (assoc :ros-init-move-base-org (send robot-vr-interface :methods)))
+  (rplaca (assoc :ros-init (send robot-vr-interface :methods)) :ros-init-move-base-org))
 (if (not (assoc :reset-move-base-org (send robot-vr-interface :methods)))
   (rplaca (assoc :reset (send robot-vr-interface :methods)) :reset-move-base-org))
 (if (not (assoc :enable-cb-move-base-org (send robot-vr-interface :methods)))
@@ -13,35 +15,44 @@
 
 (defmethod robot-vr-interface
   (:init (&rest args)
-    (send* self :init-move-base-org args)
-    ;; for move base
-    (send self :set-val 'joy-org-topic-name "/joy_org")
-    (send self :set-val 'joy-other-topic-name "/joy_other")
-    (ros::advertise joy-other-topic-name sensor_msgs::Joy 1))
+    (prog1
+      (send* self :init-move-base-org args)
+      ;; for move base
+      (send self :set-val 'joy-org-topic-name "/joy_org")
+      (send self :set-val 'joy-other-topic-name "/joy_other")))
+  (:ros-init ()
+    (prog1
+      (send self :ros-init-move-base-org)
+      (ros::advertise joy-other-topic-name sensor_msgs::Joy 1)))
   ;; redefine :reset
   (:reset (&key (loop-enable t))
     (send self :reset-move-base-org :loop-enable loop-enable)
-    (send robot-interface :clear-costmap)
+    (if (assoc :clear-costmap (send robot-interface :methods))
+      (send robot-interface :clear-costmap))
     (send self :set-val 'vx 0.0)
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
   ;; redefine :base-cb
-  (:base-cb (&key (safe t) (mirror nil))
+  (:base-cb (&key (safe t) (mirror nil) (button :trigger) (trackpad :trackpad))
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
-          (buttons (make-list 17 :initial-element 0)))
+          (buttons (make-list 17 :initial-element 0))
+          (larm-button-p (send self :get-arm-val :larm button))
+          (rarm-button-p (send self :get-arm-val :rarm button))
+          (larm-trackpad-val (send self :get-arm-val :larm trackpad))
+          (rarm-trackpad-val (send self :get-arm-val :rarm trackpad)))
       (cond
-        ((not (or larm-trigger rarm-trigger))
+        ((not (or larm-button-p rarm-button-p))
          (setf (elt buttons 10) 1)
          (setf (elt buttons 12)
-               (if (and larm-trackpad (not rarm-trackpad)) 1 0))
+               (if (and larm-trackpad-val (not rarm-trackpad-val)) 1 0))
          (setf (elt buttons 14)
-               (if (and (not larm-trackpad) rarm-trackpad) 1 0)))
-        ((and rarm-trigger
+               (if (and (not larm-trackpad-val) rarm-trackpad-val) 1 0)))
+        ((and rarm-button-p
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
          ;; for unsafe teleop
-         (if (and (not safe) larm-trigger) (setf (elt buttons 9) 1))
+         (if (and (not safe) larm-button-p) (setf (elt buttons 9) 1))
          (setf (elt buttons 10) 1)
          (setf (elt axes 3)
                (* (if mirror -1.0 1.0)

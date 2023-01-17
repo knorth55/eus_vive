@@ -27,20 +27,24 @@
 
 (defmethod robot-spacenav-interface
   (:init (&rest args)
-    ;; for spacenav
-    (send self :set-val 'control-arm :larm)
-    (send self :set-val 'left-button nil)
-    (send self :set-val 'left-button-count 0)
-    (send self :set-val 'prev-left-button nil)
-    (send self :set-val 'right-button nil)
-    (send self :set-val 'right-button-count 0)
-    (send self :set-val 'prev-right-button nil)
-    (send self :set-val 'spacenav-trans-scale 50)
-    (send self :set-val 'spacenav-rot-scale (/ pi 16.0))
-    (send self :set-val 'spacenav-joy-axes-threshold 0.2)
-    (ros::subscribe spacenav-joy-topic-name
-                    sensor_msgs::Joy #'send self :spacenav-joy-cb)
-    (send-super* :init args))
+    (prog1
+      (send-super* :init args)
+      ;; for spacenav
+      (send self :set-val 'control-arm :larm)
+      (send self :set-val 'left-button nil)
+      (send self :set-val 'left-button-count 0)
+      (send self :set-val 'prev-left-button nil)
+      (send self :set-val 'right-button nil)
+      (send self :set-val 'right-button-count 0)
+      (send self :set-val 'prev-right-button nil)
+      (send self :set-val 'spacenav-trans-scale 50)
+      (send self :set-val 'spacenav-rot-scale (/ pi 16.0))
+      (send self :set-val 'spacenav-joy-axes-threshold 0.2)))
+  (:ros-init ()
+    (prog1
+      (send-super :ros-init)
+      (ros::subscribe spacenav-joy-topic-name
+                      sensor_msgs::Joy #'send self :spacenav-joy-cb)))
   ;; spacenav joy callbacks
   (:spacenav-joy-cb (msg)
     (send self :spacenav-joy-axes-cb (send msg :axes))
@@ -96,18 +100,19 @@
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control
+    (send self :update-current-end-coords)
     (let* ((target-arm (if mirror (send self :get-opposite-arm arm) arm))
-           (ref-end-coords
-             (send (send robot target-arm :end-coords) :copy-worldcoords))
+           (current-end-coords
+             (send (send self :get-arm-val target-arm :current-end-coords)
+                   :copy-worldcoords))
            target-coords)
       (if (null (equal target-arm control-arm))
         (progn
           (ros::ros-error "Unsupported control arm: ~A" target-arm)
           (return-from :get-target-coords nil)))
-      (send self :update-robot-model)
-      (if spacenav-joy-axes
-        (let* ((ref-end-coords-pos (send ref-end-coords :worldpos))
-               (ref-end-coords-rot (send ref-end-coords :worldrot))
+      (if (some #'(lambda (x) (> (abs x) 0)) spacenav-joy-axes)
+        (let* ((current-end-coords-pos (send current-end-coords :worldpos))
+               (current-end-coords-rot (send current-end-coords :worldrot))
                (update-pos
                  (or (> (abs (elt spacenav-joy-axes 0)) 0)
                      (> (abs (elt spacenav-joy-axes 1)) 0)
@@ -120,8 +125,8 @@
                      (* scale spacenav-trans-scale (elt spacenav-joy-axes 2)))))
                (target-pos
                  (if diff-target-pos
-                   (v+ ref-end-coords-pos diff-target-pos)
-                   ref-end-coords-pos))
+                   (v+ current-end-coords-pos diff-target-pos)
+                   current-end-coords-pos))
                (update-rot
                  (and (null update-pos)
                       (or (> (abs (elt spacenav-joy-axes 3)) 0)
@@ -135,10 +140,10 @@
                      (* spacenav-rot-scale (elt spacenav-joy-axes 3)))))
                (target-rot
                  (if diff-target-rot
-                   (send (send (make-coords :rot ref-end-coords-rot) :transform
+                   (send (send (make-coords :rot current-end-coords-rot) :transform
                                (make-coords :rot diff-target-rot) :world)
                          :worldrot)
-                   ref-end-coords-rot)))
+                   current-end-coords-rot)))
           (if mirror
             (progn
               (setq target-pos (send self :get-mirror-pos target-pos))

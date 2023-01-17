@@ -18,15 +18,16 @@
 
 
 (defmethod robot-oculus-interface
-  (:init (&rest args)
-    ;; for oculus
-    (ros::subscribe hmd-pose-topic-name
-                    geometry_msgs::PoseStamped #'send self :hmd-pose-cb :larm)
-    (ros::subscribe left-controller-pose-topic-name
-                    geometry_msgs::PoseStamped #'send self :controller-pose-cb :larm)
-    (ros::subscribe right-controller-pose-topic-name
-                    geometry_msgs::PoseStamped #'send self :controller-pose-cb :rarm)
-    (send-super* :init args))
+  (:ros-init ()
+    (prog1
+      (send-super :ros-init)
+      ;; for oculus
+      (ros::subscribe hmd-pose-topic-name
+                      geometry_msgs::PoseStamped #'send self :hmd-pose-cb :larm)
+      (ros::subscribe left-controller-pose-topic-name
+                      geometry_msgs::PoseStamped #'send self :controller-pose-cb :larm)
+      (ros::subscribe right-controller-pose-topic-name
+                      geometry_msgs::PoseStamped #'send self :controller-pose-cb :rarm)))
   (:enable ()
     (send self :reset :loop-enable t)
     ;; TODO (knorth55): map oculus controller button to enable arm motion

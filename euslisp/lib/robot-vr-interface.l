@@ -57,6 +57,12 @@
           larm-collision-status-topic-name
           larm-gripper-type
           larm-loop-enable
+          larm-ref-end-coords
+          larm-command-pose-topic-name
+          larm-feedback-pose-topic-name
+          lleg-current-end-coords
+          lleg-command-pose-topic-name
+          lleg-feedback-pose-topic-name
           rarm-enable
           rarm-grasp
           rarm-grasping-p
@@ -71,6 +77,13 @@
           rarm-collision-status-topic-name
           rarm-gripper-type
           rarm-loop-enable
+          rarm-ref-end-coords
+          rarm-command-pose-topic-name
+          rarm-feedback-pose-topic-name
+          rleg-current-end-coords
+          rleg-command-pose-topic-name
+          rleg-feedback-pose-topic-name
+          always-command-current-coords
           ik-stop-step
           scale
           av-tm
@@ -93,6 +106,7 @@
           target-coords-min-z
           head->shoulder-x-distance
           head->shoulder-z-distance
+          arm-cb-solve-ik
           ;; base
           base-enable
           joy-org-topic-name
@@ -111,7 +125,6 @@
 
 (defmethod robot-vr-interface
   (:init (&key (loop-enable t) (lgripper nil) (rgripper nil))
-    (send self :reset :loop-enable loop-enable)
     (send self :set-val 'larm-gripper-type lgripper)
     (send self :set-val 'rarm-gripper-type rgripper)
     ;; for workspace
@@ -145,6 +158,15 @@
     (send self :set-val 'eus-vive-hold-grasp-service-name "/eus_vive/hold_grasp")
     (send self :set-val 'gripper-button-toggle-p (ros::get-param "/eus_vive/button_toggle" t))
 
+    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
+    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
+    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")
+    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_vive/right/hand_open_rate")
+    (send self :set-val 'tfl (instance ros::transform-listener :init))
+
+    self)
+  (:ros-init ()
+    (send self :reset :loop-enable loop-enable)
     (ros::subscribe larm-gripper-status-topic-name
                     actionlib_msgs::GoalStatusArray #'send self :gripper-status-cb :larm)
     (ros::subscribe rarm-gripper-status-topic-name
@@ -157,11 +179,6 @@
                         collision-status-topic-type #'send self :collision-status-cb :larm)
         (ros::subscribe rarm-collision-status-topic-name
                         collision-status-topic-type #'send self :collision-status-cb :rarm)))
-    (send self :set-arm-val :larm :coords-visualize-topic-name "/eus_vive/left/target_pose_stamped")
-    (send self :set-arm-val :rarm :coords-visualize-topic-name "/eus_vive/right/target_pose_stamped")
-    (send self :set-arm-val :larm :grasp-visualize-topic-name "/eus_vive/left/hand_open_rate")
-    (send self :set-arm-val :rarm :grasp-visualize-topic-name "/eus_vive/right/hand_open_rate")
-    (send self :set-val 'tfl (instance ros::transform-listener :init))
     (ros::advertise larm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise rarm-coords-visualize-topic-name geometry_msgs::PoseStamped 1)
     (ros::advertise larm-grasp-visualize-topic-name std_msgs::Float32 1)
@@ -204,7 +221,8 @@
                             #'send self :toggle-grasp-service)
     (ros::advertise-service eus-vive-hold-grasp-service-name std_srvs::Empty
                             #'send self :hold-grasp-service)
-    (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1))
+    (ros::advertise irtviewer-visualize-topic-name sensor_msgs::Image 1)
+    t)
   ;; fundamental methods
   (:reset-arm-val (arm)
     (send self :set-arm-val arm :enable nil)
@@ -407,13 +425,18 @@
       (progn
         (ros::ros-error (format nil "Invalid args: (send self :get-arm-val ~A ~A)" arm name))
         (return-from :get-arm-val nil)))
-    (send self :get-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name)))))
+    (let ((valname (format nil "~A-~A" (string-upcase arm) (string-upcase name))))
+      (if (find (read-from-string valname) (mapcar #'car (cdr (send self :slots))))
+        (send self :get-val (intern valname)))
+      ))
   (:set-arm-val (arm name val)
     (if (not (or (eq arm :larm) (eq arm :rarm)))
       (progn
         (ros::ros-error (format nil "Invalid args: (send self :set-arm-val: ~A ~A ~A)" arm name val))
         (return-from :set-arm-val nil)))
-    (send self :set-val (intern (format nil "~A-~A" (string-upcase arm) (string-upcase name))) val))
+    (let ((valname (format nil "~A-~A" (string-upcase arm) (string-upcase name))))
+      (send self :set-val (intern valname) val)
+      ))
   (:get-arm-controller (arm)
     (cond
       ((eq arm :larm) :larm-controller)
@@ -424,8 +447,6 @@
       ((eq arm :larm) :rarm)
       ((eq arm :rarm) :larm)
       (t nil)))
-  (:update-robot-model ()
-    (send robot :angle-vector (send robot-interface :state :potentio-vector)))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector args))
   (:inverse-kinematics (arm target-coords &rest args)
@@ -497,6 +518,9 @@
        (setf (elt rpy-angle 2) (* -1.0 (elt rpy-angle 2)))
        (setq mirror-coords (make-coords :rpy rpy-angle))
        (send mirror-coords :worldrot)))
+  (:get-target-coords (arm &key (head t) (mirror nil))
+    (ros::ros-error ":get-target-coords is not implemented yet.")
+    nil)
   (:get-target-coords-from-pos-rot (target-pos target-rot &key (head t) (mirror nil))
     (let* ((head-coords (send self :get-head-end-coords))
            (robot-height (elt (send head-coords :worldpos) 2))
@@ -521,91 +545,136 @@
     (if (eq arm :arms)
       (let* ((larm-raw-target-coords
                (if larm-loop-enable (send self :get-target-coords :larm :head head :mirror mirror)))
-             (larm-target-coords
+             (larm-target-coords-safe
                (if safe (send self :filter-unsafe-target-coords :larm larm-raw-target-coords)
                  larm-raw-target-coords))
              (rarm-raw-target-coords
                (if rarm-loop-enable (send self :get-target-coords :rarm :head head :mirror mirror)))
-             (rarm-target-coords
+             (rarm-target-coords-safe
                (if safe (send self :filter-unsafe-target-coords :rarm rarm-raw-target-coords)
                  rarm-raw-target-coords))
-             (ik-target-coords
-               (cond
-                 ((and larm-raw-target-coords rarm-raw-target-coords)
-                  (list larm-raw-target-coords rarm-raw-target-coords))
-                 ((and larm-raw-target-coords (not rarm-raw-target-coords))
-                  (list larm-raw-target-coords
-                        (send self :get-arm-val :rarm :current-end-coords)))
-                 ((and (not larm-raw-target-coords) rarm-raw-target-coords)
-                  (list (send self :get-arm-val :larm :current-end-coords)
-                        rarm-raw-target-coords))
-                 (t nil))))
-        (if ik-target-coords
+             (larm-command-target-coords
+               (if (and always-command-current-coords (null larm-raw-target-coords))
+                 (send self :get-arm-val :larm :current-end-coords)
+                 larm-raw-target-coords))
+             (rarm-command-target-coords
+               (if (and always-command-current-coords (null rarm-raw-target-coords))
+                 (send self :get-arm-val :rarm :current-end-coords)
+                 rarm-raw-target-coords))
+             (target-coords-pair
+               (cond ((and larm-command-target-coords rarm-command-target-coords)
+                      (list larm-command-target-coords rarm-command-target-coords))
+                     ((and larm-command-target-coords (not rarm-command-target-coords))
+                      (list larm-command-target-coords
+                            (send self :get-arm-val :rarm :current-end-coords)))
+                     ((and (not larm-command-target-coords) rarm-command-target-coords)
+                      (list (send self :get-arm-val :larm :current-end-coords)
+                            rarm-command-target-coords))
+                     (t nil))))
+        (if arm-cb-solve-ik
+          ;; TODO: always-command-current-coords t + arm-cb-solve-ik t not tested
           (progn
-            (setq torso (and torso (send self :filter-use-torso ik-target-coords)))
-            (send self :inverse-kinematics :arms ik-target-coords
-                  :use-torso
-                  (if (and torso
-                           larm-raw-target-coords
-                           rarm-raw-target-coords)
-                    torso-ik-weight)))
-          (setq ik-target-coords (list nil nil)))
-        (if loop-enable
-          (cond
-            ((and larm-target-coords rarm-target-coords)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :larm) 0
-                   :min-time min-time :scale av-scale)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :rarm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            ((and larm-target-coords (not rarm-target-coords))
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :larm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            ((and (not larm-target-coords) rarm-target-coords)
-             (send self :angle-vector (send robot :angle-vector)
-                   av-tm (send self :get-arm-controller :rarm) 0
-                   :min-time min-time :scale av-scale)
-             (if torso
-               (send self :angle-vector (send robot :angle-vector)
-                     torso-av-tm :torso-controller 0
-                     :min-time torso-min-time :scale torso-av-scale)))
-            (t nil)))
-        ik-target-coords)
+            (if always-command-current-coords (setq larm-target-coords-safe t))
+            (if always-command-current-coords (setq rarm-target-coords-safe t))
+            (if target-coords-pair
+              (progn
+                (setq torso (and torso (send self :filter-use-torso target-coords-pair)))
+                (send self :inverse-kinematics :arms target-coords-pair
+                      :use-torso
+                      (if (and torso
+                               larm-raw-target-coords
+                               rarm-raw-target-coords)
+                        torso-ik-weight)))
+              (setq target-coords-pair (list nil nil)))
+            (if loop-enable
+              (cond
+                ((and larm-target-coords-safe rarm-target-coords-safe)
+                 (send self :angle-command-vector :arms :torso torso))
+                ((and larm-target-coords-safe (not rarm-target-coords-safe))
+                 (send self :angle-command-vector :larm :torso torso))
+                ((and (not larm-target-coords-safe) rarm-target-coords-safe)
+                 (send self :angle-command-vector :rarm :torso torso))
+                (t nil))))
+          (progn
+            (send self :update-robot-model)
+            (if always-command-current-coords (setq larm-target-coords-safe t))
+            (if always-command-current-coords (setq rarm-target-coords-safe t))
+            (if (and loop-enable target-coords-pair)
+              (send self :publish-command-pose
+                    (list (if larm-target-coords-safe (car target-coords-pair))
+                          (if rarm-target-coords-safe (cadr target-coords-pair)))))))
+        target-coords-pair)
       (let* ((raw-target-coords
                (if (send self :get-arm-val arm :loop-enable)
                  (send self :get-target-coords arm :head head :mirror mirror)))
              (opposite-arm-coords
                (send self :get-arm-val (send self :get-opposite-arm arm)
                      :current-end-coords))
-             (target-coords
+             (target-coords-safe
                (if safe (send self :filter-unsafe-target-coords arm raw-target-coords)
                  raw-target-coords))
-             (ik-target-coords
-               (cond
-                 ((and raw-target-coords (eq arm :larm))
-                  (list raw-target-coords opposite-arm-coords))
-                 ((and raw-target-coords (eq arm :rarm))
-                  (list opposite-arm-coords raw-target-coords))
-                 (t nil))))
-        (if ik-target-coords
+             (command-target-coords
+               (if (and always-command-current-coords (null raw-target-coords))
+                 (send self :get-arm-val arm :current-end-coords)
+                 raw-target-coords))
+             (target-coords-pair
+               (cond ((and command-target-coords (eq arm :larm))
+                      (list command-target-coords opposite-arm-coords))
+                     ((and command-target-coords (eq arm :rarm))
+                      (list opposite-arm-coords command-target-coords))
+                     (t nil))))
+        (if arm-cb-solve-ik
+          ;; TODO: always-command-current-coords t + arm-cb-solve-ik t not tested
           (progn
-            (send self :inverse-kinematics :arms ik-target-coords :use-torso nil))
-          (setq ik-target-coords (list nil nil)))
-        (if (and loop-enable target-coords)
-          (send self :angle-vector (send robot :angle-vector)
-                av-tm (send self :get-arm-controller arm)
-                0 :min-time min-time :scale av-scale))
-        ik-target-coords)))
+            (if target-coords-pair
+              (progn
+                (send self :inverse-kinematics :arms target-coords-pair :use-torso nil))
+              (setq target-coords-pair (list nil nil)))
+            (if (and loop-enable target-coords-safe)
+              (send self :angle-command-vector arm :torso nil)))
+          (progn
+            (if always-command-current-coords (setq target-coords-safe t))
+            (send self :update-robot-model)
+            (if (and loop-enable target-coords-safe target-coords-pair)
+              (send self :publish-command-pose target-coords-pair))))
+        target-coords-pair)))
+  (:angle-command-vector (arm &key (torso t))
+    (cond
+      ((equal arm :arms)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :larm) 0
+             :min-time min-time :scale av-scale)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :rarm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      ((equal arm :larm)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :larm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      ((equal arm :rarm)
+       (send self :angle-vector (send robot :angle-vector)
+             av-tm (send self :get-arm-controller :rarm) 0
+             :min-time min-time :scale av-scale)
+       (if torso
+         (send self :angle-vector (send robot :angle-vector)
+               torso-av-tm :torso-controller 0
+               :min-time torso-min-time :scale torso-av-scale)))
+      (t nil)))
+  (:publish-command-pose (target-coords-pair)
+    (if (car target-coords-pair)
+      (ros::publish larm-command-pose-topic-name
+        (ros::coords->tf-pose-stamped (car target-coords-pair) "")))
+    (if (cadr target-coords-pair)
+      (ros::publish rarm-command-pose-topic-name
+        (ros::coords->tf-pose-stamped (cadr target-coords-pair) ""))))
   (:get-head-end-coords ()
     (send (send robot :head :end-coords) :copy-worldcoords))
   (:head-cb ()
@@ -773,15 +842,23 @@
               (ros::ros-info "arm: ~A starting" arm)))
           (send self :set-arm-val arm :enable (not enable-p))
           (send self :send-joy-feedback arm)))))
+  (:update-robot-model ()
+    (send robot :angle-vector (send robot-interface :state :potentio-vector)))
   (:update-current-end-coords ()
      (let ((av (send robot :angle-vector)))
        (send robot :angle-vector
              (send robot-interface :state :potentio-vector))
-       (send self :set-val 'larm-current-end-coords
+       (send self :set-arm-val :larm :current-end-coords
              (send robot :larm :end-coords :copy-worldcoords))
-       (send self :set-val 'rarm-current-end-coords
+       (send self :set-arm-val :rarm :current-end-coords
              (send robot :rarm :end-coords :copy-worldcoords))
        (send robot :angle-vector av)))
+  (:set-reference-end-coords (arm &key (update-robot-model t))
+    (if update-robot-model (send self :update-robot-model))
+    (if (send robot arm :end-coords)
+      (send self :set-arm-val arm :ref-end-coords
+            (send (send robot arm :end-coords) :copy-worldcoords)))
+    t)
   (:grasping-p (arm)
      (and (send self :get-arm-val arm :grasping-p)
           (not (send self :get-arm-val arm :grasp-timeout-p))))
@@ -799,23 +876,23 @@
                  (send self :arm-cb :arms :head head :torso torso :safe safe :mirror mirror)))
           ((and larm-enable (not rarm-enable))
            (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-           (setf visualize-arm-coords
+           (setq visualize-arm-coords
                  (send self :arm-cb :larm :head head :torso torso :safe safe :mirror mirror)))
           ((and (not larm-enable) rarm-enable)
            (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-           (setf visualize-arm-coords
+           (setq visualize-arm-coords
                  (send self :arm-cb :rarm :head head :torso torso :safe safe :mirror mirror)))
           (t nil))
         (progn
           (if (and larm-enable (not (send self :grasping-p :larm)))
             (progn
               (send self :gripper-cb :larm :mirror mirror :button gripper-button)
-              (setf visualize-arm-coords
+              (setq visualize-arm-coords
                     (send self :arm-cb :larm :head head :torso nil :safe safe :mirror mirror))))
           (if (and rarm-enable (not (send self :grasping-p :rarm)))
             (progn
               (send self :gripper-cb :rarm :mirror mirror :button gripper-button)
-              (setf visualize-arm-coords
+              (setq visualize-arm-coords
                     (send self :arm-cb :rarm :head head :torso nil :safe safe :mirror mirror))))))
       visualize-arm-coords))
   ;; motion cb

@@ -1,19 +1,19 @@
 ;; -*- mode: lisp;-*-
 
-(require :pr2-interface "package://pr2eus/pr2-interface.l")
+(require :jaxon-interface "package://hrpsys_ros_bridge_tutorials/euslisp/jaxon-interface.l")
 (require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
 (require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
+(require :jaxon-vr-interface "package://eus_vive/euslisp/lib/jaxon-vr-interface.l")
 (require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
 (require :robot-move-base-spacenav-interface "package://eus_vive/euslisp/lib/robot-move-base-spacenav-interface.l")
 
 
-(defclass pr2-spacenav-interface
+(defclass jaxon-spacenav-interface
   :super robot-spacenav-interface
   :slots ())
 
 
-(defmethod pr2-spacenav-interface
+(defmethod jaxon-spacenav-interface
   (:init (&rest args)
     (prog1
       (send-super* :init args)
@@ -24,9 +24,9 @@
       (send self :set-val 'spacenav-joy-topic-name "/spacenav/joy"))))
 
 
-(defun pr2-spacenav-init (&key (loop-enable t))
-  (pr2-init)
-  (make-pr2-irtviewer :no-window t)
-  (make-pr2-camera-model :no-window t)
-  (setq *ti* (instance pr2-spacenav-interface :init :loop-enable loop-enable))
+(defun jaxon-spacenav-init (&key (loop-enable t))
+  (jaxon-init)
+  (make-jaxon-irtviewer :no-window t)
+  (make-jaxon-camera-model :no-window t)
+  (setq *ti* (instance jaxon-spacenav-interface :init :loop-enable loop-enable))
   (send *ti* :ros-init))

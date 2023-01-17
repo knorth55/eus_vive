@@ -15,13 +15,14 @@
 
 (defmethod baxter-vive-interface
   (:init (&rest args)
-    ;; for vive
-    (send self :set-val 'scale 3.0)
-    (send self :set-val 'trigger-wait-count 5)
-    (send self :set-val 'menu-wait-count 5)
-    (send self :set-val 'trackpad-wait-count 5)
-    (send self :set-val 'grip-wait-count 5)
-    (send-super* :init args))
+    (prog1
+      (send-super* :init args)
+      ;; for vive
+      (send self :set-val 'scale 3.0)
+      (send self :set-val 'trigger-wait-count 5)
+      (send self :set-val 'menu-wait-count 5)
+      (send self :set-val 'trackpad-wait-count 5)
+      (send self :set-val 'grip-wait-count 5)))
   (:get-hmd->vive-coords (arm)
     (let* ((coords (send-super :get-hmd->vive-coords arm))
            (bvive->hmd-coords (send self :get-bvive->hmd-coords))
@@ -40,4 +41,5 @@
   (make-baxter-irtviewer :no-window t)
   (make-baxter-camera-model :no-window t)
   (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable
-                       :lgripper lgripper :rgripper rgripper)))
+                       :lgripper lgripper :rgripper rgripper))
+  (send *ti* :ros-init))

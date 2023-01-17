@@ -179,11 +179,13 @@ roslaunch eus_vive pr2_vive.launch head:=false
 #### PR2 + Vive in Gazebo
 
 ```bash
-roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roslaunch pr2_gazebo pr2_empty_world.launch
 roslaunch eus_vive pr2_vive_gazebo.launch
 ```
 
 ### PR2 + Tablis
+
+https://user-images.githubusercontent.com/9300063/208720417-176d698e-3789-42a8-931f-2a9fc9e062a0.mp4
 
 #### PR2 + Tablis in JSK 73B2 or 610
 
@@ -195,8 +197,29 @@ roslaunch eus_vive pr2_tablis.launch
 
 #### PR2 + Tablis in Gazebo
 
+##### Launch Tablis in Choreonoid
+
 ```bash
-roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roscd biped_wbms_tablis/scripts
+./start-tablis-sim.sh
+./start-bridge-sim.sh
+
+ipython -i tablis_setup.py
+hcf.servoOn()
+hcf.hc_svc.startHapticsController()
+```
+
+##### Launch bridge
+
+```bash
+roscd biped_wbms_tablis/scripts
+./start-bridge-sim.sh
+```
+
+##### Launch PR2 in Gazebo
+
+```bash
+roslaunch pr2_gazebo pr2_empty_world.launch
 roslaunch eus_vive pr2_tablis_gazebo.launch
 ```
 
@@ -222,15 +245,37 @@ roslaunch eus_vive baxter_vive_gazebo.launch
 
 ### Baxter + Tablis
 
+https://user-images.githubusercontent.com/9300063/208720482-b7ef0abb-e948-448c-be51-521c0c7af8a2.mp4
+
 #### Baxter + Tablis in JSK 73B2 or 610
 
 ```bash
 rossetip
-rossetmaster baxter 
+rossetmaster baxter
 roslaunch eus_vive baxter_tablis.launch
 ```
 
 #### Baxter + Tablis in Gazebo
+
+##### Launch Tablis in Choreonoid
+
+```bash
+roscd biped_wbms_tablis/scripts
+./start-tablis-sim.sh
+
+ipython -i tablis_setup.py
+hcf.servoOn()
+hcf.hc_svc.startHapticsController()
+```
+
+##### Launch bridge
+
+```bash
+roscd biped_wbms_tablis/scripts
+./start-bridge-sim.sh
+```
+
+##### Launch Baxter in Choreonoid
 
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
@@ -266,11 +311,80 @@ roslaunch eus_vive baxter_moveit.launch
 
 ### Dragon + SpaceNav
 
+https://user-images.githubusercontent.com/9300063/210754022-7df92fd5-4875-4465-9738-7efdf5649093.mp4
+
 #### Dragon + SpaceNav in Gazebo
 
 ```bash
 roslaunch dragon bringup.launch simulation:=true real_machine:=false headless:=false
 roslaunch eus_vive dragon_spacenav_gazebo.launch
+```
+
+### JAXON + SpaceNav
+
+https://user-images.githubusercontent.com/9300063/212047815-e1f2a5ed-cf51-4782-b892-66752effe41d.mp4
+
+#### JAXON + SpaceNav in Choreonoid
+
+##### Launch JAXON in Choreonoid
+
+```bash
+roscd auto_stabilizer_config/scripts
+./start-jaxon_with_rhp3hand-sim.sh
+
+ipython -i jaxon_with_rhp3hand_setup.py
+hcf.ast_svc.startAutoBalancer()
+hcf.ast_svc.startStabilizer()
+hcf.ast_svc.startWholeBodyMasterSlave()
+```
+
+##### Launch eus\_vive for SpaceNav
+
+```bash
+roslaunch eus_vive jaxon_spacenav_choreonoid.launch
+```
+
+### JAXON + Tablis
+
+https://user-images.githubusercontent.com/9300063/212932317-407102d1-093f-4729-b00a-f367bbbcb40d.mp4
+
+#### JAXON + Tablis in Choreonoid
+
+##### Launch Tablis in Choreonoid
+
+```bash
+roscd biped_wbms_tablis/scripts
+./start-tablis-sim.sh
+./start-bridge-sim.sh
+
+ipython -i tablis_setup.py
+hcf.servoOn()
+hcf.hc_svc.startHapticsController()
+```
+
+##### Launch JAXON in Choreonoid
+
+```bash
+roscd auto_stabilizer_config/scripts
+./start-jaxon_with_rhp3hand-sim.sh
+
+ipython -i jaxon_with_rhp3hand_setup.py
+hcf.ast_svc.startAutoBalancer()
+hcf.ast_svc.startStabilizer()
+hcf.ast_svc.startWholeBodyMasterSlave()
+```
+
+##### Launch bridge and wbms core
+
+```bash
+roscd biped_wbms_jaxon/scripts
+./start-jaxon-eus-vive-sim.sh
+```
+
+##### Launch eus\_vive for Tablis
+
+```bash
+roslaunch eus_vive jaxon_tablis_choreonoid.launch
 ```
 
 ### Demo & Experiments
