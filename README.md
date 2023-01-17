@@ -179,7 +179,7 @@ roslaunch eus_vive pr2_vive.launch head:=false
 #### PR2 + Vive in Gazebo
 
 ```bash
-roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roslaunch pr2_gazebo pr2_empty_world.launch
 roslaunch eus_vive pr2_vive_gazebo.launch
 ```
 
@@ -196,7 +196,7 @@ roslaunch eus_vive pr2_tablis.launch
 #### PR2 + Tablis in Gazebo
 
 ```bash
-roslaunch pr2_gazebo pr2_vive_gazebo.launch
+roslaunch pr2_gazebo pr2_empty_world.launch
 roslaunch eus_vive pr2_tablis_gazebo.launch
 ```
 
