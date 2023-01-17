@@ -8,6 +8,7 @@
     <arg name="vive" value="false" />
     <arg name="spacenav" value="$(arg spacenav)" />
     <arg name="device" value="spacenav" />
+    <arg name="mirror" value="false" />
     <arg name="button_toggle" value="$(arg button_toggle)" />
   </include>
 
