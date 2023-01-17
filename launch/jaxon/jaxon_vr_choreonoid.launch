@@ -1,6 +1,6 @@
 <launch>
   <arg name="main" default="true" />
-  <arg name="vive" default="true" />
+  <arg name="vive" default="false" />
   <arg name="spacenav" default="true" />
   <arg name="device" default="spacenav" />
   <arg name="head" default="false" />
