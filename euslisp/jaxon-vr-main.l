@@ -39,7 +39,7 @@
      (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
            :enable-button :right :gripper-button :left :visualize visualize))
     ((eq device-type :tablis)
-     (send *ti* :main-loop :head head :torso nil :base nil 
+     (send *ti* :main-loop :head head :torso nil :base nil
            :safe-arm safe-arm :safe-base nil :mirror mirror
            :enable-button :menu :gripper-button :trigger :visualize visualize))
     (t nil)))
