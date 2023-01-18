@@ -34,32 +34,43 @@
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
   ;; redefine :base-cb
-  (:base-cb (&key (safe t) (mirror nil) (button :trigger) (trackpad :trackpad))
+  (:base-cb (&key (safe t) (mirror nil)
+                  (safe-button 'rarm-trigger)
+                  (unsafe-button 'larm-trigger)
+                  (torso-up-button 'larm-trackpad)
+                  (torso-down-button 'rarm-trackpad))
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
           (buttons (make-list 17 :initial-element 0))
-          (larm-button-p (send self :get-arm-val :larm button))
-          (rarm-button-p (send self :get-arm-val :rarm button))
-          (larm-trackpad-val (send self :get-arm-val :larm trackpad))
-          (rarm-trackpad-val (send self :get-arm-val :rarm trackpad)))
+          (safe-button-p (send self :get-val safe-button))
+          (unsafe-button-p (send self :get-val unsafe-button))
+          (torso-up-button-p (send self :get-val torso-up-button))
+          (torso-down-button-p (send self :get-val torso-down-button)))
       (cond
-        ((not (or larm-button-p rarm-button-p))
+        ;; torso mode
+        ((not (or unsafe-button-p safe-button-p))
          (setf (elt buttons 10) 1)
+         ;; torso up
          (setf (elt buttons 12)
-               (if (and larm-trackpad-val (not rarm-trackpad-val)) 1 0))
+               (if (and torso-up-button-p (not torso-down-button-p)) 1 0))
+         ;; torso down
          (setf (elt buttons 14)
-               (if (and (not larm-trackpad-val) rarm-trackpad-val) 1 0)))
-        ((and rarm-button-p
+               (if (and (not torso-up-button-p) torso-down-button-p) 1 0)))
+        ;; base mode
+        ((and safe-button-p
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
          ;; for unsafe teleop
-         (if (and (not safe) larm-button-p) (setf (elt buttons 9) 1))
+         (if (and (not safe) unsafe-button-p) (setf (elt buttons 9) 1))
          (setf (elt buttons 10) 1)
+         ;; x translation
          (setf (elt axes 3)
                (* (if mirror -1.0 1.0)
                   (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0))))
+         ;; y translation
          (setf (elt axes 2)
                (* (if mirror -1.0 1.0)
                   (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0))))
+         ;; z rotation
          (setf (elt axes 0)
                (* (if mirror -1.0 1.0)
                   (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0)))))
