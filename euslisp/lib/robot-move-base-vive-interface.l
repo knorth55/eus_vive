@@ -27,7 +27,8 @@
        (send self :set-val 'vy
              (if (send self :get-arm-val arm :trackpad)
                (* -1 (elt (send msg :axes) 0)) 0)))
-      (t nil))))
+      (t nil)))
+  )
 
 
 (provide :robot-move-base-vive-interface)

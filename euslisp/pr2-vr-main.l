@@ -61,16 +61,29 @@
   (cond
     ((eq device-type :vive)
      (send *ti* :main-loop :head head :torso torso :base base
-           :safe-arm safe-arm :safe-base safe-base :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+           :safe-arm safe-arm :safe-base safe-base :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           :base-safe-button 'rarm-trigger :base-unsafe-button 'larm-trigger
+           :torso-up-button 'larm-trackpad :torso-down-button 'rarm-trackpad
+           ))
     ((eq device-type :oculus)
-     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           ))
     ((eq device-type :spacenav)
-     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm :mirror mirror
-           :enable-button :right :gripper-button :left :visualize visualize))
+     (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :right :gripper-button :left
+           :base-safe-button 'left-button :base-unsafe-button nil
+           :torso-up-button 'z-translation-up :torso-down-button 'z-translation-down
+           ))
     ((eq device-type :tablis)
      (send *ti* :main-loop :head head :torso torso :base base
-           :safe-arm safe-arm :safe-base safe-base :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+           :safe-arm safe-arm :safe-base safe-base
+           :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           :base-safe-button 'rarm-trigger :base-unsafe-button 'larm-trigger
+           :torso-up-button 'larm-trackpad :torso-down-button 'rarm-trackpad
+           ))
     (t nil)))

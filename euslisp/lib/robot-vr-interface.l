@@ -120,6 +120,14 @@
           vx-scale
           vy-scale
           vw-scale
+          prev-base-move
+          joy-deadman-button-index
+          joy-torso-up-button-index
+          joy-torso-down-button-index
+          joy-unsafe-teleop-button-index
+          joy-vx-axes-index
+          joy-vy-axes-index
+          joy-vw-axes-index
           ))
 
 
@@ -694,6 +702,33 @@
         (progn
           (ros::ros-error (format nil "cannot find method: ~A" controller-button-method))
           nil))))
+  (:controller-button-common-p (button &key (button-toggle t))
+    (let* ((button-prefix (subseq (format nil "~A" button) 0 5))
+           (prev-button
+             (if (or (equal button-prefix "larm-")
+                     (equal button-prefix "rarm-"))
+               (read-from-string
+                 (format nil "~Aprev-~A" button-prefix (subseq (format nil "~A" 5))))
+               (read-from-string (format nil "prev-~A" button))))
+           (button-counter (read-from-string (format nil "~A-count" button)))
+           (button-wait-counter (read-from-string (format nil "~A-wait-count" button)))
+           (button-p (send self :get-val button))
+           (prev-button-p (send self :get-val prev-button))
+           (button-count (send self :get-val button-counter))
+           (button-wait-count (send self :get-val button-wait-counter))
+           (controller-button-p (and (not (eq button-p prev-button-p))
+                                     (if button-toggle button-p t))))
+      (if button-toggle
+        (if (> button-count 0)
+          (progn
+            (send self :set-val button-counter (- button-count 1))
+            nil)
+          (progn
+            (if controller-button-p
+              (progn
+                (send self :set-val button-counter button-wait-count)
+                (cons controller-button-p button-p)))))
+        (if controller-button-p (cons controller-button-p button-p)))))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p

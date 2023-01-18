@@ -223,6 +223,25 @@ roslaunch pr2_gazebo pr2_empty_world.launch
 roslaunch eus_vive pr2_tablis_gazebo.launch
 ```
 
+### PR2 + SpaceNav
+
+https://user-images.githubusercontent.com/9300063/213137459-ce5f7075-acee-4a47-934a-97a4296fdc49.mp4
+
+#### PR2 + SpaceNav in JSK 73B2
+
+```bash
+rossetip
+rossetmaster pr1040
+roslaunch eus_vive pr2_spacenav.launch
+```
+
+#### PR2 + SpaceNav in Gazebo
+
+```bash
+roslaunch pr2_gazebo pr2_empty_world.launch
+roslaunch eus_vive pr2_spacenav_gazebo.launch
+```
+
 ### Baxter + Vive
 
 #### Baxter + Vive in JSK 73B2

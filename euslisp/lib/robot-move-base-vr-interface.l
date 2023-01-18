@@ -33,44 +33,85 @@
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
+  ;; methods for base-cb
+  (:get-base-safe-button (base-safe-button)
+     (cond
+       ((equal base-safe-button t) t)
+       ((equal base-safe-button nil) nil)
+       (t (send self :get-val base-safe-button))))
+  (:get-base-unsafe-button (base-unsafe-button)
+     (cond
+       ((equal base-unsafe-button t) t)
+       ((equal base-unsafe-button nil) nil)
+       (t (send self :get-val base-unsafe-button))))
+  (:get-torso-up-button (torso-up-button)
+    (if torso-up-button (send self :get-val torso-up-button)))
+  (:get-torso-down-button (torso-down-button)
+    (if torso-down-button (send self :get-val torso-down-button)))
+  (:check-torso-mode (safe-button-p unsafe-button-p
+                      torso-up-button-p torso-down-button-p)
+    (and
+      (null (or safe-button-p unsafe-button-p))
+      (or torso-up-button-p torso-down-button-p)))
+  (:check-base-mode (safe-button-p)
+    (and safe-button-p
+         (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh))))
   ;; redefine :base-cb
-  (:base-cb (&key (safe t) (mirror nil) (button :trigger) (trackpad :trackpad))
+  (:base-cb (&key (safe t) (mirror nil)
+                  (safe-button 'rarm-trigger)
+                  (unsafe-button 'larm-trigger)
+                  (torso-up-button 'larm-trackpad)
+                  (torso-down-button 'rarm-trackpad))
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
           (buttons (make-list 17 :initial-element 0))
-          (larm-button-p (send self :get-arm-val :larm button))
-          (rarm-button-p (send self :get-arm-val :rarm button))
-          (larm-trackpad-val (send self :get-arm-val :larm trackpad))
-          (rarm-trackpad-val (send self :get-arm-val :rarm trackpad)))
+          (safe-button-p (send self :get-base-safe-button safe-button))
+          (unsafe-button-p (send self :get-base-unsafe-button unsafe-button))
+          (torso-up-button-p (send self :get-torso-up-button torso-up-button))
+          (torso-down-button-p (send self :get-torso-down-button torso-down-button)))
       (cond
-        ((not (or larm-button-p rarm-button-p))
-         (setf (elt buttons 10) 1)
-         (setf (elt buttons 12)
-               (if (and larm-trackpad-val (not rarm-trackpad-val)) 1 0))
-         (setf (elt buttons 14)
-               (if (and (not larm-trackpad-val) rarm-trackpad-val) 1 0)))
-        ((and rarm-button-p
-              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
-         ;; for unsafe teleop
-         (if (and (not safe) larm-button-p) (setf (elt buttons 9) 1))
-         (setf (elt buttons 10) 1)
-         (setf (elt axes 3)
+        ;; torso mode
+        ((send self :check-torso-mode safe-button-p unsafe-button-p
+               torso-up-button-p torso-down-button-p)
+         ;; deadman
+         (setf (elt buttons joy-deadman-button-index) 1)
+         ;; torso up
+         (setf (elt buttons joy-torso-up-button-index)
+               (if (and torso-up-button-p (not torso-down-button-p)) 1 0))
+         ;; torso down
+         (setf (elt buttons joy-torso-down-button-index)
+               (if (and (not torso-up-button-p) torso-down-button-p) 1 0)))
+        ;; base mode
+        ((send self :check-base-mode safe-button-p)
+         ;; deadman
+         (setf (elt buttons joy-deadman-button-index) 1)
+         ;; unsafe teleop
+         (if (and (not safe) unsafe-button-p)
+           (setf (elt buttons joy-unsafe-teleop-button-index) 1))
+         ;; x translation
+         (setf (elt axes joy-vx-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0))))
-         (setf (elt axes 2)
+         ;; y translation
+         (setf (elt axes joy-vy-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0))))
-         (setf (elt axes 0)
+         ;; z rotation
+         (setf (elt axes joy-vw-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0)))))
         (t nil))
-      (if (or (some #'(lambda (x) (null (equal x 0))) axes)
+      (if (or prev-base-move
+              (some #'(lambda (x) (null (equal x 0))) axes)
               (some #'(lambda (x) (null (equal x 0))) buttons))
         (progn
           (send msg :header :stamp (ros::time-now))
           (send msg :axes axes)
           (send msg :buttons buttons)
           (ros::publish joy-other-topic-name msg)
+          (setq prev-base-move
+                (or (some #'(lambda (x) (null (equal x 0))) axes)
+                    (some #'(lambda (x) (null (equal x 0))) buttons)))
           ))))
   ;; switch joy from ps3joy to vive
   (:switch-joy (joy-topic-name)
@@ -98,7 +139,11 @@
       (t nil)))
   ;; redefine :motion-cb for base
   (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                    (gripper-button :trigger))
+                    (gripper-button :trigger)
+                    (base-safe-button 'rarm-trigger)
+                    (base-unsafe-button 'larm-trigger)
+                    (torso-up-button 'larm-trackpad)
+                    (torso-down-button 'rarm-trackpad))
     (let (visualize-arm-coords)
       (cond
         ((or larm-enable rarm-enable)
@@ -106,19 +151,33 @@
                (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
                      :gripper-button gripper-button)))
         ((and loop-enable base-enable)
-         (if base (send self :base-cb :safe safe-base :mirror mirror)))
+         (if base (send self :base-cb :safe safe-base :mirror mirror
+                        :safe-button base-safe-button
+                        :unsafe-button base-unsafe-button
+                        :torso-up-button torso-up-button
+                        :torso-down-button torso-down-button)))
         (t nil))
       visualize-arm-coords))
   ;; redefine :main-loop-step for base
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                         (enable-button :menu) (gripper-button :trigger) (visualize t))
+                         (visualize t)
+                         (enable-button :menu)
+                         (gripper-button :trigger)
+                         (base-safe-button 'rarm-trigger)
+                         (base-unsafe-button 'larm-trigger)
+                         (torso-up-button 'larm-trackpad)
+                         (torso-down-button 'rarm-trackpad))
     (let (visualize-arm-coords)
       (send self :update-current-end-coords)
       (send self :enable-cb :mirror mirror :base base :button enable-button)
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso
                   :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror
-                  :gripper-button gripper-button))
+                  :gripper-button gripper-button
+                  :base-safe-button base-safe-button
+                  :base-unsafe-button base-unsafe-button
+                  :torso-up-button torso-up-button
+                  :torso-down-button torso-down-button))
       (if (and head loop-enable) (send self :head-cb))
       (if visualize (send self :visualize visualize-arm-coords)))))
 
