@@ -2,10 +2,10 @@
 
 (ros::load-ros-manifest "baxter_core_msgs")
 
-(require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :baxter-vr-interface "package://eus_vive/euslisp/lib/baxter-vr-interface.l")
-(require :robot-tablis-interface "package://eus_vive/euslisp/lib/robot-tablis-interface.l")
+(require :baxter-interface "package://eus_teleop/euslisp/lib/baxter-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :baxter-teleop-interface "package://eus_teleop/euslisp/lib/baxter-teleop-interface.l")
+(require :robot-tablis-interface "package://eus_teleop/euslisp/lib/robot-tablis-interface.l")
 
 
 (defclass baxter-tablis-interface
@@ -40,7 +40,7 @@
 
 
 (defun baxter-tablis-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
+  (eus_teleop::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
   (make-baxter-irtviewer :no-window t)
   (make-baxter-camera-model :no-window t)
   (setq *ti* (instance baxter-tablis-interface :init :loop-enable loop-enable

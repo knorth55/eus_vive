@@ -1,0 +1,44 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="false" />
+  <arg name="spacenav" default="true" />
+  <arg name="device" default="spacenav" />
+  <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
+  <include file="$(find eus_teleop)/launch/jaxon/jaxon_teleop.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
+    <arg name="spacenav" value="$(arg spacenav)" />
+    <arg name="device" value="$(arg device)" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
+    <arg name="workspace_max_x" value="$(arg workspace_max_x)" />
+    <arg name="workspace_min_x" value="$(arg workspace_min_x)" />
+    <arg name="workspace_max_y" value="$(arg workspace_max_y)" />
+    <arg name="workspace_min_y" value="$(arg workspace_min_y)" />
+    <arg name="workspace_max_z" value="$(arg workspace_max_z)" />
+    <arg name="workspace_min_z" value="$(arg workspace_min_z)" />
+  </include>
+
+  <!-- launch rqt_gui -->
+  <include file="$(find eus_teleop)/launch/include/rqt_gui.launch" />
+
+</launch>

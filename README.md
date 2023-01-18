@@ -1,7 +1,7 @@
-# eus_vive
+# eus_teleop
 
-[![main](https://github.com/knorth55/eus_vive/actions/workflows/main.yml/badge.svg)](https://github.com/knorth55/eus_vive/actions/workflows/main.yml)
-[![linter](https://github.com/knorth55/eus_vive/actions/workflows/linter.yaml/badge.svg)](https://github.com/knorth55/eus_vive/actions/workflows/linter.yaml)
+[![main](https://github.com/knorth55/eus_teleop/actions/workflows/main.yml/badge.svg)](https://github.com/knorth55/eus_teleop/actions/workflows/main.yml)
+[![linter](https://github.com/knorth55/eus_teleop/actions/workflows/linter.yaml/badge.svg)](https://github.com/knorth55/eus_teleop/actions/workflows/linter.yaml)
 
 Multi robot teleoperation system with Vive/SpaceNav/Oculus/Tablis Cockpit
 
@@ -118,20 +118,20 @@ catkin config
 catkin build
 ```
 
-#### Build `eus_vive` workspace
+#### Build `eus_teleop` workspace
 
 ```bash
 source /opt/ros/$ROS_DISTRO/setup.bash
-mkdir ~/vive_ws/src -p
-cd ~/vive_ws/src
-wstool init . https://raw.githubusercontent.com/knorth55/eus_vive/master/fc.rosinstall
+mkdir ~/teleop_ws/src -p
+cd ~/teleop_ws/src
+wstool init . https://raw.githubusercontent.com/knorth55/eus_teleop/master/fc.rosinstall
 
 # Only for baxter users
-wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall
-wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/baxter.rosinstall.$ROS_DISTRO
+wstool merge https://raw.githubusercontent.com/knorth55/eus_teleop/master/baxter.rosinstall
+wstool merge https://raw.githubusercontent.com/knorth55/eus_teleop/master/baxter.rosinstall.$ROS_DISTRO
 
 # Only for dragon users
-wstool merge https://raw.githubusercontent.com/knorth55/eus_vive/master/dragon.rosinstall
+wstool merge https://raw.githubusercontent.com/knorth55/eus_teleop/master/dragon.rosinstall
 
 wstool up
 rosdep install --ignore-src --from-path . -y -r -i
@@ -139,7 +139,7 @@ rosdep install --ignore-src --from-path . -y -r -i
 # Only for baxter users
 source ~/jsk_apc_ws/devel/setup.bash
 
-cd ~/vive_ws
+cd ~/teleop_ws
 catkin config
 catkin build
 ```
@@ -175,16 +175,16 @@ https://user-images.githubusercontent.com/9300063/213145161-4b2acb89-9545-460a-b
 rossetip
 rossetmaster pr1040
 # HMD mode
-roslaunch eus_vive pr2_vive.launch
+roslaunch eus_teleop pr2_vive.launch
 # No HMD mode
-roslaunch eus_vive pr2_vive.launch head:=false
+roslaunch eus_teleop pr2_vive.launch head:=false
 ```
 
 #### PR2 + Vive in Gazebo
 
 ```bash
 roslaunch pr2_gazebo pr2_empty_world.launch
-roslaunch eus_vive pr2_vive_gazebo.launch
+roslaunch eus_teleop pr2_vive_gazebo.launch
 ```
 
 ### PR2 + Tablis
@@ -196,7 +196,7 @@ https://user-images.githubusercontent.com/9300063/208720417-176d698e-3789-42a8-9
 ```bash
 rossetip
 rossetmaster pr1040
-roslaunch eus_vive pr2_tablis.launch
+roslaunch eus_teleop pr2_tablis.launch
 ```
 
 #### PR2 + Tablis in Gazebo
@@ -204,12 +204,12 @@ roslaunch eus_vive pr2_tablis.launch
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ./start-tablis-sim.sh
 ```
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -218,7 +218,7 @@ hcf.hc_svc.startHapticsController()
 ##### Launch bridge
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ./start-bridge-sim.sh
 ```
 
@@ -226,7 +226,7 @@ roscd eus_vive/scripts/tablis
 
 ```bash
 roslaunch pr2_gazebo pr2_empty_world.launch
-roslaunch eus_vive pr2_tablis_gazebo.launch
+roslaunch eus_teleop pr2_tablis_gazebo.launch
 ```
 
 ### PR2 + SpaceNav
@@ -238,14 +238,14 @@ https://user-images.githubusercontent.com/9300063/213137459-ce5f7075-acee-4a47-9
 ```bash
 rossetip
 rossetmaster pr1040
-roslaunch eus_vive pr2_spacenav.launch
+roslaunch eus_teleop pr2_spacenav.launch
 ```
 
 #### PR2 + SpaceNav in Gazebo
 
 ```bash
 roslaunch pr2_gazebo pr2_empty_world.launch
-roslaunch eus_vive pr2_spacenav_gazebo.launch
+roslaunch eus_teleop pr2_spacenav_gazebo.launch
 ```
 
 ### Baxter + Vive
@@ -259,7 +259,7 @@ https://user-images.githubusercontent.com/9300063/213144997-0d224d5c-b462-43a7-b
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_remote.launch
+roslaunch eus_teleop baxter_remote.launch
 ```
 
 ##### Vive PC
@@ -268,16 +268,16 @@ roslaunch eus_vive baxter_remote.launch
 rossetip
 rossetmaster baxter
 # No HMD mode
-roslaunch eus_vive baxter_vive_remote.launch
+roslaunch eus_teleop baxter_vive_remote.launch
 # for display
-roslaunch eus_vive baxter_display_remote.launch
+roslaunch eus_teleop baxter_display_remote.launch
 ```
 
 #### Baxter + Vive in Gazebo
 
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive baxter_vive_gazebo.launch
+roslaunch eus_teleop baxter_vive_gazebo.launch
 ```
 
 ### Baxter + Tablis
@@ -289,7 +289,7 @@ https://user-images.githubusercontent.com/9300063/208720482-b7ef0abb-e948-448c-b
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_tablis.launch
+roslaunch eus_teleop baxter_tablis.launch
 ```
 
 #### Baxter + Tablis in Gazebo
@@ -297,12 +297,12 @@ roslaunch eus_vive baxter_tablis.launch
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ./start-tablis-sim.sh
 ```
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -311,7 +311,7 @@ hcf.hc_svc.startHapticsController()
 ##### Launch bridge
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ./start-bridge-sim.sh
 ```
 
@@ -319,7 +319,7 @@ roscd eus_vive/scripts/tablis
 
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive baxter_tablis_gazebo.launch
+roslaunch eus_teleop baxter_tablis_gazebo.launch
 ```
 
 ### Baxter + SpaceNav
@@ -329,14 +329,14 @@ roslaunch eus_vive baxter_tablis_gazebo.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_spacenav.launch
+roslaunch eus_teleop baxter_spacenav.launch
 ```
 
 #### Baxter + SpaceNav in Gazebo
 
 ```bash
 roslaunch baxter_gazebo baxter_world.launch
-roslaunch eus_vive baxter_spacenav_gazebo.launch
+roslaunch eus_teleop baxter_spacenav_gazebo.launch
 ```
 
 ### Baxter + MoveIt!
@@ -346,7 +346,7 @@ roslaunch eus_vive baxter_spacenav_gazebo.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_moveit.launch
+roslaunch eus_teleop baxter_moveit.launch
 ```
 
 ### Dragon + SpaceNav
@@ -357,7 +357,7 @@ https://user-images.githubusercontent.com/9300063/210754022-7df92fd5-4875-4465-9
 
 ```bash
 roslaunch dragon bringup.launch simulation:=true real_machine:=false headless:=false
-roslaunch eus_vive dragon_spacenav_gazebo.launch
+roslaunch eus_teleop dragon_spacenav_gazebo.launch
 ```
 
 ### JAXON + SpaceNav
@@ -369,12 +369,12 @@ https://user-images.githubusercontent.com/9300063/212047815-e1f2a5ed-cf51-4782-b
 ##### Launch JAXON in Choreonoid
 
 ```bash
-roscd eus_vive/scripts/jaxon
+roscd eus_teleop/scripts/jaxon
 ./start-jaxon_with_rhp3hand-sim.sh
 ```
 
 ```bash
-roscd eus_vive/scripts/jaxon
+roscd eus_teleop/scripts/jaxon
 ipython -i jaxon_with_rhp3hand_setup.py
 hcf.ast_svc.startAutoBalancer()
 hcf.ast_svc.startStabilizer()
@@ -384,7 +384,7 @@ hcf.ast_svc.startWholeBodyMasterSlave()
 ##### Launch eus\_vive for SpaceNav
 
 ```bash
-roslaunch eus_vive jaxon_spacenav_choreonoid.launch
+roslaunch eus_teleop jaxon_spacenav_choreonoid.launch
 ```
 
 ### JAXON + Tablis
@@ -396,12 +396,12 @@ https://user-images.githubusercontent.com/9300063/212932317-407102d1-093f-4729-b
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ./start-tablis-sim.sh
 ```
 
 ```bash
-roscd eus_vive/scripts/tablis
+roscd eus_teleop/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -410,12 +410,12 @@ hcf.hc_svc.startHapticsController()
 ##### Launch JAXON in Choreonoid
 
 ```bash
-roscd eus_vive/scripts/jaxon
+roscd eus_teleop/scripts/jaxon
 ./start-jaxon_with_rhp3hand-sim.sh
 ```
 
 ```bash
-roscd eus_vive/scripts/jaxon
+roscd eus_teleop/scripts/jaxon
 ipython -i jaxon_with_rhp3hand_setup.py
 hcf.ast_svc.startAutoBalancer()
 hcf.ast_svc.startStabilizer()
@@ -425,14 +425,14 @@ hcf.ast_svc.startWholeBodyMasterSlave()
 ##### Launch bridge and wbms core
 
 ```bash
-roscd eus_vive/scripts/jaxon
-./start-jaxon-eus-vive-sim.sh
+roscd eus_teleop/scripts/jaxon
+./start-jaxon-eus-teleop-sim.sh
 ```
 
 ##### Launch eus\_vive for Tablis
 
 ```bash
-roslaunch eus_vive jaxon_tablis_choreonoid.launch
+roslaunch eus_teleop jaxon_tablis_choreonoid.launch
 ```
 
 ### Demo & Experiments
@@ -442,7 +442,7 @@ roslaunch eus_vive jaxon_tablis_choreonoid.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_vive_mirror.launch
+roslaunch eus_teleop baxter_vive_mirror.launch
 ```
 
 #### Miraikan Demo 2020/09/11-13
@@ -452,7 +452,7 @@ roslaunch eus_vive baxter_vive_mirror.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_remote.launch
+roslaunch eus_teleop baxter_remote.launch
 ```
 
 ##### Vive control PC (Pilot side)
@@ -460,7 +460,7 @@ roslaunch eus_vive baxter_remote.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_vive_remote.launch
+roslaunch eus_teleop baxter_vive_remote.launch
 ```
 
 ##### Visualization, display and feedback PC (Pilot side)
@@ -468,7 +468,7 @@ roslaunch eus_vive baxter_vive_remote.launch
 ```bash
 rossetip
 rossetmaster baxter
-roslaunch eus_vive baxter_display_remote.launch
+roslaunch eus_teleop baxter_display_remote.launch
 ```
 
 ## How to use Vive controller

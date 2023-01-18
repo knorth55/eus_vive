@@ -1,0 +1,139 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
+  <arg name="device" default="vive" />
+  <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
+  <arg name="mirror" default="false" />
+  <arg name="logging" default="true" />
+  <arg name="twitter" default="true" />
+  <arg name="debug" default="false" />
+  <arg name="home_dir" default="$(env HOME)" />
+  <arg name="mask_rcnn" default="false" />
+  <arg name="display" default="true" />
+  <arg name="custom_xdisplay" default="true" />
+  <arg name="launch_baxter" default="true" />
+  <arg name="launch_xdisplay" default="false" />
+  <arg name="realsense_camera" default="false" />
+  <arg name="spherical_camera" default="true" />
+  <arg name="spherical_stereo" default="true" />
+  <arg name="republish" default="false" />
+  <arg name="lgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- baxter control -->
+  <arg name="arm_interpolation" default="bezier_with_velocity" />
+  <arg name="arm_control_mode" default="velocity" />
+  <arg name="moveit" default="false" />
+
+  <!-- gripper and display-->
+  <arg name="finger" default="standard_narrow" />
+  <arg name="finger_tip" default="paddle_tip" />
+
+  <!-- camera -->
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="camera_type" default="l515" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
+
+  <!-- launch baxter -->
+  <include file="$(find eus_teleop)/launch/baxter/baxter.launch" if="$(arg launch_baxter)">
+    <arg name="head" value="$(arg head)" />
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="twitter" value="$(arg twitter)" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="home_dir" value="$(arg home_dir)" />
+    <arg name="mask_rcnn" value="$(arg mask_rcnn)" />
+    <arg name="custom_xdisplay" value="$(arg custom_xdisplay)" />
+    <arg name="launch_xdisplay" value="$(arg launch_xdisplay)" />
+    <arg name="realsense_camera" value="$(arg realsense_camera)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="lgripper_type" value="$(arg lgripper_type)" />
+    <arg name="rgripper_type" value="$(arg rgripper_type)" />
+    <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
+    <arg name="moveit" value="$(arg moveit)" />
+    <arg name="finger" value="$(arg finger)" />
+    <arg name="finger_tip" value="$(arg finger_tip)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="camera_type" value="$(arg camera_type)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
+  </include>
+
+  <!-- launch vive-->
+  <include file="$(find eus_teleop)/launch/include/vive.launch" if="$(arg vive)" >
+    <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
+    <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
+  </include>
+
+  <!-- launch spacenav -->
+  <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
+  <!-- launch tablis bridge -->
+  <include file="$(find eus_teleop)/launch/tablis/tablis_bridge_follower.launch" if="$(arg tablis)" />
+
+  <!-- launch eus_teleop-->
+  <group ns="eus_teleop">
+    <rosparam subst_value="true">
+      button_toggle: $(arg button_toggle)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
+  <group if="$(arg main)">
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="baxter-teleop-main.l" name="baxter_teleop_main"
+            args="&quot;(main :head t :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="baxter-teleop-main.l" name="baxter_teleop_main"
+            args="&quot;(main :head nil :mirror t :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="baxter-teleop-main.l" name="baxter_teleop_main"
+            args="&quot;(main :head t :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="baxter-teleop-main.l" name="baxter_teleop_main"
+            args="&quot;(main :head nil :mirror nil :lgripper :$(arg lgripper_type) :rgripper :$(arg rgripper_type) :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+  </group>
+
+  <!-- launch display -->
+  <include file="$(find eus_teleop)/launch/baxter/baxter_teleop_display.launch" if="$(arg display)">
+    <arg name="head" value="$(arg head)" />
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="republish" value="$(arg republish)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="camera_ns" value="$(arg camera_ns)" />
+    <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />
+    <arg name="spherical_stereo" value="$(arg spherical_stereo)" />
+    <arg name="spherical_left_camera_ns" value="$(arg spherical_left_camera_ns)" />
+    <arg name="spherical_right_camera_ns" value="$(arg spherical_right_camera_ns)" />
+    <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
+    <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
+  </include>
+
+</launch>

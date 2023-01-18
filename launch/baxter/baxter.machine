@@ -1,4 +1,4 @@
 <launch>
-  <machine name="baxter-c1" address="baxter-c1" env-loader="$(find eus_vive)/scripts/env.sh" />
-  <machine name="baxter-c4" address="baxter-c4" env-loader="$(find eus_vive)/scripts/env.sh" />
+  <machine name="baxter-c1" address="baxter-c1" env-loader="$(find eus_teleop)/scripts/env.sh" />
+  <machine name="baxter-c4" address="baxter-c4" env-loader="$(find eus_teleop)/scripts/env.sh" />
 </launch>

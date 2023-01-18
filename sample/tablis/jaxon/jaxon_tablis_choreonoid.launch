@@ -2,7 +2,7 @@
   <arg name="main" default="true" />
   <arg name="button_toggle" default="true" />
 
-  <include file="$(find eus_vive)/launch/jaxon/jaxon_vr_choreonoid.launch">
+  <include file="$(find eus_teleop)/launch/jaxon/jaxon_teleop_choreonoid.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="spacenav" value="false" />

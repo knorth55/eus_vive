@@ -4,9 +4,9 @@ tabbed_layout:
     name: 'Reset'
     namespace: push
     type: push
-    yaml_file: 'package://eus_vive/resource/reset_button_layout.yaml'
+    yaml_file: 'package://eus_teleop/resource/reset_button_layout.yaml'
   gripper:
     name: 'Gripper'
     namespace: push
     type: push
-    yaml_file: 'package://eus_vive/resource/gripper_button_layout.yaml'
+    yaml_file: 'package://eus_teleop/resource/gripper_button_layout.yaml'

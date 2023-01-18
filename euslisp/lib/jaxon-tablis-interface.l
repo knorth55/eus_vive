@@ -1,13 +1,13 @@
 ;; -*- mode: lisp;-*-
 
 (require :jaxon-interface "package://hrpsys_ros_bridge_tutorials/euslisp/jaxon-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :jaxon-vr-interface "package://eus_vive/euslisp/lib/jaxon-vr-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
-(require :robot-move-base-vive-interface "package://eus_vive/euslisp/lib/robot-move-base-vive-interface.l")
-(require :robot-tablis-interface "package://eus_vive/euslisp/lib/robot-tablis-interface.l")
-(require :robot-move-base-tablis-interface "package://eus_vive/euslisp/lib/robot-move-base-tablis-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :robot-move-base-teleop-interface "package://eus_teleop/euslisp/lib/robot-move-base-teleop-interface.l")
+(require :jaxon-teleop-interface "package://eus_teleop/euslisp/lib/jaxon-teleop-interface.l")
+(require :robot-vive-interface "package://eus_teleop/euslisp/lib/robot-vive-interface.l")
+(require :robot-move-base-vive-interface "package://eus_teleop/euslisp/lib/robot-move-base-vive-interface.l")
+(require :robot-tablis-interface "package://eus_teleop/euslisp/lib/robot-tablis-interface.l")
+(require :robot-move-base-tablis-interface "package://eus_teleop/euslisp/lib/robot-move-base-tablis-interface.l")
 
 
 (defclass jaxon-tablis-interface

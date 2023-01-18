@@ -3,11 +3,11 @@
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
 
 
 (defclass robot-oculus-interface
-  :super robot-vr-interface
+  :super robot-teleop-interface
   :slots (hmd-pose-topic-name
           hmd-coords
           larm-controller-coords

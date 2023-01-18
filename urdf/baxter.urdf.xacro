@@ -21,14 +21,14 @@
   </xacro:if>
 
   <!-- Left End Effector -->
-  <xacro:include filename="$(find eus_vive)/urdf/left_end_effector.urdf.xacro">
+  <xacro:include filename="$(find eus_teleop)/urdf/left_end_effector.urdf.xacro">
     <xacro:arg name="left_electric_gripper" value="${left_electric_gripper}"/>
     <xacro:arg name="finger" value="${finger}"/>
     <xacro:arg name="finger_tip" value="${finger_tip}"/>
   </xacro:include>
 
   <!-- Right End Effector -->
-  <xacro:include filename="$(find eus_vive)/urdf/right_end_effector.urdf.xacro">
+  <xacro:include filename="$(find eus_teleop)/urdf/right_end_effector.urdf.xacro">
     <xacro:arg name="right_electric_gripper" value="${right_electric_gripper}"/>
     <xacro:arg name="finger" value="${finger}"/>
     <xacro:arg name="finger_tip" value="${finger_tip}"/>

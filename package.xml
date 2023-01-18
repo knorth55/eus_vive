@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>eus_vive</name>
+  <name>eus_teleop</name>
   <version>0.0.10</version>
-  <description>The eus_vive package</description>
+  <description>The eus_teleop package</description>
 
   <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
   <author email="shingogo.5511@gmail.com">Shingo Kitagawa</author>

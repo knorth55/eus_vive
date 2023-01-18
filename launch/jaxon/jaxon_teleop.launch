@@ -1,0 +1,51 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="false" />
+  <arg name="spacenav" default="true" />
+  <arg name="device" default="spacenav" />
+  <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- launch spacenav -->
+  <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
+  <!-- launch eus_teleop-->
+  <group ns="eus_teleop">
+    <rosparam subst_value="true">
+      button_toggle: $(arg button_toggle)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
+  <group if="$(arg main)">
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="jaxon-teleop-main.l" name="jaxon_teleop_main"
+            args="&quot;(main :head t :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="jaxon-teleop-main.l" name="jaxon_teleop_main"
+            args="&quot;(main :head nil :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="jaxon-teleop-main.l" name="jaxon_teleop_main"
+            args="&quot;(main :head t :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="jaxon-teleop-main.l" name="jaxon_teleop_main"
+            args="&quot;(main :head nil :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+  </group>
+
+</launch>

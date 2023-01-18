@@ -19,7 +19,7 @@
               /tf
               /tf_static
               /audio
-              /eus_vive/status
+              /eus_teleop/status
               /$(arg camera_ns)/color/image_rect_color/compressed
               /$(arg camera_ns)/color/camera_info
               /$(arg camera_ns)/depth/compressed/image_rect_raw/compressedDepth

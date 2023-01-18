@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(eus_vive)
+project(eus_teleop)
 
 find_package(catkin
   REQUIRED
@@ -9,8 +9,8 @@ find_package(catkin
 
 add_message_files(
   FILES
-  EusViveStatus.msg
-  EusViveStatusArray.msg
+  EusTeleopStatus.msg
+  EusTeleopStatusArray.msg
 )
 
 generate_messages(

@@ -50,7 +50,7 @@
        if="$(arg spherical_stereo)" />
 
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
+         command="$(find xacro)/xacro --inorder $(find eus_teleop)/urdf/baxter.urdf.xacro
                   gazebo:=false finger:=$(arg finger) finger_tip:=$(arg finger_tip)
                   left_electric_gripper:=$(arg lgripper_visualize)
                   right_electric_gripper:=$(arg rgripper_visualize)" />
@@ -103,7 +103,7 @@
           args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg camera_ns)_link 100" />
     -->
     <!-- realsense torso -->
-    <include file="$(find eus_vive)/launch/baxter/baxter_realsense_torso.launch">
+    <include file="$(find eus_teleop)/launch/baxter/baxter_realsense_torso.launch">
       <arg name="camera_ns" value="$(arg camera_ns)" />
       <arg name="camera_type" value="$(arg camera_type)" />
       <arg name="launch_transformable_server" value="true" />
@@ -123,11 +123,11 @@
             args="0 0 0 -1.57 0 -1.57 $(arg spherical_left_camera_ns)_link $(arg spherical_left_camera_ns)_optical_frame 100" />
       <node name="elp_left_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0 0 0 3.14 0 0 $(arg spherical_left_camera_ns)_link $(arg spherical_left_camera_ns)_rviz_frame 100" />
-      <include file="$(find eus_vive)/launch/include/elp_usb.launch">
+      <include file="$(find eus_teleop)/launch/include/elp_usb.launch">
         <arg name="camera_name" value="$(arg spherical_left_camera_ns)" />
         <arg name="machine" value="baxter-c1" />
         <arg name="load_machinepath" value="true" />
-        <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
+        <arg name="machinepath" value="$(find eus_teleop)/launch/baxter/baxter.machine" />
       </include>
       <!-- launch elp right camera on c4 -->
       <node name="elp_right_transform_publisher" pkg="tf" type="static_transform_publisher"
@@ -136,11 +136,11 @@
             args="0 0 0 -1.57 0 -1.57 $(arg spherical_right_camera_ns)_link $(arg spherical_right_camera_ns)_optical_frame 100" />
       <node name="elp_right_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0 0 0 3.14 0 0 $(arg spherical_right_camera_ns)_link $(arg spherical_right_camera_ns)_rviz_frame 100" />
-      <include file="$(find eus_vive)/launch/include/elp_usb.launch">
+      <include file="$(find eus_teleop)/launch/include/elp_usb.launch">
         <arg name="camera_name" value="$(arg spherical_right_camera_ns)" />
         <arg name="machine" value="localhost" />
         <arg name="load_machinepath" value="true" />
-        <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
+        <arg name="machinepath" value="$(find eus_teleop)/launch/baxter/baxter.machine" />
       </include>
     </group>
     <!-- launch kodak camera -->
@@ -151,30 +151,30 @@
             args="0 0 0 0 0 1.57 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_optical_frame 100" />
       <node name="kodak_rviz_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0 0 0 3.14 0 0 $(arg spherical_camera_ns)_link $(arg spherical_camera_ns)_rviz_frame 100" />
-      <include file="$(find eus_vive)/launch/include/kodak_pixpro.launch">
+      <include file="$(find eus_teleop)/launch/include/kodak_pixpro.launch">
         <arg name="camera_name" value="$(arg spherical_camera_ns)" />
       </include>
     </group>
   </group>
 
   <!-- launch mask rcnn -->
-  <include file="$(find eus_vive)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
+  <include file="$(find eus_teleop)/launch/include/mask_rcnn.launch" if="$(arg mask_rcnn)" >
     <arg name="INPUT_IMAGE" value="/$(arg camera_ns)/color/image_rect_color" />
   </include>
 
   <!-- launch respeaker -->
-  <include file="$(find eus_vive)/launch/include/respeaker.launch" if="$(arg respeaker)" />
+  <include file="$(find eus_teleop)/launch/include/respeaker.launch" if="$(arg respeaker)" />
 
   <!-- launch status visualizer -->
-  <node name="eus_vive_status_visualizer" if="$(arg launch_xdisplay)"
-        pkg="eus_vive" type="eus_vive_status_visualizer.py"
+  <node name="eus_teleop_status_visualizer" if="$(arg launch_xdisplay)"
+        pkg="eus_teleop" type="eus_teleop_status_visualizer.py"
         output="screen" >
-    <remap from="~input/image" to="/eus_vive/irtviewer/image" />
-    <remap from="~input/status" to="/eus_vive/status" />
+    <remap from="~input/image" to="/eus_teleop/irtviewer/image" />
+    <remap from="~input/status" to="/eus_teleop/status" />
   </node>
   <node name="irtviewer_xdisplay" if="$(arg launch_xdisplay)"
         pkg="jsk_baxter_startup" type="xdisplay_image_topic.py"
-        args="/eus_vive_status_visualizer/output/image"
+        args="/eus_teleop_status_visualizer/output/image"
         output="screen" >
     <rosparam subst_value="true">
       max_width: $(arg xdisplay_max_width)
@@ -183,7 +183,7 @@
   </node>
 
   <!-- launch logging -->
-  <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
+  <include file="$(find eus_teleop)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />
     <arg name="influxdb" value="$(arg influxdb)" />
     <arg name="debug" value="$(arg debug)" />

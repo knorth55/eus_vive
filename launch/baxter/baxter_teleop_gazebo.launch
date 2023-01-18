@@ -1,0 +1,67 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
+  <arg name="device" default="vive" />
+  <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
+  <arg name="display" default="true" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- initialize baxter in gazebo -->
+  <node name="initialize_baxter" pkg="jsk_baxter_startup" type="initialize_baxter.py" />
+
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
+  <!-- baxter_teleop -->
+  <include file="$(find eus_teleop)/launch/baxter/baxter_teleop.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
+    <arg name="spacenav" value="$(arg spacenav)" />
+    <arg name="tablis" value="$(arg tablis)" />
+    <arg name="device" value="$(arg device)" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="display" value="$(arg display)" />
+    <arg name="respeaker" value="false" />
+    <arg name="logging" value="false" />
+    <arg name="twitter" value="false" />
+    <arg name="debug" value="false" />
+    <arg name="home_dir" value="$(env HOME)" />
+    <arg name="mask_rcnn" value="false" />
+    <arg name="custom_xdisplay" value="false" />
+    <arg name="launch_baxter" value="false" />
+    <arg name="launch_xdisplay" value="false" />
+    <arg name="realsense_camera" value="false" />
+    <arg name="spherical_camera" value="false" />
+    <arg name="spherical_stereo" value="false" />
+    <arg name="republish" value="false" />
+    <arg name="lgripper_type" value="parallel" />
+    <arg name="rgripper_type" value="parallel" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
+    <arg name="workspace_max_x" value="$(arg workspace_max_x)" />
+    <arg name="workspace_min_x" value="$(arg workspace_min_x)" />
+    <arg name="workspace_max_y" value="$(arg workspace_max_y)" />
+    <arg name="workspace_min_y" value="$(arg workspace_min_y)" />
+    <arg name="workspace_max_z" value="$(arg workspace_max_z)" />
+    <arg name="workspace_min_z" value="$(arg workspace_min_z)" />
+  </include>
+
+  <!-- launch rqt_gui -->
+  <include unless="$(arg display)" file="$(find eus_teleop)/launch/include/rqt_gui.launch" />
+
+</launch>

@@ -33,7 +33,7 @@
               "keys": {
                 "layout_param": {
                   "type": "repr",
-                  "repr": "u'package://eus_vive/resource/gripper_button_layout.yaml'"
+                  "repr": "u'package://eus_teleop/resource/gripper_button_layout.yaml'"
                 }
               },
               "groups": {}

@@ -7,7 +7,7 @@
   <arg name="depth_width" default="640" />
   <arg name="depth_height" default="480" />
 
-  <include file="$(find eus_vive)/launch/include/realsense.launch">
+  <include file="$(find eus_teleop)/launch/include/realsense.launch">
     <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="manager" value="$(arg manager)" />
     <arg name="publish_tf" value="$(arg publish_tf)" />

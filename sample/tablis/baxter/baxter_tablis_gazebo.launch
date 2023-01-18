@@ -7,7 +7,7 @@
   <arg name="mirror" default="false" />
   <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vr_gazebo.launch">
+  <include file="$(find eus_teleop)/launch/baxter/baxter_teleop_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="$(arg vive)" />
     <arg name="tablis" value="true" />
@@ -18,7 +18,7 @@
     <arg name="button_toggle" value="$(arg button_toggle)" />
   </include>
 
-  <group ns="eus_vive" if="$(arg vive)">
-    <rosparam command="load" file="$(find eus_vive)/config/vive/$(arg vive_set)_vive_ids.yaml" />
+  <group ns="eus_teleop" if="$(arg vive)">
+    <rosparam command="load" file="$(find eus_teleop)/config/vive/$(arg vive_set)_vive_ids.yaml" />
   </group>
 </launch>

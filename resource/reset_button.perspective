@@ -33,7 +33,7 @@
               "keys": {
                 "layout_param": {
                   "type": "repr",
-                  "repr": "u'package://eus_vive/resource/reset_button_layout.yaml'"
+                  "repr": "u'package://eus_teleop/resource/reset_button_layout.yaml'"
                 }
               },
               "groups": {}

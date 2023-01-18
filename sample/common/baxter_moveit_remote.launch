@@ -28,7 +28,7 @@
   <arg name="launch_tabletop_detector" default="true" />
   <arg name="launch_grasp_mask_rcnn" default="false" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter.launch">
+  <include file="$(find eus_teleop)/launch/baxter/baxter.launch">
     <arg name="head" value="$(arg head)" />
     <arg name="respeaker" value="$(arg respeaker)" />
     <arg name="logging" value="$(arg logging)" />
@@ -56,6 +56,6 @@
   </include>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg gui)"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_moveit.rviz"/>
+        args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_moveit.rviz"/>
 
 </launch>

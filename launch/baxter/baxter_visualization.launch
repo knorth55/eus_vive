@@ -1,4 +1,4 @@
 <launch>
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
-      args="-d $(find eus_vive)/rvizconfig/baxter/baxter_visualization.rviz" respawn="true"/>
+      args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_visualization.rviz" respawn="true"/>
 </launch>

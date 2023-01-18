@@ -1,0 +1,139 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
+  <arg name="device" default="vive" />
+  <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
+  <arg name="mirror" default="false" />
+  <arg name="logging" default="true" />
+  <arg name="kinfu" default="false" />
+  <arg name="display" default="true" />
+  <arg name="home_dir" default="$(env HOME)" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- camera-->
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
+  <arg name="DECOMP_CAMERA_INFO"
+       default="/kinect_head_decompressed/depth_registered/camera_info" />
+  <arg name="DECOMP_RGB_CAMERA_INFO"
+       default="/kinect_head_decompressed/rgb/camera_info" />
+  <arg name="DECOMP_IMAGE_DEPTH"
+       default="/kinect_head_decompressed/depth_registered/image_rect" />
+  <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
+  <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
+
+  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
+  <arg name="RGB_CAMERA_INFO" default="/kinect_head/rgb/camera_info" />
+  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
+  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
+  <arg name="IMAGE_DEPTH_TYPE" default="compressedDepth" />
+  <arg name="COMP_IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color/compressed" />
+  <arg name="COMP_IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect/compressedDepth" />
+
+  <!-- prosilica -->
+  <!--
+  <arg name="PROSILICA_RGB_CAMERA_INFO"
+       default="/prosilica/camera_info" />
+  <arg name="PROSILICA_IMAGE_COLOR"
+       default="/prosilica/image_rect" />
+  <arg name="PROSILICA_DECOMP_RGB_CAMERA_INFO"
+       default="/prosilica_decompressed/rgb/camera_info" />
+  <arg name="PROSILICA_DECOMP_IMAGE_COLOR"
+       default="/prosilica_decompressed/rgb/image_rect_color" />
+
+  <group ns="prosilica_decompressed">
+    <node name="rgb_camera_info_relay" pkg="topic_tools" type="relay"
+          args="$(arg PROSILICA_RGB_CAMERA_INFO) $(arg PROSILICA_DECOMP_RGB_CAMERA_INFO)" />
+    <node name="rgb_image_transport" pkg="image_transport" type="republish"
+          args="theora in:=$(arg PROSILICA_IMAGE_COLOR) raw out:=$(arg PROSILICA_DECOMP_IMAGE_COLOR)" />
+  </group>
+  -->
+
+  <param name="robot_description_semantic" textfile="$(find pr2_moveit_config)/config/pr2.srdf" />
+
+  <!-- launch vive-->
+  <include file="$(find eus_teleop)/launch/include/vive.launch" if="$(arg vive)">
+    <arg name="hmd_left_image" value="$(arg hmd_left_image)" />
+    <arg name="hmd_right_image" value="$(arg hmd_right_image)" />
+  </include>
+
+  <!-- launch spacenav -->
+  <include file="$(find spacenav_node)/launch/classic.launch" if="$(arg spacenav)" />
+
+  <!-- launch tablis bridge -->
+  <include file="$(find eus_teleop)/launch/tablis/tablis_bridge_follower.launch" if="$(arg tablis)" />
+
+  <!-- launch eus_teleop-->
+  <group ns="eus_teleop">
+    <rosparam subst_value="true">
+      button_toggle: $(arg button_toggle)
+      workspace:
+        max_x: $(arg workspace_max_x)
+        min_x: $(arg workspace_min_x)
+        max_y: $(arg workspace_max_y)
+        min_y: $(arg workspace_min_y)
+        max_z: $(arg workspace_max_z)
+        min_z: $(arg workspace_min_z)
+    </rosparam>
+  </group>
+  <group if="$(arg main)">
+    <group if="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="pr2-teleop-main.l" name="pr2_teleop_main"
+            args="&quot;(main :head t :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="pr2-teleop-main.l" name="pr2_teleop_main"
+            args="&quot;(main :head nil :mirror t :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+    <group unless="$(arg mirror)">
+      <node if="$(arg head)" pkg="eus_teleop" type="pr2-teleop-main.l" name="pr2_teleop_main"
+            args="&quot;(main :head t :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+      <node unless="$(arg head)" pkg="eus_teleop" type="pr2-teleop-main.l" name="pr2_teleop_main"
+            args="&quot;(main :head nil :mirror nil :loop-enable nil :device-type :$(arg device))&quot;" output="screen" />
+    </group>
+  </group>
+
+  <!-- launch display -->
+  <include file="$(find eus_teleop)/launch/pr2/pr2_teleop_display.launch" if="$(arg display)">
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="kinfu" value="$(arg kinfu)" />
+    <arg name="DECOMP_CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
+    <arg name="DECOMP_RGB_CAMERA_INFO" value="$(arg DECOMP_RGB_CAMERA_INFO)" />
+    <arg name="DECOMP_IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
+    <arg name="DECOMP_IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
+    <arg name="DECOMP_POINTS" value="$(arg DECOMP_POINTS)" />
+    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
+    <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
+    <arg name="IMAGE_COLOR" value="$(arg IMAGE_COLOR)" />
+    <arg name="IMAGE_DEPTH" value="$(arg IMAGE_DEPTH)" />
+    <arg name="IMAGE_DEPTH_TYPE" value="$(arg IMAGE_DEPTH_TYPE)" />
+  </include>
+
+  <!-- launch kinfu -->
+  <include file="$(find eus_teleop)/launch/include/kinfu.launch" if="$(arg kinfu)">
+    <arg name="CAMERA_INFO" value="$(arg DECOMP_CAMERA_INFO)" />
+    <arg name="IMAGE_DEPTH" value="$(arg DECOMP_IMAGE_DEPTH)" />
+    <arg name="IMAGE_COLOR" value="$(arg DECOMP_IMAGE_COLOR)" />
+  </include>
+
+  <!-- launch logging -->
+  <include file="$(find eus_teleop)/launch/pr2/pr2_logging.launch" if="$(arg logging)">
+    <arg name="CAMERA_INFO" value="$(arg CAMERA_INFO)" />
+    <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
+    <arg name="COMP_IMAGE_COLOR" value="$(arg COMP_IMAGE_COLOR)" />
+    <arg name="COMP_IMAGE_DEPTH" value="$(arg COMP_IMAGE_DEPTH)" />
+    <arg name="home_dir" value="$(arg home_dir)" />
+  </include>
+
+</launch>

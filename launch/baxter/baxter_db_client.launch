@@ -69,21 +69,21 @@
         - sound_play/SoundRequestActionGoal
     </rosparam>
     <!-- eus vive status -->
-    <node name="eus_vive_status_throttle"
+    <node name="eus_teleop_status_throttle"
           pkg="jsk_topic_tools" type="lightweight_throttle"
           respawn="$(arg respawn)">
-      <remap from="~input" to="/eus_vive/status" />
+      <remap from="~input" to="/eus_teleop/status" />
       <rosparam subst_value="true">
         update_rate: $(arg log_rate)
       </rosparam>
     </node>
-    <node name="eus_vive_status_logger"
+    <node name="eus_teleop_status_logger"
           pkg="jsk_robot_startup" type="lightweight_logger"
           respawn="$(arg respawn)">
-      <remap from="~input" to="eus_vive_status_throttle/output" />
+      <remap from="~input" to="eus_teleop_status_throttle/output" />
       <rosparam subst_value="true">
         enable_monitor: $(arg enable_monitor)
-        monitor_topic: /eus_vive/status
+        monitor_topic: /eus_teleop/status
         vital_check: $(arg vital_check)
       </rosparam>
     </node>
