@@ -42,13 +42,23 @@
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
           (buttons (make-list 17 :initial-element 0))
-          (safe-button-p (send self :get-val safe-button))
-          (unsafe-button-p (send self :get-val unsafe-button))
-          (torso-up-button-p (send self :get-val torso-up-button))
-          (torso-down-button-p (send self :get-val torso-down-button)))
+          (safe-button-p
+            (cond
+              ((equal safe-button t) t)
+              ((equal safe-button nil) nil)
+              (t (send self :get-val safe-button))))
+          (unsafe-button-p
+            (cond
+              ((equal unsafe-button t) t)
+              ((equal unsafe-button nil) nil)
+              (t (send self :get-val unsafe-button))))
+          (torso-up-button-p
+            (if torso-up-button (send self :get-val torso-up-button)))
+          (torso-down-button-p
+            (if torso-down-button (send self :get-val torso-down-button))))
       (cond
         ;; torso mode
-        ((not (or unsafe-button-p safe-button-p))
+        ((or torso-up-button-p torso-down-button-p)
          (setf (elt buttons 10) 1)
          ;; torso up
          (setf (elt buttons 12)
