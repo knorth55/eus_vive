@@ -708,7 +708,7 @@
     (let* ((button-p (send self :get-val button))
            (prev-button-p (send self :get-val prev-button))
            (button-count (send self :get-val button-counter))
-           (button-wait-count (senf self :get-val button-wait-counter))
+           (button-wait-count (send self :get-val button-wait-counter))
            (controller-button-p (and (not (eq button-p prev-button-p))
                                      (if button-toggle button-p t))))
       (if button-toggle
