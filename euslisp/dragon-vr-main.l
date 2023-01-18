@@ -29,6 +29,8 @@
      (unix::sleep 5)
      (send *ti* :takeoff)
      (unix::sleep 5)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :right :gripper-button :left :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :right :gripper-button :left
+           ))
     (t nil)))

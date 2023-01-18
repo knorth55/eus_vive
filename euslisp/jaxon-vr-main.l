@@ -30,16 +30,21 @@
   (x::window-main-one))
 
 
-(defun main (&key (head nil) (safe-arm t) (mirror nil) (visualize t)
-                  (loop-enable t) (device-type :spacenav))
+(defun main (&key (head nil) (base t) (safe-arm t) (safe-base nil) (mirror nil)
+                  (visualize t) (loop-enable t) (device-type :spacenav))
   (init :loop-enable t :device-type device-type)
   (if (not loop-enable) (send *ti* :disable))
   (cond
     ((eq device-type :spacenav)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :right :gripper-button :left :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :right :gripper-button :left
+           ))
     ((eq device-type :tablis)
-     (send *ti* :main-loop :head head :torso nil :base nil
-           :safe-arm safe-arm :safe-base nil :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :base base
+           :safe-arm safe-arm :safe-base safe-base :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           :base-safe-button 'rarm-trigger :base-unsafe-button 'larm-trigger
+           :torso-up-button 'larm-trackpad :torso-down-button 'rarm-trackpad
+           ))
     (t nil)))

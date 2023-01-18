@@ -61,15 +61,23 @@
   (if (not loop-enable) (send *ti* :disable))
   (cond
     ((eq device-type :vive)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           ))
     ((eq device-type :oculus)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           ))
     ((eq device-type :spacenav)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :right :gripper-button :left :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :right :gripper-button :left
+           ))
     ((eq device-type :tablis)
-     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm :mirror mirror
-           :enable-button :menu :gripper-button :trigger :visualize visualize))
+     (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
+           :mirror mirror :visualize visualize
+           :enable-button :menu :gripper-button :trigger
+           ))
     (t nil)))
