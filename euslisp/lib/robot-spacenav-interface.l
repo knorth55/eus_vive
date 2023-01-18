@@ -59,7 +59,7 @@
             (mapcar #'(lambda (v) (if (> (abs v) spacenav-joy-axes-threshold) v 0))
                     (coerce axes cons)))))
   ;; [left, right]
-  ;; left: grasp, right: enable 
+  ;; left: grasp, right: enable
   (:spacenav-joy-buttons-cb (buttons)
     (if loop-enable
       (progn
@@ -69,36 +69,20 @@
         (send self :set-val 'right-button (> (elt buttons 1) 0.0)))))
   (:controller-left-button-p (arm &key (button-toggle t))
     (if (eq arm control-arm)
-      (let* ((controller-left-button-p
-           (and (not (eq left-button prev-left-button))
-                (if button-toggle left-button t))))
-        (if button-toggle
-          (if (> left-button-count 0)
-            (progn
-              (send self :set-val 'left-button-count (- left-button-count 1))
-              nil)
-            (progn
-              (if controller-left-button-p
-                (progn
-                  (send self :set-val 'left-button-count left-button-wait-count)
-                  (cons controller-left-button-p left-button)))))
-        (if controller-left-button-p (cons controller-left-button-p left-button))))))
+      (send self :controller-button-common-p
+            :button 'left-button
+            :prev-button 'prev-left-button
+            :button-counter 'left-button-count
+            :button-wait-counter 'left-button-wait-count
+            :button-toggle button-toggle)))
   (:controller-right-button-p (arm &key (button-toggle t))
     (if (eq arm control-arm)
-      (let* ((controller-right-button-p
-             (and (not (eq right-button prev-right-button))
-                  (if button-toggle right-button t))))
-        (if button-toggle
-          (if (> right-button-count 0)
-            (progn
-              (send self :set-val 'right-button-count (- right-button-count 1))
-              nil)
-            (progn
-              (if controller-right-button-p
-                (progn
-                  (send self :set-val 'right-button-count right-button-wait-count)
-                  (cons controller-right-button-p right-button)))))
-          (if controller-right-button-p (cons controller-right-button-p right-button))))))
+      (send self :controller-button-common-p
+            :button 'right-button
+            :prev-button 'prev-right-button
+            :button-counter 'right-button-count
+            :button-wait-counter 'right-button-wait-count
+            :button-toggle button-toggle)))
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control

@@ -702,6 +702,26 @@
         (progn
           (ros::ros-error (format nil "cannot find method: ~A" controller-button-method))
           nil))))
+  (:controller-button-common-p (&key (button nil) (prev-button nil)
+                                     (button-counter nil) (button-wait-counter nil)
+                                     (button-toggle t))
+    (let* ((button-p (send self :get-val button))
+           (prev-button-p (send self :get-val prev-button))
+           (button-count (send self :get-val button-counter))
+           (button-wait-count (senf self :get-val button-wait-counter))
+           (controller-button-p (and (not (eq button-p prev-button-p))
+                                     (if button-toggle button-p t))))
+      (if button-toggle
+        (if (> button-count 0)
+          (progn
+            (send self :set-val button-counter (- button-count 1))
+            nil)
+          (progn
+            (if controller-button-p
+              (progn
+                (send self :set-val button-counter button-wait-count)
+                (cons controller-button-p button-p)))))
+        (if controller-button-p (cons controller-button-p button-p)))))
   (:gripper-cb (arm &key (mirror nil) (button :trigger))
     (let ((gripper-button-p
             (send self :controller-button-p

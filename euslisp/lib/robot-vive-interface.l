@@ -265,73 +265,33 @@
         (send self :set-arm-val arm :trackpad (> (elt (send msg :buttons) 2) 0))
         (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0)))))
   (:controller-trigger-button-p (arm &key (button-toggle t))
-    (let* ((trigger (send self :get-arm-val arm :trigger))
-           (prev-trigger (send self :get-arm-val arm :prev-trigger))
-           (trigger-count (send self :get-arm-val arm :trigger-count))
-           (controller-trigger-button-p (and (not (eq trigger prev-trigger))
-                                             (if button-toggle trigger t))))
-      (if button-toggle
-        (if (> trigger-count 0)
-          (progn
-            (send self :set-arm-val arm :trigger-count (- trigger-count 1))
-            nil)
-          (progn
-            (if controller-trigger-button-p
-              (progn
-                (send self :set-arm-val arm :trigger-count trigger-wait-count)
-                (cons controller-trigger-button-p trigger)))))
-        (if controller-trigger-button-p (cons controller-trigger-button-p trigger)))))
+    (send self :controller-button-common-p
+          :button (if (eq arm :larm) 'larm-trigger 'rarm-trigger)
+          :prev-button (if (eq arm :larm) 'larm-prev-trigger 'rarm-prev-trigger)
+          :button-counter (if (eq arm :larm) 'larm-trigger-count 'rarm-trigger-count)
+          :button-wait-counter 'trigger-wait-count
+          :button-toggle button-toggle))
   (:controller-menu-button-p (arm &key (button-toggle t))
-    (let* ((menu (send self :get-arm-val arm :menu))
-           (prev-menu (send self :get-arm-val arm :prev-menu))
-           (menu-count (send self :get-arm-val arm :menu-count))
-           (controller-menu-button-p (and (not (eq menu prev-menu))
-                                          (if button-toggle menu t))))
-      (if button-toggle
-        (if (> menu-count 0)
-          (progn
-            (send self :set-arm-val arm :menu-count (- menu-count 1))
-            nil)
-          (progn
-            (if controller-menu-button-p
-              (progn
-                (send self :set-arm-val arm :menu-count menu-wait-count)
-                (cons controller-menu-button-p menu)))))
-        (if controller-menu-button-p (cons controller-menu-button-p menu)))))
+    (send self :controller-button-common-p
+          :button (if (eq arm :larm) 'larm-menu 'rarm-menu)
+          :prev-button (if (eq arm :larm) 'larm-prev-menu 'rarm-prev-menu)
+          :button-counter (if (eq arm :larm) 'larm-menu-count 'rarm-menu-count)
+          :button-wait-counter 'menu-wait-count
+          :button-toggle button-toggle))
   (:controller-trackpad-button-p (arm &key (button-toggle t))
-    (let* ((trackpad (send self :get-arm-val arm :trackpad))
-           (prev-trackpad (send self :get-arm-val arm :prev-trackpad))
-           (trackpad-count (send self :get-arm-val arm :trackpad-count))
-           (controller-trackpad-button-p (and (not (eq trackpad prev-trackpad))
-                                              (if button-toggle trackpad t))))
-      (if button-toggle
-        (if (> trackpad-count 0)
-          (progn
-            (send self :set-arm-val arm :trackpad-count (- trackpad-count 1))
-            nil)
-          (progn
-            (if controller-trackpad-button-p
-              (progn
-                (send self :set-arm-val arm :trackpad-count trackpad-wait-count)
-                (cons controller-trackpad-button-p trackpad)))))
-        (if controller-trackpad-button-p (cons controller-trackpad-button-p trackpad)))))
+    (send self :controller-button-common-p
+          :button (if (eq arm :larm) 'larm-trackpad 'rarm-trackpad)
+          :prev-button (if (eq arm :larm) 'larm-prev-trackpad 'rarm-prev-trackpad)
+          :button-counter (if (eq arm :larm) 'larm-trackpad-count 'rarm-trackpad-count)
+          :button-wait-counter 'trackpad-wait-count
+          :button-toggle button-toggle))
   (:controller-grip-button-p (arm &key (button-toggle t))
-    (let* ((grip (send self :get-arm-val arm :grip))
-           (prev-grip (send self :get-arm-val arm :prev-grip))
-           (grip-count (send self :get-arm-val arm :grip-count))
-           (controller-grip-button-p (and (not (eq grip prev-grip))
-                                          (if button-toggle grip t))))
-      (if button-toggle
-        (if (> grip-count 0)
-          (progn
-            (send self :set-arm-val arm :grip-count (- grip-count 1))
-            nil)
-          (progn
-            (if controller-grip-button-p
-              (progn
-                (send self :set-arm-val arm :grip-count grip-wait-count)
-                (cons controller-grip-button-p grip)))))
-        (if controller-grip-button-p (cons controller-grip-button-p grip)))))
+    (send self :controller-button-common-p
+          :button (if (eq arm :larm) 'larm-grip 'rarm-grip)
+          :prev-button (if (eq arm :larm) 'larm-prev-grip 'rarm-prev-grip)
+          :button-counter (if (eq arm :larm) 'larm-grip-count 'rarm-grip-count)
+          :button-wait-counter 'grip-wait-count
+          :button-toggle button-toggle))
   ;; vive vibration feedback
   (:send-joy-feedback (arm)
     (let (msg (id (if (eq arm :larm) 2 1)))
