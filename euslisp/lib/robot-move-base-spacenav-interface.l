@@ -16,7 +16,7 @@
 (defmethod robot-spacenav-interface
   ;; overwrite spacenav joy axes cb
   (:spacenav-joy-axes-cb (axes)
-    (send :spacenav-joy-axes-cb-move-base-spacenav-org axes)
+    (send self :spacenav-joy-axes-cb-move-base-spacenav-org axes)
     ;; [trans x, trans y, trans z, rot x, rot y, rot z]
     (send self :set-val 'vx (elt spacenav-joy-axes 0))
     (send self :set-val 'vy (elt spacenav-joy-axes 1))
