@@ -702,10 +702,17 @@
         (progn
           (ros::ros-error (format nil "cannot find method: ~A" controller-button-method))
           nil))))
-  (:controller-button-common-p (&key (button nil) (prev-button nil)
-                                     (button-counter nil) (button-wait-counter nil)
-                                     (button-toggle t))
-    (let* ((button-p (send self :get-val button))
+  (:controller-button-common-p (button &key (button-toggle t))
+    (let* ((button-prefix (subseq (format nil "~A" button) 0 5))
+           (prev-button
+             (if (or (equal button-prefix "larm-")
+                     (equal button-prefix "rarm-"))
+               (read-from-string
+                 (format nil "~Aprev-~A" button-prefix (subseq (format nil "~A" 5))))
+               (read-from-string (format nil "prev-~A" button))))
+           (button-counter (read-from-string (format nil "~A-count" button)))
+           (button-wait-counter (read-from-string (format nil "~A-wait-count" button)))
+           (button-p (send self :get-val button))
            (prev-button-p (send self :get-val prev-button))
            (button-count (send self :get-val button-counter))
            (button-wait-count (send self :get-val button-wait-counter))

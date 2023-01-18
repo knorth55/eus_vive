@@ -70,19 +70,11 @@
   (:controller-left-button-p (arm &key (button-toggle t))
     (if (eq arm control-arm)
       (send self :controller-button-common-p
-            :button 'left-button
-            :prev-button 'prev-left-button
-            :button-counter 'left-button-count
-            :button-wait-counter 'left-button-wait-count
-            :button-toggle button-toggle)))
+            'left-button :button-toggle button-toggle)))
   (:controller-right-button-p (arm &key (button-toggle t))
     (if (eq arm control-arm)
       (send self :controller-button-common-p
-            :button 'right-button
-            :prev-button 'prev-right-button
-            :button-counter 'right-button-count
-            :button-wait-counter 'right-button-wait-count
-            :button-toggle button-toggle)))
+            'right-button :button-toggle button-toggle)))
   ;; :get-target-coords
   (:get-target-coords (arm &key (head t) (mirror nil))
     ;; TODO: support dual arm control

@@ -266,31 +266,19 @@
         (send self :set-arm-val arm :grip (> (elt (send msg :buttons) 3) 0)))))
   (:controller-trigger-button-p (arm &key (button-toggle t))
     (send self :controller-button-common-p
-          :button (if (eq arm :larm) 'larm-trigger 'rarm-trigger)
-          :prev-button (if (eq arm :larm) 'larm-prev-trigger 'rarm-prev-trigger)
-          :button-counter (if (eq arm :larm) 'larm-trigger-count 'rarm-trigger-count)
-          :button-wait-counter 'trigger-wait-count
+          (if (eq arm :larm) 'larm-trigger 'rarm-trigger)
           :button-toggle button-toggle))
   (:controller-menu-button-p (arm &key (button-toggle t))
     (send self :controller-button-common-p
-          :button (if (eq arm :larm) 'larm-menu 'rarm-menu)
-          :prev-button (if (eq arm :larm) 'larm-prev-menu 'rarm-prev-menu)
-          :button-counter (if (eq arm :larm) 'larm-menu-count 'rarm-menu-count)
-          :button-wait-counter 'menu-wait-count
+          (if (eq arm :larm) 'larm-menu 'rarm-menu)
           :button-toggle button-toggle))
   (:controller-trackpad-button-p (arm &key (button-toggle t))
     (send self :controller-button-common-p
-          :button (if (eq arm :larm) 'larm-trackpad 'rarm-trackpad)
-          :prev-button (if (eq arm :larm) 'larm-prev-trackpad 'rarm-prev-trackpad)
-          :button-counter (if (eq arm :larm) 'larm-trackpad-count 'rarm-trackpad-count)
-          :button-wait-counter 'trackpad-wait-count
+          (if (eq arm :larm) 'larm-trackpad 'rarm-trackpad)
           :button-toggle button-toggle))
   (:controller-grip-button-p (arm &key (button-toggle t))
     (send self :controller-button-common-p
-          :button (if (eq arm :larm) 'larm-grip 'rarm-grip)
-          :prev-button (if (eq arm :larm) 'larm-prev-grip 'rarm-prev-grip)
-          :button-counter (if (eq arm :larm) 'larm-grip-count 'rarm-grip-count)
-          :button-wait-counter 'grip-wait-count
+          (if (eq arm :larm) 'larm-grip 'rarm-grip)
           :button-toggle button-toggle))
   ;; vive vibration feedback
   (:send-joy-feedback (arm)
