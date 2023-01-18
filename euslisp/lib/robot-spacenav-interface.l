@@ -24,6 +24,7 @@
           prev-right-button
           z-translation-up
           z-translation-down
+          base-safe-enable
           ))
 
 
