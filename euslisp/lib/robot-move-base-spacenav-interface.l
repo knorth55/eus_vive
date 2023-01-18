@@ -33,9 +33,9 @@
        ((equal base-safe-button t) t)
        ((equal base-safe-button nil) nil)
        ((equal base-safe-button 'right-button)
-        (send self :controller-right-button-p control-arm :botton-toggle t))
+        (send self :controller-right-button-p control-arm :button-toggle t))
        ((equal base-safe-button 'left-button)
-        (send self :controller-left-button-p control-arm :botton-toggle t))
+        (send self :controller-left-button-p control-arm :button-toggle t))
        (t nil)))
   )
 
