@@ -35,7 +35,7 @@
     (send self :set-val 'base-enable nil))
   (:check-torso-mode (safe-button-p unsafe-button-p
                       torso-up-button-p torso-down-button-p)
-    (and 
+    (and
       (null (or safe-button-p unsafe-button-p))
       (or torso-up-button-p torso-down-button-p)))
   (:check-base-mode (safe-button-p)
