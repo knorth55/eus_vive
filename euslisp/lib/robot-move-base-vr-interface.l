@@ -59,29 +59,32 @@
       (cond
         ;; torso mode
         ((or torso-up-button-p torso-down-button-p)
-         (setf (elt buttons 10) 1)
+         ;; deadman
+         (setf (elt buttons joy-deadman-button-index) 1)
          ;; torso up
-         (setf (elt buttons 12)
+         (setf (elt buttons joy-torso-up-button-index)
                (if (and torso-up-button-p (not torso-down-button-p)) 1 0))
          ;; torso down
-         (setf (elt buttons 14)
+         (setf (elt buttons joy-torso-down-button-index)
                (if (and (not torso-up-button-p) torso-down-button-p) 1 0)))
         ;; base mode
         ((and safe-button-p
               (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
-         ;; for unsafe teleop
-         (if (and (not safe) unsafe-button-p) (setf (elt buttons 9) 1))
-         (setf (elt buttons 10) 1)
+         ;; deadman
+         (setf (elt buttons joy-deadman-button-index) 1)
+         ;; unsafe teleop
+         (if (and (not safe) unsafe-button-p)
+           (setf (elt buttons joy-unsafe-teleop-button-index) 1))
          ;; x translation
-         (setf (elt axes 3)
+         (setf (elt axes joy-vx-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vx-scale (if (> (abs vx) vx-thresh) vx 0.0))))
          ;; y translation
-         (setf (elt axes 2)
+         (setf (elt axes joy-vy-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vy-scale (if (> (abs vy) vy-thresh) vy 0.0))))
          ;; z rotation
-         (setf (elt axes 0)
+         (setf (elt axes joy-vw-axes-index)
                (* (if mirror -1.0 1.0)
                   (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0)))))
         (t nil))

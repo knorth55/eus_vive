@@ -121,6 +121,13 @@
           vy-scale
           vw-scale
           prev-base-move
+          joy-deadman-button-index
+          joy-torso-up-button-index
+          joy-torso-down-button-index
+          joy-unsafe-teleop-button-index
+          joy-vx-axes-index
+          joy-vy-axes-index
+          joy-vw-axes-index
           ))
 
 

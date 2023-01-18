@@ -46,6 +46,13 @@
       (send self :set-val 'vx-scale 1.0)
       (send self :set-val 'vy-scale 1.0)
       (send self :set-val 'vw-scale 1.0)
+      (send self :set-val 'joy-deadman-button-index 10)
+      (send self :set-val 'joy-torso-up-button-index 12)
+      (send self :set-val 'joy-torso-down-button-index 14)
+      (send self :set-val 'joy-unsafe-teleop-button-index 9)
+      (send self :set-val 'joy-vx-axes-index 3)
+      (send self :set-val 'joy-vy-axes-index 2)
+      (send self :set-val 'joy-vw-axes-index 0)
       ;; pr2 hardware configuration
       (send self :set-val 'scale 1.5)
       (send self :set-val 'arm-length 600)
