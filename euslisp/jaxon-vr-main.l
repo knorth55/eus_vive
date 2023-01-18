@@ -39,12 +39,14 @@
      (send *ti* :main-loop :head head :torso nil :safe-arm safe-arm
            :mirror mirror :visualize visualize
            :enable-button :right :gripper-button :left
+           :base-safe-button 'left-button :base-unsafe-button nil
+           :torso-up-button  nil :torso-down-button nil
            ))
     ((eq device-type :tablis)
      (send *ti* :main-loop :head head :torso nil :base base
            :safe-arm safe-arm :safe-base safe-base :mirror mirror :visualize visualize
            :enable-button :menu :gripper-button :trigger
            :base-safe-button 'rarm-trigger :base-unsafe-button 'larm-trigger
-           :torso-up-button 'larm-trackpad :torso-down-button 'rarm-trackpad
+           :torso-up-button nil :torso-down-button nil
            ))
     (t nil)))
