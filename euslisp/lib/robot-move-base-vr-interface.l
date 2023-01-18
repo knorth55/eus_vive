@@ -85,13 +85,17 @@
                (* (if mirror -1.0 1.0)
                   (* vw-scale (if (> (abs vw) vw-thresh) vw 0.0)))))
         (t nil))
-      (if (or (some #'(lambda (x) (null (equal x 0))) axes)
+      (if (or prev-base-move
+              (some #'(lambda (x) (null (equal x 0))) axes)
               (some #'(lambda (x) (null (equal x 0))) buttons))
         (progn
           (send msg :header :stamp (ros::time-now))
           (send msg :axes axes)
           (send msg :buttons buttons)
           (ros::publish joy-other-topic-name msg)
+          (setq prev-base-move
+                (or (some #'(lambda (x) (null (equal x 0))) axes)
+                    (some #'(lambda (x) (null (equal x 0))) buttons)))
           ))))
   ;; switch joy from ps3joy to vive
   (:switch-joy (joy-topic-name)

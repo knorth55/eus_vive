@@ -120,6 +120,7 @@
           vx-scale
           vy-scale
           vw-scale
+          prev-base-move
           ))
 
 
