@@ -33,6 +33,21 @@
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
+  ;; methods for base-cb
+  (:get-base-safe-button (base-safe-button)
+     (cond
+       ((equal base-safe-button t) t)
+       ((equal base-safe-button nil) nil)
+       (t (send self :get-val base-safe-button))))
+  (:get-base-unsafe-button (base-unsafe-button)
+     (cond
+       ((equal base-unsafe-button t) t)
+       ((equal base-unsafe-button nil) nil)
+       (t (send self :get-val base-unsafe-button))))
+  (:get-torso-up-button (torso-up-button)
+    (if torso-up-button (send self :get-val torso-up-button)))
+  (:get-torso-down-button (torso-down-button)
+    (if torso-down-button (send self :get-val torso-down-button)))
   (:check-torso-mode (safe-button-p unsafe-button-p
                       torso-up-button-p torso-down-button-p)
     (and
@@ -50,20 +65,10 @@
     (let ((msg (instance sensor_msgs::Joy :init))
           (axes (make-list 29 :initial-element 0))
           (buttons (make-list 17 :initial-element 0))
-          (safe-button-p
-            (cond
-              ((equal safe-button t) t)
-              ((equal safe-button nil) nil)
-              (t (send self :get-val safe-button))))
-          (unsafe-button-p
-            (cond
-              ((equal unsafe-button t) t)
-              ((equal unsafe-button nil) nil)
-              (t (send self :get-val unsafe-button))))
-          (torso-up-button-p
-            (if torso-up-button (send self :get-val torso-up-button)))
-          (torso-down-button-p
-            (if torso-down-button (send self :get-val torso-down-button))))
+          (safe-button-p (send self :get-base-safe-button safe-button))
+          (unsafe-button-p (send self :get-base-unsafe-button unsafe-button))
+          (torso-up-button-p (send self :get-torso-up-button torso-up-button))
+          (torso-down-button-p (send self :get-torso-down-button torso-down-button)))
       (cond
         ;; torso mode
         ((send self :check-torso-mode safe-button-p unsafe-button-p
