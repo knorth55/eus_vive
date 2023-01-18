@@ -27,7 +27,11 @@
        (send self :set-val 'vy
              (if (send self :get-arm-val arm :trackpad)
                (* -1 (elt (send msg :axes) 0)) 0)))
-      (t nil))))
+      (t nil)))
+  (:check-torso-mode (safe-button-p unsafe-button-p
+                      torso-up-button-p torso-down-button-p)
+    (null (or safe-button-p unsafe-button-p)))
+  )
 
 
 (provide :robot-move-base-vive-interface)

@@ -33,6 +33,12 @@
     (send self :set-val 'vy 0.0)
     (send self :set-val 'vw 0.0)
     (send self :set-val 'base-enable nil))
+  (:check-torso-mode (safe-button-p unsafe-button-p
+                      torso-up-button-p torso-down-button-p)
+    (or torso-up-button-p torso-down-button-p))
+  (:check-base-mode (safe-button-p)
+    (and safe-button-p
+         (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh))))
   ;; redefine :base-cb
   (:base-cb (&key (safe t) (mirror nil)
                   (safe-button 'rarm-trigger)
@@ -58,7 +64,8 @@
             (if torso-down-button (send self :get-val torso-down-button))))
       (cond
         ;; torso mode
-        ((or torso-up-button-p torso-down-button-p)
+        ((send self :check-torso-mode safe-button-p unsafe-button-p
+               torso-up-button-p torso-down-button-p)
          ;; deadman
          (setf (elt buttons joy-deadman-button-index) 1)
          ;; torso up
@@ -68,8 +75,7 @@
          (setf (elt buttons joy-torso-down-button-index)
                (if (and (not torso-up-button-p) torso-down-button-p) 1 0)))
         ;; base mode
-        ((and safe-button-p
-              (or (> (abs vx) vx-thresh) (> (abs vy) vy-thresh) (> (abs vw) vw-thresh)))
+        ((send self :check-base-mode safe-button-p)
          ;; deadman
          (setf (elt buttons joy-deadman-button-index) 1)
          ;; unsafe teleop
