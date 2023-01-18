@@ -165,6 +165,8 @@ The arm calibration is required for no HMD mode in order to measure your positio
 
 ### PR2 + Vive
 
+https://user-images.githubusercontent.com/9300063/213145161-4b2acb89-9545-460a-b5cc-d05a111a187b.mp4
+
 #### PR2 + Vive in JSK 73B2 or 610
 
 ```bash
@@ -243,6 +245,8 @@ roslaunch eus_vive pr2_spacenav_gazebo.launch
 ```
 
 ### Baxter + Vive
+
+https://user-images.githubusercontent.com/9300063/213144997-0d224d5c-b462-43a7-b759-0233fff41d94.mp4
 
 #### Baxter + Vive in JSK 73B2
 
