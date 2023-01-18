@@ -75,7 +75,7 @@
      (send *ti* :main-loop :head head :torso torso :safe-arm safe-arm
            :mirror mirror :visualize visualize
            :enable-button :right :gripper-button :left
-           :base-safe-button 'larm-left-button :base-unsafe-button nil
+           :base-safe-button 'left-button :base-unsafe-button nil
            :torso-up-button nil :torso-down-button nil
            ))
     ((eq device-type :tablis)
