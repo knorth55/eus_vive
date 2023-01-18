@@ -18,14 +18,17 @@
   (:spacenav-joy-axes-cb (axes)
     (send self :spacenav-joy-axes-cb-move-base-spacenav-org axes)
     ;; [trans x, trans y, trans z, rot x, rot y, rot z]
-    (send self :set-val 'vx (elt spacenav-joy-axes 0))
-    (send self :set-val 'vy (elt spacenav-joy-axes 1))
-    (send self :set-val 'vw (elt spacenav-joy-axes 5))
-    (send self :set-val 'z-translation-up
-          (> (elt spacenav-joy-axes 2) 0))
-    (send self :set-val 'z-translation-down
-          (< (elt spacenav-joy-axes 2) 0))
-    ))
+    (if loop-enable
+      (progn
+        (send self :set-val 'vx (elt spacenav-joy-axes 0))
+        (send self :set-val 'vy (elt spacenav-joy-axes 1))
+        (send self :set-val 'vw (elt spacenav-joy-axes 5))
+        (send self :set-val 'z-translation-up
+              (> (elt spacenav-joy-axes 2) 0))
+        (send self :set-val 'z-translation-down
+              (< (elt spacenav-joy-axes 2) 0))
+        )))
+  )
 
 
 (provide :robot-move-base-spacenav-interface)
