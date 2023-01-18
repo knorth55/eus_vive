@@ -109,7 +109,11 @@
       (t nil)))
   ;; redefine :motion-cb for base
   (:motion-cb (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                    (gripper-button :trigger))
+                    (gripper-button :trigger)
+                    (base-safe-button 'rarm-trigger)
+                    (base-unsafe-button 'larm-trigger)
+                    (torso-up-button 'larm-trackpad)
+                    (torso-down-button 'rarm-trackpad))
     (let (visualize-arm-coords)
       (cond
         ((or larm-enable rarm-enable)
@@ -117,19 +121,33 @@
                (send self :arm-motion-cb :head head :torso torso :safe safe-arm :mirror mirror
                      :gripper-button gripper-button)))
         ((and loop-enable base-enable)
-         (if base (send self :base-cb :safe safe-base :mirror mirror)))
+         (if base (send self :base-cb :safe safe-base :mirror mirror
+                        :safe-button base-safe-button
+                        :unsafe-button base-unsafe-button
+                        :torso-up-button torso-up-button
+                        :torso-down-button torso-down-button)))
         (t nil))
       visualize-arm-coords))
   ;; redefine :main-loop-step for base
   (:main-loop-step (&key (head t) (torso t) (base t) (safe-arm t) (safe-base nil) (mirror nil)
-                         (enable-button :menu) (gripper-button :trigger) (visualize t))
+                         (visualize t)
+                         (enable-button :menu)
+                         (gripper-button :trigger)
+                         (base-safe-button 'rarm-trigger)
+                         (base-unsafe-button 'larm-trigger)
+                         (torso-up-button 'larm-trackpad)
+                         (torso-down-button 'rarm-trackpad))
     (let (visualize-arm-coords)
       (send self :update-current-end-coords)
       (send self :enable-cb :mirror mirror :base base :button enable-button)
       (setq visualize-arm-coords
             (send self :motion-cb :head head :torso torso
                   :base base :safe-arm safe-arm :safe-base safe-base :mirror mirror
-                  :gripper-button gripper-button))
+                  :gripper-button gripper-button
+                  :base-safe-button base-safe-button
+                  :base-unsafe-button base-unsafe-button
+                  :torso-up-button torso-up-button
+                  :torso-down-button torso-down-button))
       (if (and head loop-enable) (send self :head-cb))
       (if visualize (send self :visualize visualize-arm-coords)))))
 
