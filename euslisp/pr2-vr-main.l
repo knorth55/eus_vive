@@ -76,7 +76,7 @@
            :mirror mirror :visualize visualize
            :enable-button :right :gripper-button :left
            :base-safe-button 'left-button :base-unsafe-button nil
-           :torso-up-button nil :torso-down-button nil
+           :torso-up-button 'z-translation-up :torso-down-button 'z-translation-down
            ))
     ((eq device-type :tablis)
      (send *ti* :main-loop :head head :torso torso :base base
