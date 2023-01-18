@@ -22,6 +22,8 @@
           right-button-count
           right-button-wait-count
           prev-right-button
+          z-translation-up
+          z-translation-down
           ))
 
 
