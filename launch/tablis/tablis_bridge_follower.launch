@@ -1,10 +1,18 @@
 <launch>
   <node pkg="connect_two_ros_master" type="connect_two_master" name="connect_two_master">
     <rosparam>
-      topics: ["/slave_rleg_pose_converted","/slave_lleg_pose_converted","/slave_rarm_pose_converted","/slave_larm_pose_converted","/slave_rleg_wrench_converted","/slave_lleg_wrench_converted","/slave_rarm_wrench_converted","/slave_larm_wrench_converted"]
-      #topics: []
+      topics:
+        - /slave_larm_pose_converted
+        - /slave_rarm_pose_converted
+        - /slave_lleg_pose_converted
+        - /slave_rleg_pose_converted
+        - /slave_larm_wrench_converted
+        - /slave_rarm_wrench_converted
+        - /slave_lleg_wrench_converted
+        - /slave_rleg_wrench_converted
       slaveside: true
       queuesize: 50
     </rosparam>
   </node>
+
 </launch>

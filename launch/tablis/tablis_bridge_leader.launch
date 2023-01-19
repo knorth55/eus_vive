@@ -1,9 +1,35 @@
 <launch>
+  <arg name="filtered" default="false" />
+
+  <arg if="$(arg filtered)" name="MASTER_LARM_TOPIC" value="/master_larm_pose_orig" />
+  <arg if="$(arg filtered)" name="MASTER_RARM_TOPIC" value="/master_rarm_pose_orig" />
+  <arg if="$(arg filtered)" name="MASTER_LLEG_TOPIC" value="/master_lleg_pose_orig" />
+  <arg if="$(arg filtered)" name="MASTER_RLEG_TOPIC" value="/master_rleg_pose_orig" />
+  <arg unless="$(arg filtered)" name="MASTER_LARM_TOPIC" value="/master_larm_pose" />
+  <arg unless="$(arg filtered)" name="MASTER_RARM_TOPIC" value="/master_rarm_pose" />
+  <arg unless="$(arg filtered)" name="MASTER_LLEG_TOPIC" value="/master_lleg_pose" />
+  <arg unless="$(arg filtered)" name="MASTER_RLEG_TOPIC" value="/master_rleg_pose" />
+
   <node pkg="connect_two_ros_master" type="connect_two_master" name="connect_two_master">
-    <rosparam>
-      topics: ["/master_rleg_pose","/master_lleg_pose","/master_rarm_pose","/master_larm_pose"]
+    <rosparam subst_value="true">
+      topics:
+        - $(arg MASTER_LARM_TOPIC)
+        - $(arg MASTER_RARM_TOPIC)
+        - $(arg MASTER_LLEG_TOPIC)
+        - $(arg MASTER_RLEG_TOPIC)
       slaveside: false
       queuesize: 50
     </rosparam>
   </node>
+
+  <!-- relay for filtered topics -->
+  <node name="master_larm_pose_orig_relay" pkg="topic_tools" type="relay"
+        args="/master_larm_pose /master_larm_pose_orig" />
+  <node name="master_rarm_pose_orig_relay" pkg="topic_tools" type="relay"
+        args="/master_rarm_pose /master_rarm_pose_orig" />
+  <node name="master_lleg_pose_orig_relay" pkg="topic_tools" type="relay"
+        args="/master_lleg_pose /master_lleg_pose_orig" />
+  <node name="master_rleg_pose_orig_relay" pkg="topic_tools" type="relay"
+        args="/master_rleg_pose /master_rleg_pose_orig" />
+
 </launch>
