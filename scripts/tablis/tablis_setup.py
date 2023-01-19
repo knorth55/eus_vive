@@ -195,7 +195,7 @@ class TABLIS_Configurator:
                 rtm.findRTC("hc").port("act" + ee + "PoseOut"),
                 rtm.findRTC("log").port("hc_act" + ee + "PoseOut")
             )
-        self.log_svc.maxLength(1000*60)
+        self.log_svc.maxLength(1000 * 60)
         self.log_svc.clear()
 
     def init(self):
