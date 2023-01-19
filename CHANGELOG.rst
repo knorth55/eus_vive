@@ -2,6 +2,158 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add pr2 and baxter video
+* Merge pull request `#47 <https://github.com/knorth55/eus_vive/issues/47>`_ from knorth55/spacenav-base
+* euslint
+* updat ereadme
+* toggle spacenav base
+* fix typo
+* add base-cb methods
+* euslint
+* update controller-button-common-p
+* change torso mode
+* fix typo
+* add controller-button-common-p
+* add check torso/base mode functions
+* add joy index val
+* publish when loop enable
+* publish stop base topic
+* fix typo
+* update jaxon-vr-main.l
+* pr2 torso for spacenav
+* support spacenav move base
+* fix typo in pr2-vr-main.l
+* set pr2 spacenav button
+* refactor robot-move-base-vr-interface
+* refactor main-loop args
+* add base button options
+* abstract base-cb
+* Merge pull request `#46 <https://github.com/knorth55/eus_vive/issues/46>`_ from knorth55/jaxon
+  Add JAXON + SpaceNav, Tablis Demo
+* disable md034
+* euslint
+* add movies
+* update readme
+* fix typo in readme
+* use current-end-coords for spacenav
+* refactor jaxon-tablis-interface.l
+* fix typo in jaxon-vr-main
+* fix typo
+* move :reset in :ros-init
+* update jaxon tablis params
+* add tablis jaxon launch
+* add mirror arg in jaxon_spacenav_choreonoid
+* change default args in jaxon launch
+* load jaxon-tablis-interface in jaxon-vr-main
+* add jaxon-tablis-interface
+* add feedback pose topic val
+* add ros-init
+* use prog1 for init and return self in init
+* publish leg pose stamp in euslisp
+* refactor robot-vr-interface
+* add publish-command-pose
+* fix typo in robot-vr-interface
+* update slot val name
+* fix typo
+* add always-publish-command-pose
+* fix spacenav drifting
+* update robot model
+* relay leg slave
+* refactor robot-vr-interface
+* move functions
+* update current-end-coords from pose in jaxon
+* disable update-current-end-coords in jaxon
+* fix topic name
+* fix robot-vr-interface visualize
+* fix typo
+* add advertise
+* fix slot search
+* support trackpad too
+* support other button for base-cb
+* check if slot is boundp or not
+* fix typo
+* rename launches
+* add jaxon sample launches
+* add jaxon launch files
+* add jaxon-vr-main
+* publish to command pose topic
+* add jaxon custom set reference end coords
+* use set-reference-end-coords in robot-vr-interface
+* add set-reference-tablis-coords
+* refactor parameters
+* add arm-cb-solve-ik val
+* move update-robot-model to correct position
+* add get-target-coords place holder
+* add jaxon spacenav interface
+* require robot-move-base-spacenav-interface in pr2-spacenav-interface
+* fix visualize coords
+* add robot-move-base-spacenav-interface.l
+* add robot-move-base-oculus-interface.l
+* add jaxon-vr-interface
+* Merge pull request `#30 <https://github.com/knorth55/eus_vive/issues/30>`_ from knorth55/dragon-spacenav-demo
+* add dragon example in readme
+* add dragon.rosinstall
+* fix get-target-coords
+* add scale
+* refactor dragon vr interface
+* add dragon vr and gazebo launch
+* refactor spacenav euslisp codes
+* add dragon-vr-main.l for dragon spacenav demo
+* fix typo
+* update readme
+* update readme
+* markdownlint
+* update baxter vive sample
+* update tablis sample launches
+* update readme
+* update readme
+* Merge pull request `#44 <https://github.com/knorth55/eus_vive/issues/44>`_ from knorth55/tablis-demo
+* fix mirror control
+* add mirror arguments
+* add tablis.rosinstall
+* add tablis bridge follower launch in baxter_vr
+* add tablis launches
+* add baxter_tablis_remote.launch
+* fix tablis get-target-coords
+* add scale
+* update baxter scale
+* use vals for topic names
+* call send-super at the end
+* refactor parameters
+* show rqt gui unless display
+* check if device id is set in param
+* draw objects in all step
+* dont send joy when no diff
+* add make-*-irtviewer and camera-model func
+* refactor
+* euslint
+* refactor
+* add return t
+* fix tablis interface
+* comment out pr2 gazebo
+* add sound_play
+* fix sample
+* add move base interface
+* refactor launch
+* merge pr1012 and pr1040 launch
+* use require
+* change org method names
+* overwrite start-grasp and stop-grasp
+* add tablis in main
+* add baxter and pr2 launches
+* add baxter tablis interface
+* add pr2 tablis interface
+* add robot-tablis-interface
+* add update-robot-model method
+* update baxter_tabletop_object_detector.launch
+* fix baxter_logging.launch
+* fix baxter.launch
+* add allow-other-keys t for baxter-init
+* fix baxter-init &rest args
+* Contributors: Shingo Kitagawa
+
 0.0.8 (2022-08-15)
 ------------------
 * Merge pull request `#43 <https://github.com/knorth55/eus_vive/issues/43>`_ from Kanazawanaoaki/add-moveit-to-depend
