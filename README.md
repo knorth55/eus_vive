@@ -3,7 +3,7 @@
 [![main](https://github.com/knorth55/eus_vive/actions/workflows/main.yml/badge.svg)](https://github.com/knorth55/eus_vive/actions/workflows/main.yml)
 [![linter](https://github.com/knorth55/eus_vive/actions/workflows/linter.yaml/badge.svg)](https://github.com/knorth55/eus_vive/actions/workflows/linter.yaml)
 
-Robot remote control program with Vive/Oculus
+Multi robot teleoperation system with Vive/SpaceNav/Oculus/Tablis Cockpit
 
 ## Note
 
