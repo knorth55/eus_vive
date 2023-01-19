@@ -2,8 +2,8 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.9 (2023-01-19)
+------------------
 * add pr2 and baxter video
 * Merge pull request `#47 <https://github.com/knorth55/eus_vive/issues/47>`_ from knorth55/spacenav-base
 * euslint
