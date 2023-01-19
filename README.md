@@ -202,10 +202,12 @@ roslaunch eus_vive pr2_tablis.launch
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd biped_wbms_tablis/scripts
+roscd eus_vive/scripts/tablis
 ./start-tablis-sim.sh
-./start-bridge-sim.sh
+```
 
+```bash
+roscd eus_vive/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -214,7 +216,7 @@ hcf.hc_svc.startHapticsController()
 ##### Launch bridge
 
 ```bash
-roscd biped_wbms_tablis/scripts
+roscd eus_vive/scripts/tablis
 ./start-bridge-sim.sh
 ```
 
@@ -283,9 +285,12 @@ roslaunch eus_vive baxter_tablis.launch
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd biped_wbms_tablis/scripts
+roscd eus_vive/scripts/tablis
 ./start-tablis-sim.sh
+```
 
+```bash
+roscd eus_vive/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -294,7 +299,7 @@ hcf.hc_svc.startHapticsController()
 ##### Launch bridge
 
 ```bash
-roscd biped_wbms_tablis/scripts
+roscd eus_vive/scripts/tablis
 ./start-bridge-sim.sh
 ```
 
@@ -352,9 +357,12 @@ https://user-images.githubusercontent.com/9300063/212047815-e1f2a5ed-cf51-4782-b
 ##### Launch JAXON in Choreonoid
 
 ```bash
-roscd auto_stabilizer_config/scripts
+roscd eus_vive/scripts/jaxon
 ./start-jaxon_with_rhp3hand-sim.sh
+```
 
+```bash
+roscd eus_vive/scripts/jaxon
 ipython -i jaxon_with_rhp3hand_setup.py
 hcf.ast_svc.startAutoBalancer()
 hcf.ast_svc.startStabilizer()
@@ -376,10 +384,12 @@ https://user-images.githubusercontent.com/9300063/212932317-407102d1-093f-4729-b
 ##### Launch Tablis in Choreonoid
 
 ```bash
-roscd biped_wbms_tablis/scripts
+roscd eus_vive/scripts/tablis
 ./start-tablis-sim.sh
-./start-bridge-sim.sh
+```
 
+```bash
+roscd eus_vive/scripts/tablis
 ipython -i tablis_setup.py
 hcf.servoOn()
 hcf.hc_svc.startHapticsController()
@@ -388,9 +398,12 @@ hcf.hc_svc.startHapticsController()
 ##### Launch JAXON in Choreonoid
 
 ```bash
-roscd auto_stabilizer_config/scripts
+roscd eus_vive/scripts/jaxon
 ./start-jaxon_with_rhp3hand-sim.sh
+```
 
+```bash
+roscd eus_vive/scripts/jaxon
 ipython -i jaxon_with_rhp3hand_setup.py
 hcf.ast_svc.startAutoBalancer()
 hcf.ast_svc.startStabilizer()
@@ -400,7 +413,7 @@ hcf.ast_svc.startWholeBodyMasterSlave()
 ##### Launch bridge and wbms core
 
 ```bash
-roscd biped_wbms_jaxon/scripts
+roscd eus_vive/scripts/jaxon
 ./start-jaxon-eus-vive-sim.sh
 ```
 
