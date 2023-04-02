@@ -2,6 +2,18 @@
 Changelog for package eus_vive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update readme
+* flake8
+* disable bash and mypy lint
+* flake8
+* disable shellcheck
+* update readme
+* move jaxon tablis scripts in eus_vive
+* update tablis launch
+* Contributors: Shingo Kitagawa
+
 0.0.9 (2023-01-19)
 ------------------
 * add pr2 and baxter video
