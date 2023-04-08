@@ -14,7 +14,7 @@
 (defmethod robot-vive-interface
   ;; overwrite controller button callbacks
   (:controller-button-cb (arm msg)
-    (send :controller-button-cb-move-base-vive-org arm msg)
+    (send self :controller-button-cb-move-base-vive-org arm msg)
     (cond
       ((eq arm :larm)
        (send self :set-val 'vw
