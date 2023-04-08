@@ -712,12 +712,12 @@
                (read-from-string (format nil "prev-~A" button))))
            (button-counter (read-from-string (format nil "~A-count" button)))
            (button-wait-counter
-	     (read-from-string
-	       (format nil "~A-wait-count"
-		       (if (or (equal button-prefix "larm-")
-			       (equal button-prefix "rarm-"))
-			 (subseq (format nil "~A" button) 5)
-			 button))))
+             (read-from-string
+               (format nil "~A-wait-count"
+                       (if (or (equal button-prefix "larm-")
+                               (equal button-prefix "rarm-"))
+                         (subseq (format nil "~A" button) 5)
+                         button))))
            (button-p (send self :get-val button))
            (prev-button-p (send self :get-val prev-button))
            (button-count (send self :get-val button-counter))
