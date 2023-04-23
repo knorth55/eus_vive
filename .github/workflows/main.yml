@@ -13,19 +13,19 @@ jobs:
         env:
           - ROS_DISTRO: melodic
             ROS_REPO: testing
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store python-serial'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: melodic
             ROS_REPO: main
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store python-serial'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: noetic 
             ROS_REPO: testing
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store python-serial'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
           - ROS_DISTRO: noetic
             ROS_REPO: main
-            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store python-serial'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
     runs-on: ubuntu-latest
     steps:
