@@ -88,6 +88,12 @@ sudo apt install nvidia-396
 
 Follow [here](https://github.com/knorth55/vive_ros)
 
+#### Remove libcurl packages in Steam (for Vive)
+
+```
+sudo rm -r ~/.steam/steam/ubuntu12_32/steam-runtime/usr/lib/x86_64-linux-gnu/libcurl* 
+```
+
 #### Install kodak 4k pro camera and ELP usb camera udev (for Baxter)
 
 ```bash
