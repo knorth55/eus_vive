@@ -23,11 +23,11 @@
       (send self :set-val 'menu-wait-count 5)
       (send self :set-val 'trackpad-wait-count 5)
       (send self :set-val 'grip-wait-count 5)))
-  (:get-hmd->vive-coords (arm)
-    (let* ((coords (send-super :get-hmd->vive-coords arm))
-           (bvive->hmd-coords (send self :get-bvive->hmd-coords))
+  (:get-hmd->controller-coords (arm)
+    (let* ((coords (send-super :get-hmd->controller-coords arm))
+           (vrbase->hmd-coords (send self :get-vrbase->hmd-coords))
            (rpy-angle
-             (if bvive->hmd-coords (car (send bvive->hmd-coords :rpy-angle)))))
+             (if vrbase->hmd-coords (car (send vrbase->hmd-coords :rpy-angle)))))
       (if (and coords rpy-angle)
         (progn
           (setq coords
