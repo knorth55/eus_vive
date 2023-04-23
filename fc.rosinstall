@@ -32,7 +32,7 @@
 - git:
     local-name: knorth55/rviz_camera_stream
     uri: https://github.com/knorth55/rviz_camera_stream
-    version: master
+    version: noetic-devel
 # use larger image for vr
 # https://github.com/knorth55/vive_ros/commit/67fa4803ac324846608b062b44c618335bfa0c45
 - git:
