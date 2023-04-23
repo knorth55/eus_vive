@@ -12,12 +12,11 @@
   <arg name="DECOMP_IMAGE_COLOR" default="/kinect_head_decompressed/rgb/image_rect_color" />
   <arg name="DECOMP_POINTS" default="/kinect_head_decompressed/depth_registered/points" />
 
-  <!-- pr1012 and pr1040 parameters -->
-  <arg name="CAMERA_INFO" />
-  <arg name="RGB_CAMERA_INFO" />
-  <arg name="IMAGE_COLOR" />
-  <arg name="IMAGE_DEPTH" />
-  <arg name="IMAGE_DEPTH_TYPE" />
+  <arg name="CAMERA_INFO" default="/kinect_head/depth_registered/camera_info" />
+  <arg name="RGB_CAMERA_INFO" default="/kinect_head/rgb/camera_info" />
+  <arg name="IMAGE_COLOR" default="/kinect_head/rgb/image_rect_color" />
+  <arg name="IMAGE_DEPTH" default="/kinect_head/depth_registered/image_rect" />
+  <arg name="IMAGE_DEPTH_TYPE" default="compressedDepth" />
 
   <group ns="kinect_head_decompressed">
     <node name="camera_info_relay" pkg="topic_tools" type="relay"
