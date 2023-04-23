@@ -70,7 +70,9 @@
     (let (coords)
       (send tfl :wait-for-transform base-frame-id head-frame-id (ros::time 0) 0.1)
       (setq coords (send tfl :lookup-transform base-frame-id head-frame-id (ros::time 0)))
-      (if coords (send coords :rotate pi/2 :y :world))
+      (if coords
+        (setq coords (make-coords :pos (send coords :worldpos)
+                                  :rpy (float-vector 0 pi/2 0))))
       coords))
   (:angle-vector (&rest args)
     (send* robot-interface :angle-vector-raw args))
