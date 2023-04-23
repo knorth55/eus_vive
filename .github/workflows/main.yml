@@ -27,6 +27,14 @@ jobs:
             ROS_REPO: main
             ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
             UPSTREAM_WORKSPACE: '.ci.rosinstall'
+          - ROS_DISTRO: noetic 
+            ROS_REPO: testing
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            UPSTREAM_WORKSPACE: '.ci.rosinstall'
+          - ROS_DISTRO: noetic
+            ROS_REPO: main
+            ROSDEP_SKIP_KEYS: 'vive_ros baxter_core_msgs baxtereus influxdb_store'
+            UPSTREAM_WORKSPACE: '.ci.rosinstall'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
