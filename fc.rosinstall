@@ -28,7 +28,6 @@
     uri: https://github.com/jsk-ros-pkg/jsk_visualization.git
     version: master
 # need fixed version of rviz_camera_stream
-# https://github.com/knorth55/rviz_camera_stream/commit/ca7ffb379946710a3045dea2d191ba0218a8fd08
 - git:
     local-name: knorth55/rviz_camera_stream
     uri: https://github.com/knorth55/rviz_camera_stream
@@ -45,3 +44,8 @@
     local-name: UTNuclearRoboticsPublic/rviz_textured_sphere
     uri: https://github.com/knorth55/rviz_textured_sphere.git
     version: vive-control
+# for pr2_moveit_config in noetic
+- git:
+    local-name: ros-planning/moveit_pr2
+    uri: https://github.com/ros-planning/moveit_pr2.git
+    version: melodic-devel
