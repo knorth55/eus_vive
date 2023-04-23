@@ -2,7 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="vive_set" default="default" />
-  <arg name="head" default="true" />
+  <arg name="head" default="false" />
   <arg name="respeaker" value="true" />
   <arg name="realsense_camera" default="false" />
   <arg name="spherical_camera" default="true" />

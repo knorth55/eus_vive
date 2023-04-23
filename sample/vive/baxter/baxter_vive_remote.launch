@@ -2,7 +2,7 @@
   <arg name="main" default="true" />
   <arg name="vive" default="true" />
   <arg name="vive_set" default="default" />
-  <arg name="head" default="true" />
+  <arg name="head" default="false" />
   <arg name="mirror" default="false" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
