@@ -1,15 +1,15 @@
 - name: 'Reset'
-  service: '/eus_vive/reset'
+  service: '/eus_teleop/reset'
   column: 0
 - name: 'Enable'
-  service: '/eus_vive/enable'
+  service: '/eus_teleop/enable'
   column: 1
 - name: 'Disable'
-  service: '/eus_vive/disable'
+  service: '/eus_teleop/disable'
   column: 2
 - name: 'Calibrate larm'
-  service: '/eus_vive/larm/calibrate'
+  service: '/eus_teleop/larm/calibrate'
   column: 3
 - name: 'Calibrate rarm'
-  service: '/eus_vive/rarm/calibrate'
+  service: '/eus_teleop/rarm/calibrate'
   column: 4

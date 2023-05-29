@@ -1,13 +1,13 @@
 ;; -*- mode: lisp;-*-
 
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
-(require :robot-move-base-vive-interface "package://eus_vive/euslisp/lib/robot-move-base-vive-interface.l")
-(require :robot-tablis-interface "package://eus_vive/euslisp/lib/robot-tablis-interface.l")
-(require :robot-move-base-tablis-interface "package://eus_vive/euslisp/lib/robot-move-base-tablis-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :robot-move-base-teleop-interface "package://eus_teleop/euslisp/lib/robot-move-base-teleop-interface.l")
+(require :pr2-teleop-interface "package://eus_teleop/euslisp/lib/pr2-teleop-interface.l")
+(require :robot-vive-interface "package://eus_teleop/euslisp/lib/robot-vive-interface.l")
+(require :robot-move-base-vive-interface "package://eus_teleop/euslisp/lib/robot-move-base-vive-interface.l")
+(require :robot-tablis-interface "package://eus_teleop/euslisp/lib/robot-tablis-interface.l")
+(require :robot-move-base-tablis-interface "package://eus_teleop/euslisp/lib/robot-move-base-tablis-interface.l")
 
 
 (defclass pr2-tablis-interface

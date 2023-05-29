@@ -1,5 +1,5 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package eus_vive
+Changelog for package eus_teleop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 0.0.10 (2023-04-02)
@@ -17,7 +17,7 @@ Changelog for package eus_vive
 0.0.9 (2023-01-19)
 ------------------
 * add pr2 and baxter video
-* Merge pull request `#47 <https://github.com/knorth55/eus_vive/issues/47>`_ from knorth55/spacenav-base
+* Merge pull request `#47 <https://github.com/knorth55/eus_teleop/issues/47>`_ from knorth55/spacenav-base
 * euslint
 * updat ereadme
 * toggle spacenav base
@@ -42,7 +42,7 @@ Changelog for package eus_vive
 * refactor main-loop args
 * add base button options
 * abstract base-cb
-* Merge pull request `#46 <https://github.com/knorth55/eus_vive/issues/46>`_ from knorth55/jaxon
+* Merge pull request `#46 <https://github.com/knorth55/eus_teleop/issues/46>`_ from knorth55/jaxon
   Add JAXON + SpaceNav, Tablis Demo
 * disable md034
 * euslint
@@ -104,7 +104,7 @@ Changelog for package eus_vive
 * add robot-move-base-spacenav-interface.l
 * add robot-move-base-oculus-interface.l
 * add jaxon-vr-interface
-* Merge pull request `#30 <https://github.com/knorth55/eus_vive/issues/30>`_ from knorth55/dragon-spacenav-demo
+* Merge pull request `#30 <https://github.com/knorth55/eus_teleop/issues/30>`_ from knorth55/dragon-spacenav-demo
 * add dragon example in readme
 * add dragon.rosinstall
 * fix get-target-coords
@@ -121,7 +121,7 @@ Changelog for package eus_vive
 * update tablis sample launches
 * update readme
 * update readme
-* Merge pull request `#44 <https://github.com/knorth55/eus_vive/issues/44>`_ from knorth55/tablis-demo
+* Merge pull request `#44 <https://github.com/knorth55/eus_teleop/issues/44>`_ from knorth55/tablis-demo
 * fix mirror control
 * add mirror arguments
 * add tablis.rosinstall
@@ -168,17 +168,17 @@ Changelog for package eus_vive
 
 0.0.8 (2022-08-15)
 ------------------
-* Merge pull request `#43 <https://github.com/knorth55/eus_vive/issues/43>`_ from Kanazawanaoaki/add-moveit-to-depend
-* Merge pull request `#42 <https://github.com/knorth55/eus_vive/issues/42>`_ from Kanazawanaoaki/add-eus_vive-to-rosinstall
+* Merge pull request `#43 <https://github.com/knorth55/eus_teleop/issues/43>`_ from Kanazawanaoaki/add-moveit-to-depend
+* Merge pull request `#42 <https://github.com/knorth55/eus_teleop/issues/42>`_ from Kanazawanaoaki/add-eus_teleop-to-rosinstall
 * Add pr2_moveit_config to depend in package.xml
-* Add eus_vive to rosinstall
-* Merge pull request `#41 <https://github.com/knorth55/eus_vive/issues/41>`_ from knorth55/baxter-moveit-args
+* Add eus_teleop to rosinstall
+* Merge pull request `#41 <https://github.com/knorth55/eus_teleop/issues/41>`_ from knorth55/baxter-moveit-args
   add gripper args in baxter_moveit.launch
 * add gripper args in baxter_moveit.launch
-* Merge pull request `#40 <https://github.com/knorth55/eus_vive/issues/40>`_ from knorth55/use-baxter-softhand-interface
+* Merge pull request `#40 <https://github.com/knorth55/eus_teleop/issues/40>`_ from knorth55/use-baxter-softhand-interface
   use baxter-softhand-interface in jsk_robot
 * use baxter-softhand-interface in jsk_robot
-* Merge pull request `#37 <https://github.com/knorth55/eus_vive/issues/37>`_ from YUKINA-3252/global-time
+* Merge pull request `#37 <https://github.com/knorth55/eus_teleop/issues/37>`_ from YUKINA-3252/global-time
 * Make global_time_enabled true
 * Update README.md
 * update rviz config
@@ -188,15 +188,15 @@ Changelog for package eus_vive
 * add allow-other-keys
 * update *baxter* with potentio vector
 * add finger1,2,3 rotate method in baxter-interface
-* Merge pull request `#36 <https://github.com/knorth55/eus_vive/issues/36>`_ from softyanija/update-rotate-angle
+* Merge pull request `#36 <https://github.com/knorth55/eus_teleop/issues/36>`_ from softyanija/update-rotate-angle
 * add rotate-angle in baxter-interface.l
 * update baxter.rosinstall
-* Merge pull request `#35 <https://github.com/knorth55/eus_vive/issues/35>`_ from YUKINA-3252/baxter_torso_l515
+* Merge pull request `#35 <https://github.com/knorth55/eus_teleop/issues/35>`_ from YUKINA-3252/baxter_torso_l515
 * update baxter torso l515 pose
 * add readme
 * add baxter_spacenav_gazebo.launch
 * update baxter_vr_gazebo.launch
-* Merge pull request `#34 <https://github.com/knorth55/eus_vive/issues/34>`_ from knorth55/spacenav
+* Merge pull request `#34 <https://github.com/knorth55/eus_teleop/issues/34>`_ from knorth55/spacenav
   add baxter spacenav launch
 * euslint
 * update thumb button
@@ -222,12 +222,12 @@ Changelog for package eus_vive
 * update workspace config
 * update rviz config
 * update tabletop detector launch
-* Merge pull request `#33 <https://github.com/knorth55/eus_vive/issues/33>`_ from tohirose/cylinder-experiment
+* Merge pull request `#33 <https://github.com/knorth55/eus_teleop/issues/33>`_ from tohirose/cylinder-experiment
   change l515_torso_pose.yaml
 * change l515_torso_pose.yaml
 * add grasp mask rcnn launch
 * update baxter.rosinstall
-* Merge pull request `#19 <https://github.com/knorth55/eus_vive/issues/19>`_ from knorth55/no-window
+* Merge pull request `#19 <https://github.com/knorth55/eus_teleop/issues/19>`_ from knorth55/no-window
 * add no-window version
 * use outlier removal with cluster indices
 * update rosbag rviz
@@ -252,7 +252,7 @@ Changelog for package eus_vive
 * disable camera logging to mongodb
 * support :arms in baxter-interface
 * udpate rosinstall
-* Merge pull request `#32 <https://github.com/knorth55/eus_vive/issues/32>`_ from knorth55/knorth55-patch-1
+* Merge pull request `#32 <https://github.com/knorth55/eus_teleop/issues/32>`_ from knorth55/knorth55-patch-1
 * disable textlint
 * Update linter.yaml
 * Update README.md
@@ -263,7 +263,7 @@ Changelog for package eus_vive
 0.0.6 (2021-08-07)
 ------------------
 * use :set-torque-limit-step for softhand v1 and v2
-* Merge pull request `#31 <https://github.com/knorth55/eus_vive/issues/31>`_ from knorth55/set-torque-limit
+* Merge pull request `#31 <https://github.com/knorth55/eus_teleop/issues/31>`_ from knorth55/set-torque-limit
   add set-torque-limit methods in baxter-interface.l
 * fix typo
 * add set-torque-limit methods in baxter-interface.l
@@ -327,7 +327,7 @@ Changelog for package eus_vive
 * fix missing arg
 * update readme
 * update fc.rosinstall
-* Merge pull request `#22 <https://github.com/knorth55/eus_vive/issues/22>`_ from knorth55/add-spacenav
+* Merge pull request `#22 <https://github.com/knorth55/eus_teleop/issues/22>`_ from knorth55/add-spacenav
 * implement spacenav interface
 * show error when button method not found
 * add spacenav interfaces
@@ -465,14 +465,14 @@ Changelog for package eus_vive
 * flake8
 * markdown lint
 * add linter
-* Merge pull request `#18 <https://github.com/knorth55/eus_vive/issues/18>`_ from knorth55/softhand-v2-devel
+* Merge pull request `#18 <https://github.com/knorth55/eus_teleop/issues/18>`_ from knorth55/softhand-v2-devel
 * update reset-teleop-pose
 * fix baxter-interface
 * add reset-pose
 * add softhand-v2 methods
 * fix arm-motion-cb
 * fix  typo in baxter-interface.l
-* Merge pull request `#20 <https://github.com/knorth55/eus_vive/issues/20>`_ from knorth55/use-4k
+* Merge pull request `#20 <https://github.com/knorth55/eus_teleop/issues/20>`_ from knorth55/use-4k
 * Merge branch 'use-4k' into softhand-v2-devel
 * use kodak pixpro as 4k
 * fix robot-vr-interface.l
@@ -504,11 +504,11 @@ Changelog for package eus_vive
 * update README
 * fix typo in .ci.rosinstall
 * update fc.rosinstall and .ci.rosinstall
-* Merge pull request `#16 <https://github.com/knorth55/eus_vive/issues/16>`_ from knorth55/softhand-v2-devel
+* Merge pull request `#16 <https://github.com/knorth55/eus_teleop/issues/16>`_ from knorth55/softhand-v2-devel
   support softhand v2
 * change launch arg: gripper_softhand -> gripper_type
 * add softhand-v2 in baxter-interface
-* Merge pull request `#15 <https://github.com/knorth55/eus_vive/issues/15>`_ from knorth55/update-gripper-control
+* Merge pull request `#15 <https://github.com/knorth55/eus_teleop/issues/15>`_ from knorth55/update-gripper-control
   add button toggle control
 * rename button-toggle-p -> gripper-button-toggle-p
 * fix button-toggle
@@ -521,7 +521,7 @@ Changelog for package eus_vive
 * add button_toggle launch args
 * remove unused launch args
 * add button-toggle-p in robot-vive-interface.l
-* Merge pull request `#17 <https://github.com/knorth55/eus_vive/issues/17>`_ from knorth55/use-github-actions
+* Merge pull request `#17 <https://github.com/knorth55/eus_teleop/issues/17>`_ from knorth55/use-github-actions
 * update readme
 * update github actions config
 * skip vive_ros
@@ -537,7 +537,7 @@ Changelog for package eus_vive
 
 0.0.3 (2020-09-18)
 ------------------
-* Merge pull request `#14 <https://github.com/knorth55/eus_vive/issues/14>`_ from knorth55/update-calib
+* Merge pull request `#14 <https://github.com/knorth55/eus_teleop/issues/14>`_ from knorth55/update-calib
   Update calib
 * update perspective
 * skip calib service in main
@@ -546,10 +546,10 @@ Changelog for package eus_vive
 * update rviz config
 * tune volume
 * update rviz config
-* update eus_vive sounder
+* update eus_teleop sounder
 * update rviz config
 * add rviz config
-* update eus_vive_status_sounder
+* update eus_teleop_status_sounder
 * modify package version in package.xml
 * add CHANGELOG.rst
 * add gripper state visualiztion
@@ -562,7 +562,7 @@ Changelog for package eus_vive
 * tune sound volume
 * fix target pos z for non-head control
 * updte baxter head->shoulder-x-distance
-* Merge pull request `#13 <https://github.com/knorth55/eus_vive/issues/13>`_ from knorth55/add-hand-close
+* Merge pull request `#13 <https://github.com/knorth55/eus_teleop/issues/13>`_ from knorth55/add-hand-close
   Add hand close in status msg
 * launch xdisplay false
 * fix color
@@ -573,7 +573,7 @@ Changelog for package eus_vive
 * update comment in launch files
 * move status visualizer
 * publish hand_close status
-* add hand_close in EusViveStatus.msg
+* add hand_close in EusTeleopStatus.msg
 * use package:// in reset_button.perspective
 * Contributors: Shingo Kitagawa
 
@@ -603,7 +603,7 @@ Changelog for package eus_vive
 * update rvizconfig
 * fix respeaker.launch
 * add republish
-* Merge pull request `#12 <https://github.com/knorth55/eus_vive/issues/12>`_ from knorth55/remote-baxter
+* Merge pull request `#12 <https://github.com/knorth55/eus_teleop/issues/12>`_ from knorth55/remote-baxter
 * fix baxter_miraikan_remote_vive.launch
 * update rviz config
 * fix baxter_vr.launch
@@ -619,7 +619,7 @@ Changelog for package eus_vive
 * update audio_common
 * update readme
 * update .travis to 0.5.12
-* Merge pull request `#11 <https://github.com/knorth55/eus_vive/issues/11>`_ from knorth55/fix-torso
+* Merge pull request `#11 <https://github.com/knorth55/eus_teleop/issues/11>`_ from knorth55/fix-torso
 * speak when ready
 * reset torso controller
 * update parameters
@@ -635,7 +635,7 @@ Changelog for package eus_vive
 * use current coords when one arm is moving
 * use opposite-arm-coords for one arm ik
 * update readme
-* Merge pull request `#10 <https://github.com/knorth55/eus_vive/issues/10>`_ from knorth55/use-oculus
+* Merge pull request `#10 <https://github.com/knorth55/eus_teleop/issues/10>`_ from knorth55/use-oculus
 * update current-end-coords when start
 * update get-target-coords for oculus
 * return when current-end-coords is nil
@@ -680,7 +680,7 @@ Changelog for package eus_vive
 0.0.1 (2020-01-23)
 ------------------
 * fix typo in launch
-* Merge pull request `#8 <https://github.com/knorth55/eus_vive/issues/8>`_ from knorth55/pr1012
+* Merge pull request `#8 <https://github.com/knorth55/eus_teleop/issues/8>`_ from knorth55/pr1012
   20120114-20200121 experiments
 * rename baxter rosbag node
 * add logging
@@ -695,14 +695,14 @@ Changelog for package eus_vive
 * update rviz config
 * add queue_size for point_cloud_xyzrgb
 * add pr1012 and pr1040 launch
-* Merge pull request `#9 <https://github.com/knorth55/eus_vive/issues/9>`_ from knorth55/add-travis
+* Merge pull request `#9 <https://github.com/knorth55/eus_teleop/issues/9>`_ from knorth55/add-travis
   add travis
 * update readme
 * add travis
 * add respeaker in launch
 * update .rosinstall
 * update package.xml
-* Merge pull request `#7 <https://github.com/knorth55/eus_vive/issues/7>`_ from knorth55/baxter-hmd
+* Merge pull request `#7 <https://github.com/knorth55/eus_teleop/issues/7>`_ from knorth55/baxter-hmd
   add baxter head camera and hmd view
 * update camera pose
 * update baxter vive visualization rviz config
@@ -722,7 +722,7 @@ Changelog for package eus_vive
 * override head-cb in baxter-vive-interface
 * add baxter head camera and hmd view
 * upadte device name
-* Merge pull request `#6 <https://github.com/knorth55/eus_vive/issues/6>`_ from knorth55/20191106-demo
+* Merge pull request `#6 <https://github.com/knorth55/eus_teleop/issues/6>`_ from knorth55/20191106-demo
   add softhand demo
 * add softhand mode
 * lint
@@ -743,7 +743,7 @@ Changelog for package eus_vive
 * solve inverse-kinematics not from current pose
 * set pr2 gripper gain
 * set loop-enable nil for pr2
-* Merge pull request `#5 <https://github.com/knorth55/eus_vive/issues/5>`_ from knorth55/use-rosparam
+* Merge pull request `#5 <https://github.com/knorth55/eus_teleop/issues/5>`_ from knorth55/use-rosparam
   Use rosparam for workspace and vive id
 * fix typo in robot-vive-interface
 * add rqt_service_buttons
@@ -794,11 +794,11 @@ Changelog for package eus_vive
 * split into baxter_logging launch
 * add miraikan arg
 * refactor db_client.launch
-* update logger to add eus_vive_status
+* update logger to add eus_teleop_status
 * update rvizconfig
 * add vive arg for launch
 * change speak contents
-* update eus_vive_status_sounder
+* update eus_teleop_status_sounder
 * speak when enable/disable arm
 * refactor
 * add alert sounder
@@ -813,11 +813,11 @@ Changelog for package eus_vive
 * fix typo
 * add baxter urdf for custom gripper
 * add mask_rcnn launch
-* display eus_vive_status_visualizer in xdisplay
+* display eus_teleop_status_visualizer in xdisplay
 * move robot-state-visualize-topic-name in robot-vive-interface.l
-* publish EusViveStatusArray
-* add EusViveStatusVisualizer
-* add EusViveStatusArray msg
+* publish EusTeleopStatusArray
+* add EusTeleopStatusVisualizer
+* add EusTeleopStatusArray msg
 * update baxter irtviewer camera
 * update kinetic.rosinstall
 * update diff thresh
@@ -862,7 +862,7 @@ Changelog for package eus_vive
 * add baxter_interface
 * use baxter av-scale 2.0
 * start from untuck-pose
-* Merge pull request `#4 <https://github.com/knorth55/eus_vive/issues/4>`_ from knorth55/mirror
+* Merge pull request `#4 <https://github.com/knorth55/eus_teleop/issues/4>`_ from knorth55/mirror
   add mirror mode
 * add calibration error
 * try again when calibration is failed
@@ -896,7 +896,7 @@ Changelog for package eus_vive
 * update pr2 paramter
 * update pr2 parameters
 * use *irtviewer*
-* Merge pull request `#3 <https://github.com/knorth55/eus_vive/issues/3>`_ from knorth55/support-baxter
+* Merge pull request `#3 <https://github.com/knorth55/eus_teleop/issues/3>`_ from knorth55/support-baxter
   Support baxter vive control
 * set interpolation and mode
 * add min-time
@@ -929,7 +929,7 @@ Changelog for package eus_vive
 * update readme
 * add grip button function
 * remap move base: use trigger for safe move base
-* Merge pull request `#2 <https://github.com/knorth55/eus_vive/issues/2>`_ from knorth55/no-head-interface
+* Merge pull request `#2 <https://github.com/knorth55/eus_teleop/issues/2>`_ from knorth55/no-head-interface
   refactor and refine move base method
 * fix typo
 * use trackpad button
@@ -949,7 +949,7 @@ Changelog for package eus_vive
 * add base option
 * refactor pr2-vive-interface.l
 * fix typo
-* Merge pull request `#1 <https://github.com/knorth55/eus_vive/issues/1>`_ from knorth55/pr2-vive-interface
+* Merge pull request `#1 <https://github.com/knorth55/eus_teleop/issues/1>`_ from knorth55/pr2-vive-interface
   add pr2-vive-interface.l
 * update scale paramter
 * fix typo

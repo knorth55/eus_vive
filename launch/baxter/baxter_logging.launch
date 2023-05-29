@@ -23,7 +23,7 @@
     <arg name="port" value="27017" />
     <arg name="repl_set_mode" value="false" />
   </include>
-  <include file="$(find eus_vive)/launch/baxter/baxter_db_client.launch">
+  <include file="$(find eus_teleop)/launch/baxter/baxter_db_client.launch">
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera" value="$(arg camera)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
@@ -35,8 +35,8 @@
   </include>
 
   <!-- rosbag -->
-  <include file="$(find eus_vive)/launch/baxter/baxter_rosbag_record.launch">
-    <arg name="output_prefix" value="$(arg home_dir)/.ros/eus_vive/rosbag/baxter" />
+  <include file="$(find eus_teleop)/launch/baxter/baxter_rosbag_record.launch">
+    <arg name="output_prefix" value="$(arg home_dir)/.ros/eus_teleop/rosbag/baxter" />
     <arg name="compress" value="$(arg compress)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="spherical_camera_ns" value="$(arg spherical_camera_ns)" />

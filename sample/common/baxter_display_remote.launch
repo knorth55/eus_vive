@@ -13,7 +13,7 @@
   <arg name="spherical_left_camera_ns" default="elp_head_left" />
   <arg name="spherical_right_camera_ns" default="elp_head_right" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vr_display.launch">
+  <include file="$(find eus_teleop)/launch/baxter/baxter_teleop_display.launch">
     <arg name="head" value="$(arg head)" />
     <arg name="respeaker" value="$(arg respeaker)" />
     <arg name="mirror" value="$(arg mirror)" />

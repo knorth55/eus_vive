@@ -4,7 +4,7 @@
   <arg name="button_toggle" default="true" />
   <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr2_vr_gazebo.launch">
+  <include file="$(find eus_teleop)/launch/pr2/pr2_teleop_gazebo.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="spacenav" value="$(arg spacenav)" />

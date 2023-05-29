@@ -1,9 +1,9 @@
 ;; -*- mode: lisp;-*-
 
 (require :dragon-interface "package://dragon/euslisp/quad/dragon-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :dragon-vr-interface "package://eus_vive/euslisp/lib/dragon-vr-interface.l")
-(require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :dragon-teleop-interface "package://eus_teleop/euslisp/lib/dragon-teleop-interface.l")
+(require :robot-spacenav-interface "package://eus_teleop/euslisp/lib/robot-spacenav-interface.l")
 
 
 (defclass dragon-spacenav-interface

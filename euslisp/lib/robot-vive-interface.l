@@ -3,11 +3,11 @@
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "topic_tools")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
 
 
 (defclass robot-vive-interface
-  :super robot-vr-interface
+  :super robot-teleop-interface
   :slots (hmd-frame-id
           vrbase-device-id
           larm-controller-device-id
@@ -58,15 +58,15 @@
       (send self :set-val 'vrbase->shoulder-z nil)
       ;; for vive
       (send self :set-val 'hmd-frame-id "hmd")
-      (send self :set-val 'vrbase-device-id (ros::get-param "/eus_vive/b_lighthouse_id"))
+      (send self :set-val 'vrbase-device-id (ros::get-param "/eus_teleop/b_lighthouse_id"))
       (send self :set-arm-val :larm :controller-device-id
-            (ros::get-param "/eus_vive/l_controller_id"))
+            (ros::get-param "/eus_teleop/l_controller_id"))
       (send self :set-arm-val :rarm :controller-device-id
-            (ros::get-param "/eus_vive/r_controller_id"))
+            (ros::get-param "/eus_teleop/r_controller_id"))
       (send self :set-val 'feedback-topic-name "/vive/set_feedback")
       (if vrbase-device-id
         (send self :set-val 'vrbase-frame-id (format nil "lighthouse_LHB_~A" vrbase-device-id))
-        (ros::ros-warn "param: /eus_vive/b_lighthouse_id is not set"))))
+        (ros::ros-warn "param: /eus_teleop/b_lighthouse_id is not set"))))
   (:ros-init ()
     (prog1
       (send-super :ros-init)
@@ -78,7 +78,7 @@
           (ros::subscribe (format nil "/vive/~A/joy"
                                   (send self :get-arm-val :larm :controller-frame-id))
                           sensor_msgs::Joy #'send self :controller-button-cb :larm))
-        (ros::ros-warn "param: /eus_vive/l_controller_id is not set"))
+        (ros::ros-warn "param: /eus_teleop/l_controller_id is not set"))
       (if rarm-controller-device-id
         (progn
           (send self :set-arm-val :rarm :controller-frame-id
@@ -86,7 +86,7 @@
           (ros::subscribe (format nil "/vive/~A/joy"
                                   (send self :get-arm-val :rarm :controller-frame-id))
                           sensor_msgs::Joy #'send self :controller-button-cb :rarm))
-        (ros::ros-warn "param: /eus_vive/r_controller_id is not set"))))
+        (ros::ros-warn "param: /eus_teleop/r_controller_id is not set"))))
   ;; redefine :reset-arm-val
   (:reset-arm-val (arm)
     (send-super :reset-arm-val arm)

@@ -2,8 +2,8 @@
 
 (ros::roseus-add-msgs "geometry_msgs")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :robot-vive-interface "package://eus_teleop/euslisp/lib/robot-vive-interface.l")
 
 
 (defclass robot-tablis-interface

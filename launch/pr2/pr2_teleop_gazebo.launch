@@ -1,0 +1,55 @@
+<launch>
+  <arg name="main" default="true" />
+  <arg name="vive" default="true" />
+  <arg name="spacenav" default="false" />
+  <arg name="tablis" default="false" />
+  <arg name="device" default="vive" />
+  <arg name="head" default="false" />
+  <arg name="mirror" default="false" />
+  <arg name="display" default="true" />
+
+  <!-- vive -->
+  <arg name="button_toggle" default="true" />
+
+  <!-- workspace -->
+  <arg name="workspace_max_x" default="false" />
+  <arg name="workspace_min_x" default="false" />
+  <arg name="workspace_max_y" default="false" />
+  <arg name="workspace_min_y" default="false" />
+  <arg name="workspace_max_z" default="false" />
+  <arg name="workspace_min_z" default="false" />
+
+  <!-- <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" /> -->
+
+  <!-- sound play -->
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" respawn="true">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+
+  <include file="$(find eus_teleop)/launch/pr2/pr2_teleop.launch">
+    <arg name="main" value="$(arg main)" />
+    <arg name="vive" value="$(arg vive)" />
+    <arg name="spacenav" value="$(arg spacenav)" />
+    <arg name="tablis" value="$(arg tablis)" />
+    <arg name="device" value="$(arg device)" />
+    <arg name="head" value="$(arg head)" />
+    <arg name="mirror" value="$(arg mirror)" />
+    <arg name="display" value="$(arg display)" />
+    <arg name="respeaker" value="false" />
+    <arg name="logging" value="false" />
+    <arg name="kinfu" value="false" />
+    <arg name="button_toggle" value="$(arg button_toggle)" />
+    <arg name="workspace_max_x" value="$(arg workspace_max_x)" />
+    <arg name="workspace_min_x" value="$(arg workspace_min_x)" />
+    <arg name="workspace_max_y" value="$(arg workspace_max_y)" />
+    <arg name="workspace_min_y" value="$(arg workspace_min_y)" />
+    <arg name="workspace_max_z" value="$(arg workspace_max_z)" />
+    <arg name="workspace_min_z" value="$(arg workspace_min_z)" />
+    <arg name="hmd_left_image" value="/wide_stereo/left/image_rect_color" />
+    <arg name="hmd_right_image" value="/wide_stereo/right/image_rect_color" />
+  </include>
+
+  <!-- launch rqt_gui -->
+  <include unless="$(arg display)" file="$(find eus_teleop)/launch/include/rqt_gui.launch" />
+
+</launch>

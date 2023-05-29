@@ -5,7 +5,7 @@
   <arg name="kinfu" default="false" />
   <arg name="display" default="true" />
 
-  <include file="$(find eus_vive)/launch/pr2/pr2_vr.launch">
+  <include file="$(find eus_teleop)/launch/pr2/pr2_teleop.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="spacenav" value="$(arg spacenav)" />

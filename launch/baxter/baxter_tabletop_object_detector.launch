@@ -17,7 +17,7 @@
           output="screen">
       <remap from="~server" to="transformable_interactive_server" />
       <rosparam subst_value="true">
-        config_file: $(find eus_vive)/config/baxter/workspace_transformable_markers_client.yaml
+        config_file: $(find eus_teleop)/config/baxter/workspace_transformable_markers_client.yaml
         config_auto_save: true
         interactive_mode: 2  # BUTTON
       </rosparam>

@@ -23,7 +23,7 @@
   <!-- tf for realsense at baxter's torso -->
   <node name="marker_6dof_tf_base_to_color"
         pkg="jsk_interactive_marker" type="marker_6dof">
-    <rosparam command="load" file="$(find eus_vive)/config/baxter/$(arg camera_type)_torso_pose.yaml" />
+    <rosparam command="load" file="$(find eus_teleop)/config/baxter/$(arg camera_type)_torso_pose.yaml" />
     <rosparam subst_value="true" >
       object_type: cube
       publish_tf: true
@@ -34,7 +34,7 @@
     </rosparam>
   </node>
 
-  <include file="$(find eus_vive)/launch/include/realsense_$(arg camera_type).launch">
+  <include file="$(find eus_teleop)/launch/include/realsense_$(arg camera_type).launch">
     <arg name="camera_ns" value="$(arg camera_ns)" />
     <arg name="manager" value="$(arg manager)" />
     <arg name="publish_tf" value="false" />
@@ -54,7 +54,7 @@
   <node name="pointcloud_to_image" pkg="pcl_ros" type="convert_pointcloud_to_image"
         args="input:=$(arg input_cloud) output:=$(arg input_image)" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_tabletop_object_detector.launch"
+  <include file="$(find eus_teleop)/launch/baxter/baxter_tabletop_object_detector.launch"
            if="$(arg launch_tabletop_detector)">
     <arg name="input_image" value="$(arg input_image)" />
     <arg name="input_cloud" value="$(arg input_cloud)" />
@@ -64,7 +64,7 @@
     <arg name="clip" value="true" />
   </include>
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_grasp_mask_rcnn.launch"
+  <include file="$(find eus_teleop)/launch/baxter/baxter_grasp_mask_rcnn.launch"
            if="$(arg launch_grasp_mask_rcnn)">
     <arg name="input_image" value="$(arg input_image)" />
     <arg name="input_cloud" value="$(arg input_cloud)" />

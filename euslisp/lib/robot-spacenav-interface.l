@@ -2,11 +2,11 @@
 
 (ros::load-ros-manifest "sensor_msgs")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
 
 
 (defclass robot-spacenav-interface
-  :super robot-vr-interface
+  :super robot-teleop-interface
   :slots (spacenav-joy-topic-name
           spacenav-joy-axes
           spacenav-joy-axes-threshold

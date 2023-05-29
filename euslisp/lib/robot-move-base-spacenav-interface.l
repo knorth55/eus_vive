@@ -2,9 +2,9 @@
 
 (ros::roseus-add-msgs "geometry_msgs")
 
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :robot-move-base-teleop-interface "package://eus_teleop/euslisp/lib/robot-move-base-teleop-interface.l")
+(require :robot-spacenav-interface "package://eus_teleop/euslisp/lib/robot-spacenav-interface.l")
 
 
 (if (not (assoc :spacenav-joy-axes-cb-move-base-spacenav-org

@@ -1,0 +1,261 @@
+<launch>
+  <arg name="head" default="true" />
+  <arg name="respeaker" default="true" />
+  <arg name="mirror" default="false" />
+  <arg name="republish" default="false" />
+  <arg name="logging" default="true" />
+  <arg name="rqt_gui" default="true" />
+  <arg name="home_dir" default="$(env HOME)" />
+  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+
+  <arg name="main_name" default="/baxter_teleop_main" />
+
+  <!-- camera -->
+  <arg name="camera_ns" default="realsense_torso" />
+  <arg name="spherical_camera_ns" default="kodak_head" />
+  <arg name="spherical_stereo" default="true" />
+  <arg name="spherical_left_camera_ns" default="elp_head_left" />
+  <arg name="spherical_right_camera_ns" default="elp_head_right" />
+  <arg name="hmd_left_image" default="/virtual_camera/left/rviz_image" />
+  <arg name="hmd_right_image" default="/virtual_camera/right/rviz_image" />
+
+  <!-- camera parameters -->
+  <arg name="REALSENSE_IMAGE_TYPE" default="x264" />
+  <arg name="REALSENSE_DEPTH_TYPE" default="compressedDepth" />
+  <arg name="SPHERICAL_IMAGE_TYPE" default="x264" />
+  <arg name="SPHERICAL_STEREO_IMAGE_TYPE" default="x264" />
+
+  <!-- compress flag-->
+  <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
+  <arg unless="$(arg compress)" name="compress_flag" value="" />
+
+  <!-- launch rviz overlay -->
+  <node name="rosconsole_overlay_text"
+        pkg="jsk_rviz_plugins" type="rosconsole_overlay_text.py">
+    <rosparam subst_value="true" >
+      nodes:
+        - $(arg main_name)
+      exclude_regexes:
+        - .*follow_joint_trajectory.*
+        - .*:joint-angle.*
+        - .*:wait-interpolation-until.*
+        - ^;;.*
+        - if you do not have gripper,.*
+    </rosparam>
+  </node>
+
+  <!-- launch robot sounder -->
+  <node name="eus_teleop_status_sounder"
+      pkg="eus_teleop" type="eus_teleop_status_sounder.py">
+    <remap from="~output/sound" to="/robotsound" />
+    <remap from="~input/status" to="/eus_teleop/status" />
+  </node>
+  <include file="$(find eus_teleop)/launch/include/audio_play.launch" if="$(arg respeaker)" />
+  <node name="soundplay_node"
+        pkg="sound_play" type="soundplay_node.py">
+    <remap from="sound_play" to="robotsound" />
+  </node>
+  <node name="soundplay_jp_node"
+        pkg="sound_play" type="soundplay_node.py">
+    <remap from="robotsound" to="robotsound_jp" />
+    <remap from="sound_play" to="robotsound_jp" />
+  </node>
+
+  <!-- launch camera republish-->
+  <group if="$(arg republish)">
+    <!-- realsense rgb -->
+    <node name="realsense_rgb_decompress" pkg="image_transport" type="republish"
+          args="$(arg REALSENSE_IMAGE_TYPE) in:=/$(arg camera_ns)/color/image_raw
+                raw out:=/$(arg camera_ns)_remote/color/image_raw" />
+    <node name="realsense_rgb_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/color/camera_info
+                /$(arg camera_ns)_remote/color/camera_info" />
+    <!-- realsense depth -->
+    <node name="realsense_depth_decompress" pkg="image_transport" type="republish"
+          args="$(arg REALSENSE_DEPTH_TYPE) in:=/$(arg camera_ns)/depth/compressed/image_rect_raw
+                raw out:=/$(arg camera_ns)_remote/depth/compressed/image_rect_raw" />
+    <node name="realsense_depth_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/depth/compressed/camera_info
+                /$(arg camera_ns)_remote/depth/compressed/camera_info" />
+    <!-- realsense aligned_depth_to_color -->
+    <node name="realsense_aligned_depth_to_color_decompress" pkg="image_transport" type="republish"
+          args="$(arg REALSENSE_DEPTH_TYPE) in:=/$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw
+                raw out:=/$(arg camera_ns)_remote/aligned_depth_to_color/compressed/image_raw" />
+    <node name="realsense_aligned_depth_to_color_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
+                /$(arg camera_ns)_remote/aligned_depth_to_color/compressed/camera_info" />
+    <!-- spherical camera -->
+    <node name="spherical_decompress" pkg="image_transport" type="republish"
+          args="$(arg SPHERICAL_IMAGE_TYPE) in:=/$(arg spherical_camera_ns)/image_raw
+                raw out:=/$(arg spherical_camera_ns)_remote/image_raw" />
+    <node name="spherical_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_camera_ns)/camera_info
+                /$(arg spherical_camera_ns)_remote/camera_info" />
+    <!-- spherical left camera -->
+    <node name="spherical_left_decompress" pkg="image_transport" type="republish"
+          args="$(arg SPHERICAL_STEREO_IMAGE_TYPE) in:=/$(arg spherical_left_camera_ns)/image_raw
+                raw out:=/$(arg spherical_left_camera_ns)_remote/image_raw" />
+    <node name="spherical_left_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_left_camera_ns)/camera_info
+                /$(arg spherical_left_camera_ns)_remote/camera_info" />
+    <!-- spherical right camera -->
+    <node name="spherical_right_decompress" pkg="image_transport" type="republish"
+          args="$(arg SPHERICAL_STEREO_IMAGE_TYPE) in:=/$(arg spherical_right_camera_ns)/image_raw
+                raw out:=/$(arg spherical_right_camera_ns)_remote/image_raw" />
+    <node name="spherical_right_camera_info_relay" pkg="topic_tools" type="relay"
+          args="/$(arg spherical_right_camera_ns)/camera_info
+                /$(arg spherical_right_camera_ns)_remote/camera_info" />
+  </group>
+
+  <!-- virtual camera -->
+  <group if="$(arg head)">
+    <group if="$(arg spherical_stereo)">
+      <group ns="virtual_camera">
+        <group ns="left">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0 0 0 0 0 0 /$(arg spherical_left_camera_ns)_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_teleop" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg spherical_left_camera_ns)/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_left_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+        </group>
+        <group ns="right">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0 0 0 0 0 0 /$(arg spherical_right_camera_ns)_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_teleop" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg spherical_right_camera_ns)/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_right_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+        </group>
+      </group>
+    </group>
+    <group unless="$(arg spherical_stereo)">
+      <group ns="virtual_camera">
+        <group ns="left">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="-0.0315 0 0 0 0 0 /$(arg camera_ns)_color_optical_frame /virtual_camera_left_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_teleop" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_left_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+          <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+                args="standalone jsk_pcl/DepthImageCreator" output="screen">
+            <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+            <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+          </node>
+        </group>
+        <group ns="right">
+          <node name="virtual_camera_tf_static_transform_publisher" pkg="tf" type="static_transform_publisher"
+                args="0.0315 0 0 0 0 0 /$(arg camera_ns)_color_optical_frame /virtual_camera_right_rgb_optical_frame 100" />
+          <node name="virtual_camera_info_publisher" pkg="eus_teleop" type="virtual_camera_info_publisher.py"
+                output="screen">
+            <remap from="~input/camera_info" to="/$(arg camera_ns)/color/camera_info" />
+            <rosparam>
+              frame_id: virtual_camera_right_rgb_optical_frame
+              height: 1080
+              width: 1200
+            </rosparam>
+          </node>
+          <node name="depth_image_creator" pkg="nodelet" type="nodelet"
+                args="standalone jsk_pcl/DepthImageCreator" output="screen">
+            <remap from="~input" to="/$(arg camera_ns)/depth_registered/points" />
+            <remap from="~info" to="virtual_camera_info_publisher/output/camera_info" />
+          </node>
+        </group>
+      </group>
+    </group>
+  </group>
+
+  <!-- launch rviz -->
+  <group if="$(arg head)">
+    <group if="$(arg spherical_stereo)">
+      <group if="$(arg republish)">
+        <node name="$(anon teleop_left_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_remote_hmd_left_visualization.rviz" />
+        <node name="$(anon teleop_right_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_remote_hmd_right_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon teleop_left_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_hmd_left_visualization.rviz" />
+        <node name="$(anon teleop_right_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_hmd_right_visualization.rviz" />
+      </group>
+    </group>
+    <group unless="$(arg spherical_stereo)">
+      <group if="$(arg republish)">
+        <node name="$(anon teleop_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_remote_hmd_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon teleop_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_hmd_visualization.rviz" />
+      </group>
+    </group>
+  </group>
+  <group unless="$(arg head)">
+    <group if="$(arg mirror)">
+      <node name="$(anon teleop_rviz)" pkg="rviz" type="rviz"
+            args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_mirror_visualization.rviz" />
+    </group>
+    <group unless="$(arg mirror)">
+      <group if="$(arg republish)">
+        <node name="$(anon teleop_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_remote_display_visualization.rviz" />
+      </group>
+      <group unless="$(arg republish)">
+        <node name="$(anon teleop_rviz)" pkg="rviz" type="rviz"
+              args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_teleop_display_visualization.rviz" />
+      </group>
+      <node name="$(anon vis_top_rviz)" pkg="rviz" type="rviz"
+            args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_top_visualization.rviz" />
+      <node name="$(anon vis_front_rviz)" pkg="rviz" type="rviz"
+            args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_front_visualization.rviz" />
+    </group>
+  </group>
+
+  <!-- launch rqt_gui -->
+  <include file="$(find eus_teleop)/launch/include/rqt_gui.launch" if="$(arg rqt_gui)" />
+
+  <!-- rosbag -->
+  <node name="baxter_display_rosbag_record" pkg="rosbag" type="record" if="$(arg logging)"
+        args="/rosout /eus_teleop/status /tf /robot/joint_states
+              /tf_static
+              /audio
+              /baxter_top_rviz/image/compressed
+              /baxter_front_rviz/image/compressed
+              /baxter_remote_rviz/image/compressed
+              $(arg hmd_left_image)/compressed
+              $(arg hmd_right_image)/compressed
+              /$(arg camera_ns)/color/image_rect_color/$(arg REALSENSE_IMAGE_TYPE)
+              /$(arg camera_ns)/color/camera_info
+              /$(arg camera_ns)/depth/compressed/image_rect_raw/$(arg REALSENSE_DEPTH_TYPE)
+              /$(arg camera_ns)/depth/compressed/camera_info
+              /$(arg camera_ns)/aligned_depth_to_color/compressed/image_raw/$(arg REALSENSE_DEPTH_TYPE)
+              /$(arg camera_ns)/aligned_depth_to_color/compressed/camera_info
+              /$(arg spherical_camera_ns)/image_raw/$(arg SPHERICAL_IMAGE_TYPE)
+              /$(arg spherical_camera_ns)/camera_info
+              /$(arg spherical_left_camera_ns)/image_raw/$(arg SPHERICAL_STEREO_IMAGE_TYPE)
+              /$(arg spherical_left_camera_ns)/camera_info
+              /$(arg spherical_right_camera_ns)/image_raw/$(arg SPHERICAL_STEREO_IMAGE_TYPE)
+              /$(arg spherical_right_camera_ns)/camera_info
+              -q $(arg compress_flag) -b 0
+              --output-prefix $(arg home_dir)/.ros/eus_teleop/rosbag/baxter_display"
+        output="screen" />
+
+</launch>

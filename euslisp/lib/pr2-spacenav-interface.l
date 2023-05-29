@@ -1,11 +1,11 @@
 ;; -*- mode: lisp;-*-
 
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :robot-move-base-vr-interface "package://eus_vive/euslisp/lib/robot-move-base-vr-interface.l")
-(require :pr2-vr-interface "package://eus_vive/euslisp/lib/pr2-vr-interface.l")
-(require :robot-spacenav-interface "package://eus_vive/euslisp/lib/robot-spacenav-interface.l")
-(require :robot-move-base-spacenav-interface "package://eus_vive/euslisp/lib/robot-move-base-spacenav-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :robot-move-base-teleop-interface "package://eus_teleop/euslisp/lib/robot-move-base-teleop-interface.l")
+(require :pr2-teleop-interface "package://eus_teleop/euslisp/lib/pr2-teleop-interface.l")
+(require :robot-spacenav-interface "package://eus_teleop/euslisp/lib/robot-spacenav-interface.l")
+(require :robot-move-base-spacenav-interface "package://eus_teleop/euslisp/lib/robot-move-base-spacenav-interface.l")
 
 
 (defclass pr2-spacenav-interface

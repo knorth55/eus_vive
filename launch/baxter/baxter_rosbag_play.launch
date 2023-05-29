@@ -39,7 +39,7 @@
 
   <param name="/use_sim_time" value="true" />
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder $(find eus_vive)/urdf/baxter.urdf.xacro
+         command="$(find xacro)/xacro --inorder $(find eus_teleop)/urdf/baxter.urdf.xacro
                   gazebo:=false finger:=$(arg finger) finger_tip:=$(arg finger_tip)
                   left_electric_gripper:=$(arg left_electric_gripper)
                   right_electric_gripper:=$(arg right_electric_gripper)" />
@@ -52,7 +52,7 @@
   </node>
 
   <node name="$(anon rviz)" pkg="rviz" type="rviz"
-        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_rosbag_play.rviz"
+        args="-d $(find eus_teleop)/rvizconfig/baxter/baxter_rosbag_play.rviz"
         if="$(arg gui)" />
 
 </launch>

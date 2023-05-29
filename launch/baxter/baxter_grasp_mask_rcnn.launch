@@ -12,7 +12,7 @@
   <arg name="config_yaml"
        default="$(find dualarm_grasping)/models/dualarm_occluded_grasp/self_anno/20181227_params.yaml" />
   <arg name="target_yaml"
-       default="$(find eus_vive)/config/baxter/grasp_mask_rcnn_target_names.yaml"  />
+       default="$(find eus_teleop)/config/baxter/grasp_mask_rcnn_target_names.yaml"  />
   <arg name="label_yaml"
        default="$(find dualarm_grasping)/yaml/dualarm_occluded_grasping_label_names.yaml" />
 
@@ -35,7 +35,7 @@
       <arg name="NODELET_MANAGER" value="$(arg manager)" />
     </include>
     <group ns="dualarm_grasp_segmentation">
-       <rosparam command="load" file="$(find eus_vive)/config/baxter/grasp_mask_rcnn_tote_contents.yaml" />
+       <rosparam command="load" file="$(find eus_teleop)/config/baxter/grasp_mask_rcnn_tote_contents.yaml" />
        <rosparam>
          score_thresh: 0.5
          grasp_thresh: 0.1

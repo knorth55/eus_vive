@@ -10,7 +10,7 @@
   <arg name="rgripper_type" default="softhand" />
   <arg name="button_toggle" default="true" />
 
-  <include file="$(find eus_vive)/launch/baxter/baxter_vr.launch">
+  <include file="$(find eus_teleop)/launch/baxter/baxter_teleop.launch">
     <arg name="main" value="$(arg main)" />
     <arg name="vive" value="false" />
     <arg name="device" value="oculus" />

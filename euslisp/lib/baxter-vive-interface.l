@@ -1,10 +1,10 @@
 ;; -*- mode: lisp;-*-
 (ros::load-ros-manifest "baxter_core_msgs")
 
-(require :baxter-interface "package://eus_vive/euslisp/lib/baxter-interface.l")
-(require :robot-vr-interface "package://eus_vive/euslisp/lib/robot-vr-interface.l")
-(require :baxter-vr-interface "package://eus_vive/euslisp/lib/baxter-vr-interface.l")
-(require :robot-vive-interface "package://eus_vive/euslisp/lib/robot-vive-interface.l")
+(require :baxter-interface "package://eus_teleop/euslisp/lib/baxter-interface.l")
+(require :robot-teleop-interface "package://eus_teleop/euslisp/lib/robot-teleop-interface.l")
+(require :baxter-teleop-interface "package://eus_teleop/euslisp/lib/baxter-teleop-interface.l")
+(require :robot-vive-interface "package://eus_teleop/euslisp/lib/robot-vive-interface.l")
 
 
 (defclass baxter-vive-interface
@@ -37,7 +37,7 @@
 
 
 (defun baxter-vive-init (&key (lgripper :parallel) (rgripper :parallel) (loop-enable t))
-  (eus_vive::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
+  (eus_teleop::baxter-init :lgripper lgripper :rgripper rgripper :limit-in-front t)
   (make-baxter-irtviewer :no-window t)
   (make-baxter-camera-model :no-window t)
   (setq *ti* (instance baxter-vive-interface :init :loop-enable loop-enable
